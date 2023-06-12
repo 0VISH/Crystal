@@ -23,7 +23,7 @@ if(isWin):
         buildCmd = "cl /nologo /std:c++14 /Zi src/Windows/entryPoint.cc /Fo:" + folder + "crystal.obj /Fd:" + folder + "crystal.pdb /Fe:" + folder + "crystal.exe /I:src/window/GLFW/"
 
 print("[CMD]", buildCmd)
-run(buildCmd)
+if run(buildCmd).returncode != 0: shouldRun = False
 
 if(shouldRun):
     cmd = folder+"crystal.exe"

@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 namespace window{
 
     typedef HWND Window;
@@ -46,7 +44,7 @@ namespace window{
 	    ShowWindow(hwnd, 1);
 	    return hwnd;
 	}else{
-	    printf("could not register class");
+	    log("could not register class");
 	    return NULL;
 	};
     };

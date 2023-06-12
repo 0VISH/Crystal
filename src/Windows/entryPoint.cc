@@ -3,6 +3,7 @@
 s32 main(){
     window::Window window = window::create("crytal test");
     if(window == NULL){
+	log("Could not open a window");
 	return EXIT_SUCCESS;
     };
     crystal::init();
@@ -12,7 +13,7 @@ s32 main(){
     };
     window::destroy(window);
     crystal::uninit();
-    printf("\nDONE :)\n");
+    dlog("\nDONE :)\n");
     return EXIT_SUCCESS;
 }
 
