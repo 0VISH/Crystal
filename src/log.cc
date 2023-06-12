@@ -1,7 +1,7 @@
 FILE *logOutputFile = nullptr;
 
 void initLogOutputFile(char *fileName){
-    logOutputFile = fopen(fileName, "a+");
+    logOutputFile = fopen(fileName, "w");
 #if(PLAT_WINDOWS)
     SYSTEMTIME time;
     GetLocalTime(&time);
