@@ -20,7 +20,7 @@ buildCmd = None
 
 if(isWin):
     if(isDbg):
-        buildCmd = "cl /nologo /std:c++14 /Zi src/Windows/main.cc /Fo:" + folder + "crystal.obj /Fd:" + folder + "crystal.pdb /Fe:" + folder + "crystal.exe"
+        buildCmd = "cl /nologo /std:c++14 /Zi src/Windows/entryPoint.cc /Fo:" + folder + "crystal.obj /Fd:" + folder + "crystal.pdb /Fe:" + folder + "crystal.exe /I:src/window/GLFW/"
 
 print("[CMD]", buildCmd)
 run(buildCmd)

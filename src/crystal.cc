@@ -1,9 +1,9 @@
 namespace crystal{
-    bool init(){
-	return true;
+    void init(){  
     };
-    bool uninit(){
-	return true;
+    void update(){
+    };
+    void uninit(){
     };
 };
 

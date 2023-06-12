@@ -3,8 +3,8 @@
 #include "config.hh"
 
 #if(PLAT_WINDOWS)
-#include "windows.h"
+#include "Windows/include.hh"
 #endif
 
 #include "crystal.hh"
-#include "entryPoint.cc"
+#include "crystal.cc"
