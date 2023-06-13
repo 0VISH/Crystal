@@ -3,22 +3,43 @@ namespace window{
     typedef HWND Window;
     const char* className = "Crystal";
     bool shouldClose = false;
+    EventDispatcher *eventDispatcher;
     
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
-	LRESULT res;
+	LRESULT res = 0;
+	Event e;
+	e.type = EventType::NONE;
 	
         switch(uMsg){
 	case WM_DESTROY:
 	case WM_CLOSE:{
 	    shouldClose = true;
 	}break;
+	case WM_LBUTTONDOWN:{
+	    e.type = EventType::MOUSE_BUTTON_DOWN;
+	    e.buttonCode = ButtonCode::L_MOUSE;
+	};
+	case WM_RBUTTONDOWN:{
+	    e.type = EventType::MOUSE_BUTTON_DOWN;
+	    e.buttonCode = ButtonCode::R_MOUSE;
+	};
+	case WM_LBUTTONUP:{
+	    e.type = EventType::MOUSE_BUTTON_UP;
+	    e.buttonCode = ButtonCode::L_MOUSE;
+	};
+	case WM_RBUTTONUP:{
+	    e.type = EventType::MOUSE_BUTTON_UP;
+	    e.buttonCode = ButtonCode::R_MOUSE;
+	};
 	default: res = DefWindowProc(hwnd, uMsg, wParam, lParam);
 	};
-	
+
+	eventDispatcher->registerEvent(e);
 	return res;
     };
     
-    Window create(char *windowName){
+    Window create(char *windowName, EventDispatcher *ed){
+	eventDispatcher = ed;
 	HMODULE hInstance = GetModuleHandle(NULL);	
 	
 	WNDCLASS wc = {};

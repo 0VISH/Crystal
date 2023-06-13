@@ -5,7 +5,8 @@
 #include "../../vendor/imgui/backends/imgui_impl_win32.h"
 
 s32 main(){
-    window::Window window = window::create("crytal test");
+    EventDispatcher eventDispatcher;
+    window::Window window = window::create("crytal test", &eventDispatcher);
     if(window == NULL){
 	log("Could not open a window");
 	return EXIT_SUCCESS;
@@ -29,6 +30,7 @@ s32 main(){
     while(window::shouldClose == false){
 	window::pollEvents();
 	crystal::update();
+	dumpEvent(eventDispatcher.event);
 	
 	ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplWin32_NewFrame();
