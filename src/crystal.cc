@@ -1,9 +1,14 @@
-namespace crystal{
+struct Crystal{
+    LayerManager lm;
+    
     void init(){
-    };
-    void update(){
+	lm.init(3);
     };
     void uninit(){
+	if(lm.layers != nullptr){
+	    lm.uninitLayers();
+	    lm.uninit();
+	};
     };
 };
 

@@ -27,13 +27,13 @@ if(isWin):
     imguiPath = folder + "imgui.obj"
     if not os.path.isfile(imguiPath): shouldBuildIMGUI = True
     if(shouldBuildIMGUI):
-        runCmd("cl /nologo /I vendor/imgui/ src/Windows/imgui.cc -c /Fo:"+imguiPath)
+        runCmd("cl /nologo /Zi /I vendor/imgui/ src/Windows/imgui.cc -c /Fo:"+imguiPath+" /Fd" + folder + "imgui.pdb")
     if(isDbg):
         buildCmd = "cl /nologo /std:c++14 -c /Zi /I vendor/imgui/ src/Windows/entryPoint.cc /Fo" + folder + "crystal.obj /Fd" + folder + "crystal.pdb"
 
 if runCmd(buildCmd) != 0:
     quit()
-if runCmd("link /NOLOGO " + folder + "crystal.obj " + folder + "imgui.obj /OUT:" + folder + "crystal.exe") != 0:
+if runCmd("link /NOLOGO /DEBUG /PDB:" + folder + "crystal.pdb " + folder + "crystal.obj " + folder + "imgui.obj /OUT:" + folder + "crystal.exe") != 0:
     quit()
 
 if(shouldRun): runCmd(folder+"crystal.exe")

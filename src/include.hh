@@ -3,7 +3,9 @@
 #include "crystal.hh"
 #include "config.hh"
 #include "log.hh"
+#include "mem.cc"
 #include "event.cc"
+#include "layer.cc"
 
 #if(PLAT_WINDOWS)
 #include "Windows/include.hh"

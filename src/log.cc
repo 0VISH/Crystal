@@ -24,7 +24,8 @@ void log(const char *fmt, ...){
     vfprintf(out, fmt, args);
     va_end(args);
 };
-void dlog(const char *fmt, ...){
+void _dlog(char *file, u32 line, const char *fmt, ...){
+    printf("%s(%d): ", file, line);
 #if(DBG)
     va_list args;
     va_start(args, fmt);

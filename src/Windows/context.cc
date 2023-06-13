@@ -39,6 +39,8 @@ namespace ContextGL{
     };
     void swapBuffers(){SwapBuffers(windowHandleToDeviceContext);};
     void uninit(window::Window window){
+	wglMakeCurrent(NULL, NULL);
+	ReleaseDC(window, windowHandleToDeviceContext);
 	wglDeleteContext(openGLRenderingContext);
     };
 };

@@ -11,6 +11,7 @@ namespace window{
 	e.type = EventType::NONE;
 	
         switch(uMsg){
+	case WM_QUIT:
 	case WM_DESTROY:
 	case WM_CLOSE:{
 	    shouldClose = true;
@@ -63,6 +64,7 @@ namespace window{
 				       NULL        // Additional application data
 				       );
 	    ShowWindow(hwnd, 1);
+	    UpdateWindow(hwnd);
 	    return hwnd;
 	}else{
 	    log("could not register class");
@@ -76,10 +78,12 @@ namespace window{
     
     void pollEvents(){
 	MSG msg;
-	BOOL msgResult = GetMessage(&msg, 0, 0, 0);
-	if(msgResult > 0){
+	while(PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)){
 	    TranslateMessage(&msg);
 	    DispatchMessage(&msg);
+	    switch(msg.message){
+	    case WM_QUIT: shouldClose = true;
+	    };
 	};
     };
 };
