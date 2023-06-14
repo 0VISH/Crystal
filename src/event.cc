@@ -22,11 +22,11 @@ struct Event{
 struct EventDispatcher{
     Event event;
 
-    void registerEvent(Event e){
-	event = e;
-    };
-    void clearEvent(){
+    void registerEvent(Event e){event = e;};
+    Event getEvent(){
+	Event e = event;
 	event.type = EventType::NONE;
+	return e;
     };
 };
 

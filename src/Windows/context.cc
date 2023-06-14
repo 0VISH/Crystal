@@ -5,36 +5,19 @@ namespace ContextGL{
     HDC windowHandleToDeviceContext;
     HGLRC openGLRenderingContext;
     void init(window::Window window){
-	//https://www.khronos.org/opengl/wiki/Creating_an_OpenGL_Context_%28WGL%29
-	PIXELFORMATDESCRIPTOR pfd =
-	    {
-		sizeof(PIXELFORMATDESCRIPTOR),
-		1,
-		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,    //Flags
-		PFD_TYPE_RGBA,        // The kind of framebuffer. RGBA or palette.
-		32,                   // Colordepth of the framebuffer.
-		0, 0, 0, 0, 0, 0,
-		0,
-		0,
-		0,
-		0, 0, 0, 0,
-		24,                   // Number of bits for the depthbuffer
-		8,                    // Number of bits for the stencilbuffer
-		0,                    // Number of Aux buffers in the framebuffer.
-		PFD_MAIN_PLANE,
-		0,
-		0, 0, 0
-	    };
-
-	windowHandleToDeviceContext = GetDC(window);
-
-	int  letWindowsChooseThisPixelFormat;
-	letWindowsChooseThisPixelFormat = ChoosePixelFormat(windowHandleToDeviceContext, &pfd); 
-	SetPixelFormat(windowHandleToDeviceContext, letWindowsChooseThisPixelFormat, &pfd);
-
+	HDC hDc = ::GetDC(window);
+	PIXELFORMATDESCRIPTOR pfd = { 0 };
+	pfd.nSize = sizeof(pfd);
+	pfd.nVersion = 1;
+	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+	pfd.iPixelType = PFD_TYPE_RGBA;
+	pfd.cColorBits = 32;
+	const int pf = ::ChoosePixelFormat(hDc, &pfd);
+        ::SetPixelFormat(hDc, pf, &pfd);
+	::ReleaseDC(window, hDc);
+        windowHandleToDeviceContext = ::GetDC(window);
 	openGLRenderingContext = wglCreateContext(windowHandleToDeviceContext);
 	wglMakeCurrent(windowHandleToDeviceContext, openGLRenderingContext);
-
 	log("[RENDER CONTEXT]: OpenGL(%s)\n", (char*)glGetString(GL_VERSION));
     };
     void swapBuffers(){SwapBuffers(windowHandleToDeviceContext);};

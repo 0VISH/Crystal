@@ -52,40 +52,16 @@ namespace window{
     };
     
     Window create(char *windowName, EventDispatcher *ed){
-	eventDispatcher = ed;
-	HMODULE hInstance = GetModuleHandle(NULL);	
-	
-	WNDCLASS wc = {};
-	wc.lpfnWndProc   = WindowProc;
-	wc.hInstance     = hInstance;
-	wc.lpszClassName = className;
+	eventDispatcher = ed;	
 
-	if(RegisterClass(&wc)){
-	    HWND hwnd = CreateWindowEx(
-				       0,                              // Optional window styles.
-				       className,                      // Window class
-				       windowName,                     // Window text
-				       WS_OVERLAPPEDWINDOW,            // Window style
-
-				       // Size and position
-				       CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-
-				       NULL,       // Parent window    
-				       NULL,       // Menu
-				       hInstance,  // Instance handle
-				       NULL        // Additional application data
-				       );
-	    ShowWindow(hwnd, 1);
-	    UpdateWindow(hwnd);
-	    return hwnd;
-	}else{
-	    log("could not register class");
-	    return NULL;
-	};
+	WNDCLASSEXW wc = { sizeof(wc), CS_OWNDC, WindowProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, (LPCWSTR)className, NULL };
+        ::RegisterClassExW(&wc);
+	HWND hwnd = ::CreateWindowW(wc.lpszClassName, (LPCWSTR)windowName, WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, NULL, NULL, wc.hInstance, NULL);
+	return hwnd;
     };
     void destroy(Window window){
 	DestroyWindow(window);
-	UnregisterClass(className, NULL);
+	::UnregisterClassW((LPCWSTR)className, GetModuleHandle(NULL));
     };
     
     void pollEvents(){

@@ -4,16 +4,19 @@
 #include "../Editor/include.hh"
 #endif
 
-s32 main(){
-    Crystal engine;
+s32 main()
+{
     EventDispatcher eventDispatcher;
-    window::Window window = window::create("crytal test", &eventDispatcher);
-    if(window == NULL){
-	log("Could not open a window");
-	return EXIT_SUCCESS;
-    };
+    window::Window window = window::create("test", &eventDispatcher);
     RenderContext::init(window);
+
+    // Show the window
+    ::ShowWindow(window, SW_SHOWDEFAULT);
+    ::UpdateWindow(window);
+
+    Crystal engine;
     engine.init();
+    
 #if(EDITOR)
     Layer *editorLayer = engine.lm.newLayer();
     editorLayer->onUpdate = Editor::onUpdate;
@@ -22,23 +25,22 @@ s32 main(){
     Editor::init(window);
 #endif
 
-    while(true){
+    while (true)
+    {
 	window::pollEvents();
 	if(window::shouldClose){break;};
 
-	glClear(GL_COLOR_BUFFER_BIT);
+        engine.lm.updateLayers(eventDispatcher.getEvent());
+        glClear(GL_COLOR_BUFFER_BIT);
+        engine.lm.renderLayers();
 
-	engine.lm.updateLayers(eventDispatcher.event);
-	engine.lm.renderLayers();
-	
 	RenderContext::swapBuffers();
-
-	eventDispatcher.clearEvent();
-    };
+    }
 
     engine.uninit();
     RenderContext::uninit(window);
     window::destroy(window);
+
     dlog("DONE :)\n");
     return EXIT_SUCCESS;
 }
