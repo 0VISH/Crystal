@@ -1,1 +1,1 @@
-git clone --recurse-submodules https://github.com/As14n/Crystal.git
+```git clone --recurse-submodules https://github.com/As14n/Crystal.git```
