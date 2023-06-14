@@ -25,6 +25,9 @@ struct EventDispatcher{
     void registerEvent(Event e){
 	event = e;
     };
+    void clearEvent(){
+	event.type = EventType::NONE;
+    };
 };
 
 #if(DBG)
@@ -48,10 +51,11 @@ void dumpEvent(Event e){
     switch(e.buttonCode){
     case ButtonCode::R_MOUSE: log("r_mouse");break;
     case ButtonCode::L_MOUSE: log("l_mouse");break;
-    default: DEBUG_UNREACHABLE;
+    default: log("%c", (char)e.buttonCode);
     };
+    log("\n");
     if(dumpOff){
-	log("\nx offset: %d\ny offset: %d\n", e.xOffset, e.yOffset);
+	log("x offset: %d\ny offset: %d\n", e.xOffset, e.yOffset);
     };
 };
 #endif

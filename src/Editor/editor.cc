@@ -17,11 +17,16 @@ namespace Editor{
 	ImGui_ImplOpenGL3_Init();
     };
     bool onUpdate(Event e){
-	log("updating\n");
+        bool show_demo_window = true;
+	ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplWin32_NewFrame();
+        ImGui::NewFrame();
+	ImGui::ShowDemoWindow(&show_demo_window);
 	return false;
     };
     void onRender(){
-	log("rendering\n");
+        ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     };
     void onUninit(){
 	ImGui_ImplOpenGL3_Shutdown();

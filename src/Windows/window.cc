@@ -11,10 +11,22 @@ namespace window{
 	e.type = EventType::NONE;
 	
         switch(uMsg){
-	case WM_QUIT:
 	case WM_DESTROY:
+	case WM_QUIT:
 	case WM_CLOSE:{
 	    shouldClose = true;
+	}break;
+	case WM_KEYDOWN:{
+	    if(wParam == VK_ESCAPE){
+		shouldClose = true;
+		break;
+	    };
+	    e.type = EventType::KEY_DOWN;
+	    e.buttonCode = (ButtonCode)wParam;
+	}break;
+	case WM_KEYUP:{
+	    e.type = EventType::KEY_UP;
+	    e.buttonCode = (ButtonCode)wParam;
 	}break;
 	case WM_LBUTTONDOWN:{
 	    e.type = EventType::MOUSE_BUTTON_DOWN;
@@ -51,8 +63,8 @@ namespace window{
 	if(RegisterClass(&wc)){
 	    HWND hwnd = CreateWindowEx(
 				       0,                              // Optional window styles.
-				       className,                     // Window class
-				       windowName,                    // Window text
+				       className,                      // Window class
+				       windowName,                     // Window text
 				       WS_OVERLAPPEDWINDOW,            // Window style
 
 				       // Size and position

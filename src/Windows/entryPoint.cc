@@ -22,26 +22,18 @@ s32 main(){
     Editor::init(window);
 #endif
 
-    engine.lm.dumpLayersStat();
     while(true){
 	window::pollEvents();
 	if(window::shouldClose){break;};
+
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	//????????????????????????????
-	//Event e;
-	//engine.lm.updateLayers(e);
-	//????????????????????????????
-	
-        bool show_demo_window = true;
-	ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplWin32_NewFrame();
-        ImGui::NewFrame();
-	ImGui::ShowDemoWindow(&show_demo_window);
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	engine.lm.updateLayers(eventDispatcher.event);
+	engine.lm.renderLayers();
 	
 	RenderContext::swapBuffers();
+
+	eventDispatcher.clearEvent();
     };
 
     engine.uninit();
