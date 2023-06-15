@@ -7,17 +7,17 @@ enum class EventType : u8{
     MOUSE_SCROLL,
 };
 enum class ButtonCode : u16{
+    //NOTE: this is in peace with imgui's button code
+    L_MOUSE = 0,
     R_MOUSE,
-    L_MOUSE,
+    M_MOUSE,
 };
 
 struct Event{
     EventType type;
     ButtonCode buttonCode;
-    u16 xOffset;
-    u16 yOffset;
+    f32 scroll;
 };
-
 //NOTE: Block dispatcher. Hence, we hold only 1 event
 struct EventDispatcher{
     Event event;
@@ -28,6 +28,13 @@ struct EventDispatcher{
 	event.type = EventType::NONE;
 	return e;
     };
+};
+
+bool isMouseButtonEvent(Event e){
+    return e.type == EventType::MOUSE_BUTTON_DOWN || e.type == EventType::MOUSE_BUTTON_UP;
+};
+bool isKeyboardButtonEvent(Event e){
+    return e.type == EventType::KEY_DOWN || e.type == EventType::KEY_UP;
 };
 
 #if(DBG)
@@ -55,7 +62,7 @@ void dumpEvent(Event e){
     };
     log("\n");
     if(dumpOff){
-	log("x offset: %d\ny offset: %d\n", e.xOffset, e.yOffset);
+	log("scroll: %f\n", e.scroll);
     };
 };
 #endif

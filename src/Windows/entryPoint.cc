@@ -30,7 +30,9 @@ s32 main()
 	window::pollEvents();
 	if(window::shouldClose){break;};
 
-        engine.lm.updateLayers(eventDispatcher.getEvent());
+	Event e = eventDispatcher.getEvent();
+	
+        engine.lm.updateLayers(e);
         glClear(GL_COLOR_BUFFER_BIT);
         engine.lm.renderLayers();
 

@@ -1,5 +1,6 @@
 #define IMGUI_IMPLEMENTATION
 #define IMGUI_DEFINE_MATH_OPERATORS
+#define IMGUI_ENABLE_FREETYPE
 
 #include "../config.hh"
 

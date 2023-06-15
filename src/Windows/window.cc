@@ -1,5 +1,4 @@
 namespace window{
-
     typedef HWND Window;
     const char* className = "Crystal";
     bool shouldClose = false;
@@ -31,19 +30,23 @@ namespace window{
 	case WM_LBUTTONDOWN:{
 	    e.type = EventType::MOUSE_BUTTON_DOWN;
 	    e.buttonCode = ButtonCode::L_MOUSE;
-	};
+	}break;
 	case WM_RBUTTONDOWN:{
 	    e.type = EventType::MOUSE_BUTTON_DOWN;
 	    e.buttonCode = ButtonCode::R_MOUSE;
-	};
+	}break;
 	case WM_LBUTTONUP:{
 	    e.type = EventType::MOUSE_BUTTON_UP;
 	    e.buttonCode = ButtonCode::L_MOUSE;
-	};
+	}break;
 	case WM_RBUTTONUP:{
 	    e.type = EventType::MOUSE_BUTTON_UP;
 	    e.buttonCode = ButtonCode::R_MOUSE;
-	};
+	}break;
+	case WM_MOUSEWHEEL:{
+	    e.type = EventType::MOUSE_SCROLL;
+	    e.scroll = (f32)GET_WHEEL_DELTA_WPARAM(wParam);
+	}break;
 	default: res = DefWindowProc(hwnd, uMsg, wParam, lParam);
 	};
 
