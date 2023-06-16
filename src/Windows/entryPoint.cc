@@ -28,10 +28,11 @@ s32 main()
     Layer *trialLayer = engine.lm.newLayer();
     trialLayer->onRender = game::render;
     trialLayer->onUninit = game::uninit;
+    trialLayer->onUpdate = nullptr;
     game::init();
 
     while (true)
-    {
+    {	
 	window::pollEvents();
 	if(window::shouldClose){break;};
 
