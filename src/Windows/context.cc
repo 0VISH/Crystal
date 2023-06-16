@@ -1,5 +1,5 @@
 #if(RCONTEXT_GL)
-#include <GL/GL.h>
+#include "../../vendor/glad/include/glad/glad.h"
 
 namespace ContextGL{
     HDC windowHandleToDeviceContext;
@@ -18,6 +18,7 @@ namespace ContextGL{
         windowHandleToDeviceContext = ::GetDC(window);
 	openGLRenderingContext = wglCreateContext(windowHandleToDeviceContext);
 	wglMakeCurrent(windowHandleToDeviceContext, openGLRenderingContext);
+	gladLoadGL();
 	log("[RENDER CONTEXT]: OpenGL(%s)\n", (char*)glGetString(GL_VERSION));
     };
     void swapBuffers(){SwapBuffers(windowHandleToDeviceContext);};

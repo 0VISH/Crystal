@@ -25,6 +25,11 @@ s32 main()
     Editor::init(window);
 #endif
 
+    Layer *trialLayer = engine.lm.newLayer();
+    trialLayer->onRender = game::render;
+    trialLayer->onUninit = game::uninit;
+    game::init();
+
     while (true)
     {
 	window::pollEvents();

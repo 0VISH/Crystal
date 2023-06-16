@@ -37,8 +37,7 @@ struct LayerManager{
 	};
     };
     void updateLayers(Event event){
-	for(u8 x=layerCount; x>0;){
-	    x -= 1;
+	for(u8 x=0; x<layerCount; x+=1){
 	    Layer& layer = layers[x];
 	    if(layer.onUpdate == nullptr){continue;};
 	    if(layer.onUpdate(event)){
@@ -47,7 +46,8 @@ struct LayerManager{
 	};
     };
     void renderLayers(){
-	for(u8 x=0; x<layerCount; x+=1){
+	for(u8 x=layerCount; x>0;){
+	    x -= 1;
 	    Layer& layer = layers[x];
 	    if(layer.onRender == nullptr){continue;};
 	    layer.onRender();
