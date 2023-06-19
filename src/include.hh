@@ -7,6 +7,7 @@
 #include "mem.cc"
 #include "event.cc"
 #include "layer.cc"
+#include "package.hh"
 #include "Renderer/renderer.cc"
 
 #if(PLAT_WINDOWS)

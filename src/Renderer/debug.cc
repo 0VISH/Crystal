@@ -40,5 +40,33 @@ namespace Renderer{
 	    };
 	log("\n");
     }
+
+    void vertexCheckErr(u32 vertexShader){
+	s32  success;
+	char infoLog[512];
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	if(!success){
+	    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+	    log("[VERTEX SHADER ERROR]: %s\n", infoLog);
+	};
+    };
+    void fragmentCheckErr(u32 fragmentShader){
+	s32  success;
+	char infoLog[512];
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	if(!success){
+	    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+	    log("[FRAGMENT SHADER ERROR]: %s\n", infoLog);
+	};
+    };
+    void linkCheckErr(u32 shaderProgram){
+	s32  success;
+	char infoLog[512];
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	if(!success) {
+	    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+	    log("[SHADER LINK ERROR]: %s\n", infoLog);
+	}
+    };
 #endif
 };
