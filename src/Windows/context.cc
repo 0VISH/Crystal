@@ -1,6 +1,4 @@
 #if(RCONTEXT_GL)
-#include "../../vendor/glad/include/glad/glad.h"
-
 namespace ContextGL{
     HDC windowHandleToDeviceContext;
     HGLRC openGLRenderingContext;
