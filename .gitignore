@@ -1,5 +1,5 @@
-bin/
 misc/
+**/bin/
 **/.vs/
 **/imgui.ini
 **/*.log

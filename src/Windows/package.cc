@@ -15,7 +15,7 @@ namespace Package{
 	long fsize = ftell(f);
 	fseek(f, 0, SEEK_SET);
 
-	char *mem = (char*)mem::alloc(fsize + 1);
+	char *mem = (char*)calloc(1, fsize + 1);
 	fread(mem, fsize, 1, f);
 	fclose(f);
 

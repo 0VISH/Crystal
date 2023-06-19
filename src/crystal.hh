@@ -28,3 +28,5 @@ void debugUnreachable(char *file, u32 line) {
 #else
 #define DEBUG_UNREACHABLE
 #endif
+
+#define EXPORT extern "C" __declspec(dllexport)

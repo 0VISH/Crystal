@@ -1,28 +1,19 @@
-typedef void (*ShaderCreateCallback)(u32 shader);
-namespace Renderer{
-    struct Shape{
-#if(RCONTEXT_GL)
-	u32 vao;
-#endif
-	u32 vbo;
-	u32 ibo;
-    };
-    struct Object{
-	Shape triangle;
-	Shape quad;
-	u32 shaderProgram;
-    };
-};
+#include "renderer.hh"
 
 #if(RCONTEXT_GL)
 #include "../../vendor/glad/include/glad/glad.h"
+#if(DBG)
+#include "Renderer/debugGL.cc"
+#endif
 
 namespace OpenGL{
-    void enableDebugMode(void *callBack){
+#if(DBG)
+    void enableDebugMode(){
 	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback((GLDEBUGPROC)callBack, nullptr);
+	glDebugMessageCallback(OpenGL::DebugCallback, nullptr);
     };
-    Renderer::Object createObject(ShaderCreateCallback vertexCallback, ShaderCreateCallback fragmentCallback, ShaderCreateCallback linkCallback){
+#endif
+    Renderer::Object createObject(){
 	Renderer::Object obj;
 
 	//TRIANGLE
@@ -76,16 +67,22 @@ namespace OpenGL{
 	u32 vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
-	if(vertexCallback != nullptr){vertexCallback(vertexShader);};
+#if(DBG)
+	OpenGL::vertexCheckErr(vertexShader);
+#endif
 	u32 fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
-	if(fragmentCallback != nullptr){fragmentCallback(fragmentShader);};
+#if(DBG)
+	OpenGL::fragmentCheckErr(fragmentShader);
+#endif
 	u32 shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
-	if(linkCallback != nullptr){linkCallback(shaderProgram);};
+#if(DBG)
+	OpenGL::linkCheckErr(shaderProgram);
+#endif
 	obj.shaderProgram = shaderProgram;
 	glUseProgram(shaderProgram);
 	glDeleteShader(vertexShader);
@@ -120,14 +117,16 @@ namespace OpenGL{
 #endif
 
 namespace Renderer{
-    void enableDebugMode(void *callBack){
+#if(DBG)
+    void enableDebugMode(){
 #if(RCONTEXT_GL)
-	OpenGL::enableDebugMode(callBack);
+	OpenGL::enableDebugMode();
 #endif
     };
-    Object createObject(ShaderCreateCallback vertexCallback, ShaderCreateCallback fragmentCallback, ShaderCreateCallback linkCallback){
+#endif
+    Object createObject(){
 #if(RCONTEXT_GL)
-	return OpenGL::createObject(vertexCallback, fragmentCallback, linkCallback);
+	return OpenGL::createObject();
 #endif
     };
     void destroyObject(Object &obj){
@@ -154,5 +153,19 @@ namespace Renderer{
 #if(RCONTEXT_GL)
 	OpenGL::drawFill();
 #endif
+    };
+
+    FuncAddr CreateAndRFA(){
+	FuncAddr rfa;
+    
+	rfa.enableDebugMode = Renderer::enableDebugMode;
+	rfa.createObject = Renderer::createObject;
+	rfa.destroyObject = Renderer::destroyObject;
+	rfa.drawTriangle = Renderer::drawTriangle;
+	rfa.drawQuad = Renderer::drawQuad;
+	rfa.drawWireframe = Renderer::drawWireframe;
+	rfa.drawFill = Renderer::drawFill;
+
+	return rfa;
     };
 };

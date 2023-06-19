@@ -1,4 +1,4 @@
-namespace Renderer{
+namespace OpenGL{
 #if(RCONTEXT_GL)
     void APIENTRY DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
     {
@@ -41,21 +41,21 @@ namespace Renderer{
 	log("\n");
     }
 
-    void vertexCheckErr(u32 vertexShader){
+    void vertexCheckErr(u32 shader){
 	s32  success;
 	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if(!success){
-	    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+	    glGetShaderInfoLog(shader, 512, NULL, infoLog);
 	    log("[VERTEX SHADER ERROR]: %s\n", infoLog);
 	};
     };
-    void fragmentCheckErr(u32 fragmentShader){
+    void fragmentCheckErr(u32 shader){
 	s32  success;
 	char infoLog[512];
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if(!success){
-	    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+	    glGetShaderInfoLog(shader, 512, NULL, infoLog);
 	    log("[FRAGMENT SHADER ERROR]: %s\n", infoLog);
 	};
     };

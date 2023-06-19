@@ -4,11 +4,13 @@
 #include "../Editor/include.hh"
 #endif
 
+typedef void(*hh)();
+
 s32 main()
 {
     EventDispatcher eventDispatcher;
     eventDispatcher.init();
-    window::Window window = window::create("test", &eventDispatcher);
+    window::Window window = window::create("Crystal", &eventDispatcher);
     RenderContext::init(window);
 
     // Show the window
@@ -26,11 +28,22 @@ s32 main()
     Editor::init(window);
 #endif
 
-    Layer *trialLayer = engine.lm.newLayer();
-    trialLayer->onRender = game::render;
-    trialLayer->onUninit = game::uninit;
-    trialLayer->onUpdate = nullptr;
-    game::init();
+    char *gameCodePath = "sandbox/bin/sandbox.dll";
+    HMODULE gameCodeDLL = LoadLibraryA(gameCodePath);
+    if(gameCodeDLL == NULL){
+	log("Could not load game code %s\n", gameCodePath);
+	return EXIT_SUCCESS;
+    };
+    Renderer::RFA RFAInGameCode = (Renderer::RFA)GetProcAddress(gameCodeDLL, "rendererRFA");
+    Renderer::FuncAddr fa = Renderer::CreateAndRFA();
+    RFAInGameCode(&fa);
+
+    Layer *gameLayer = engine.lm.newLayer();
+    gameLayer->onRender = (LayerFunc)GetProcAddress(gameCodeDLL, "render");
+    gameLayer->onUninit = (LayerFunc)GetProcAddress(gameCodeDLL, "uninit");
+    gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(gameCodeDLL, "update");
+    LayerFunc gameInit = (LayerFunc)GetProcAddress(gameCodeDLL, "init");
+    gameInit();
 
     while (true)
     {	
@@ -47,6 +60,7 @@ s32 main()
     }
 
     engine.uninit();
+    FreeLibrary(gameCodeDLL);
     RenderContext::uninit(window);
     window::destroy(window);
 
