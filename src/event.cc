@@ -1,3 +1,5 @@
+#define EVENT_COUNT 5
+
 enum class EventType : u8{
     NONE,
     KEY_DOWN,
@@ -18,14 +20,24 @@ struct Event{
     ButtonCode buttonCode;
     f32 scroll;
 };
-//NOTE: Block dispatcher. Hence, we hold only 1 event
-struct EventDispatcher{
-    Event event;
 
-    void registerEvent(Event e){event = e;};
+struct EventDispatcher{
+    Event events[EVENT_COUNT];
+    u8 off;
+
+    void init(){off = 0;};
+    void registerEvent(Event e){
+	if(e.type == EventType::NONE){return;};
+	if(off >= EVENT_COUNT){return;};
+	events[off] = e;
+	off += 1;
+    };
     Event getEvent(){
-	Event e = event;
-	event.type = EventType::NONE;
+	Event e = events[0];
+	if(off != 0){
+	    off -= 1;
+	    memcpy(events, events + 1, sizeof(Event)*off);
+	};
 	return e;
     };
 };

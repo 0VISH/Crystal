@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string.h>
 #include "crystal.hh"
 #include "config.hh"
 #include "log.hh"

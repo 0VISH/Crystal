@@ -7,6 +7,7 @@
 s32 main()
 {
     EventDispatcher eventDispatcher;
+    eventDispatcher.init();
     window::Window window = window::create("test", &eventDispatcher);
     RenderContext::init(window);
 
