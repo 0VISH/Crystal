@@ -10,6 +10,7 @@ namespace game{
     };
 
     void render(){
+	Renderer::drawTriangle(robj);
 	Renderer::drawQuad(robj);
     };
     

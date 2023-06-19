@@ -27,9 +27,9 @@ namespace OpenGL{
 
 	//TRIANGLE
 	float triangleVertices[] = {
-	    -0.5f, -0.5f, 0.0f,
-	    0.5f, -0.5f, 0.0f,
-	    0.0f,  0.5f, 0.0f
+	    -0.5f, -0.5f,
+	    0.5f, -0.5f,
+	    0.0f,  0.5f,
 	};
 	u32 tvao, tvbo;
 	glGenVertexArrays(1, &tvao);	
@@ -37,7 +37,7 @@ namespace OpenGL{
 	glGenBuffers(1, &tvbo);
 	glBindBuffer(GL_ARRAY_BUFFER, tvbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	obj.triangle.vao = tvao;
 	obj.triangle.vbo = tvbo;
@@ -45,10 +45,10 @@ namespace OpenGL{
 
 	//QUAD
 	float quadVertices[] = {
-	    0.5f,  0.5f, 0.0f,
-	    0.5f, -0.5f, 0.0f,
-	    -0.5f, -0.5f, 0.0f,
-	    -0.5f,  0.5f, 0.0f
+	    0.5f,  0.5f,
+	    0.5f, -0.5f,
+	    -0.5f, -0.5f,
+	    -0.5f,  0.5f,
 	};
 	u32 quadIndices[] = {
 	    0, 1, 3,
@@ -60,7 +60,7 @@ namespace OpenGL{
 	glGenBuffers(1, &qvbo);
 	glBindBuffer(GL_ARRAY_BUFFER, qvbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	glGenBuffers(1, &qibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, qibo);
