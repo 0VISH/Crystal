@@ -4,13 +4,13 @@
 #include "../Editor/include.hh"
 #endif
 
-typedef void(*hh)();
+char* gameName     = "Sandbox";
+char* gameCodePath = "sandbox/bin/sandbox.dll";
 
-s32 main()
-{
+s32 main(){
     EventDispatcher eventDispatcher;
     eventDispatcher.init();
-    window::Window window = window::create("Crystal", &eventDispatcher);
+    window::Window window = window::create(gameName, &eventDispatcher);
     RenderContext::init(window);
 
     // Show the window
@@ -28,7 +28,6 @@ s32 main()
     Editor::init(window);
 #endif
 
-    char *gameCodePath = "sandbox/bin/sandbox.dll";
     HMODULE gameCodeDLL = LoadLibraryA(gameCodePath);
     if(gameCodeDLL == NULL){
 	log("Could not load game code %s\n", gameCodePath);

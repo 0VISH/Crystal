@@ -8,6 +8,8 @@
 #include "event.cc"
 #include "layer.cc"
 #include "package.hh"
+#include "ds.cc"
+#include "scene.cc"
 #include "Renderer/renderer.cc"
 
 #if(PLAT_WINDOWS)
