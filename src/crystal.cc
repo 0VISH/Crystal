@@ -1,14 +1,17 @@
 struct Crystal{
     LayerManager lm;
+    Renderer     r;
     
     void init(){
 	lm.init(3);
+	r.init();
     };
     void uninit(){
 	if(lm.layers != nullptr){
 	    lm.uninitLayers();
 	    lm.uninit();
 	};
+	r.uninit();
     };
 };
 

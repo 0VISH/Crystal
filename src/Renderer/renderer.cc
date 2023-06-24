@@ -1,5 +1,3 @@
-#include "renderer.hh"
-
 #if(RCONTEXT_GL)
 #include "../../vendor/glad/include/glad/glad.h"
 #if(DBG)
@@ -13,27 +11,7 @@ namespace OpenGL{
 	glDebugMessageCallback(OpenGL::DebugCallback, nullptr);
     };
 #endif
-    Renderer::Object createObject(){
-	Renderer::Object obj;
-
-	//TRIANGLE
-	float triangleVertices[] = {
-	    -0.5f, -0.5f,
-	    0.5f, -0.5f,
-	    0.0f,  0.5f,
-	};
-	u32 tvao, tvbo;
-	glGenVertexArrays(1, &tvao);	
-	glBindVertexArray(tvao);
-	glGenBuffers(1, &tvbo);
-	glBindBuffer(GL_ARRAY_BUFFER, tvbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	obj.triangle.vao = tvao;
-	obj.triangle.vbo = tvbo;
-	obj.triangle.ibo = 0;
-
+    void init(u32 &qvao, u32 &qvbo, u32 &qibo, u32 &shaderProgram){
 	//QUAD
 	float quadVertices[] = {
 	    0.5f,  0.5f,
@@ -45,7 +23,6 @@ namespace OpenGL{
 	    0, 1, 3,
 	    1, 2, 3
 	};
-	u32 qvao, qvbo, qibo;
 	glGenVertexArrays(1, &qvao);	
 	glBindVertexArray(qvao);
 	glGenBuffers(1, &qvbo);
@@ -56,10 +33,6 @@ namespace OpenGL{
 	glGenBuffers(1, &qibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, qibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), quadIndices, GL_STATIC_DRAW); 
-	obj.quad.vao = qvao;
-	obj.quad.vbo = qvbo;
-	obj.quad.ibo = qibo;
-	
 
 	//SHADER
 	char *vertexShaderSource = Package::readTextFile("package/shader/vertex.glsl");
@@ -76,39 +49,30 @@ namespace OpenGL{
 #if(DBG)
 	OpenGL::fragmentCheckErr(fragmentShader);
 #endif
-	u32 shaderProgram = glCreateProgram();
+	shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
 #if(DBG)
 	OpenGL::linkCheckErr(shaderProgram);
 #endif
-	obj.shaderProgram = shaderProgram;
 	glUseProgram(shaderProgram);
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 	//TODO: Package should handle this
 	mem::free(fragmentShaderSource);
 	mem::free(vertexShaderSource);
-
-	return obj;
     };
-    void destroyObject(Renderer::Object &obj){
-	glDeleteProgram(obj.shaderProgram);
-	//TRIANGLE
-	glDeleteBuffers(1, &obj.triangle.vbo);
-	glDeleteVertexArrays(1, &obj.triangle.vao);
-	//QUAD
-	glDeleteBuffers(1, &obj.quad.ibo);
-	glDeleteBuffers(1, &obj.triangle.vbo);
-	glDeleteVertexArrays(1, &obj.triangle.vao);
+    void destroyShader(u32 shaderProgram){
+	glDeleteProgram(shaderProgram);
     };
-    void drawTriangle(Renderer::Object &obj){
-	glBindVertexArray(obj.triangle.vao);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+    void destroyQuad(u32 &vao, u32 &vbo, u32 &ibo){
+	glDeleteBuffers(1, &ibo);
+	glDeleteBuffers(1, &vbo);
+	glDeleteVertexArrays(1, &vao);
     };
-    void drawQuad(Renderer::Object &obj){
-	glBindVertexArray(obj.quad.vao);
+    void drawQuad(u32 vao){
+	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     };
     void drawWireframe(){glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);};
@@ -116,7 +80,7 @@ namespace OpenGL{
 };
 #endif
 
-namespace Renderer{
+struct Renderer{
 #if(DBG)
     void enableDebugMode(){
 #if(RCONTEXT_GL)
@@ -124,24 +88,20 @@ namespace Renderer{
 #endif
     };
 #endif
-    Object createObject(){
+    void init(){
 #if(RCONTEXT_GL)
-	return OpenGL::createObject();
+	OpenGL::init(qvao, qvbo, qibo, shaderProgram);
 #endif
     };
-    void destroyObject(Object &obj){
+    void uninit(){
 #if(RCONTEXT_GL)
-	OpenGL::destroyObject(obj);
+	OpenGL::destroyShader(shaderProgram);
+	OpenGL::destroyQuad(qvao, qvbo, qibo);
 #endif
     };
-    void drawTriangle(Object &obj){
+    void drawQuad(){
 #if(RCONTEXT_GL)
-	OpenGL::drawTriangle(obj);
-#endif
-    };
-    void drawQuad(Object &obj){
-#if(RCONTEXT_GL)
-	OpenGL::drawQuad(obj);
+	OpenGL::drawQuad(qvao);
 #endif
     };
     void drawWireframe(){
@@ -155,17 +115,10 @@ namespace Renderer{
 #endif
     };
 
-    FuncAddr CreateAndRFA(){
-	FuncAddr rfa;
-    
-	rfa.enableDebugMode = Renderer::enableDebugMode;
-	rfa.createObject = Renderer::createObject;
-	rfa.destroyObject = Renderer::destroyObject;
-	rfa.drawTriangle = Renderer::drawTriangle;
-	rfa.drawQuad = Renderer::drawQuad;
-	rfa.drawWireframe = Renderer::drawWireframe;
-	rfa.drawFill = Renderer::drawFill;
-
-	return rfa;
-    };
+    u32 shaderProgram;
+#if(RCONTEXT_GL)
+    u32 qvao;
+#endif
+    u32 qvbo;
+    u32 qibo;
 };

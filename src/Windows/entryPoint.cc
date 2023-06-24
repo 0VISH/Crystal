@@ -4,45 +4,36 @@
 #include "../Editor/include.hh"
 #endif
 
-char* gameName     = "Sandbox";
-char* gameCodePath = "sandbox/bin/sandbox.dll";
+Crystal *engine;
+
+#include GAME_CODE_PATH
 
 s32 main(){
     EventDispatcher eventDispatcher;
     eventDispatcher.init();
-    window::Window window = window::create(gameName, &eventDispatcher);
+    window::Window window = window::create(Game::gameName, &eventDispatcher);
     RenderContext::init(window);
 
     // Show the window
     ::ShowWindow(window, SW_SHOWDEFAULT);
     ::UpdateWindow(window);
 
-    Crystal engine;
-    engine.init();
+    engine = (Crystal*)mem::alloc(sizeof(Crystal));
+    engine->init();
     
 #if(EDITOR)
-    Layer *editorLayer = engine.lm.newLayer();
+    Layer *editorLayer = engine->lm.newLayer();
     editorLayer->onUpdate = Editor::onUpdate;
     editorLayer->onRender = Editor::onRender;
     editorLayer->onUninit = Editor::onUninit;
     Editor::init(window);
 #endif
 
-    HMODULE gameCodeDLL = LoadLibraryA(gameCodePath);
-    if(gameCodeDLL == NULL){
-	log("Could not load game code %s\n", gameCodePath);
-	return EXIT_SUCCESS;
-    };
-    Renderer::RFA RFAInGameCode = (Renderer::RFA)GetProcAddress(gameCodeDLL, "rendererRFA");
-    Renderer::FuncAddr fa = Renderer::CreateAndRFA();
-    RFAInGameCode(&fa);
-
-    Layer *gameLayer = engine.lm.newLayer();
-    gameLayer->onRender = (LayerFunc)GetProcAddress(gameCodeDLL, "render");
-    gameLayer->onUninit = (LayerFunc)GetProcAddress(gameCodeDLL, "uninit");
-    gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(gameCodeDLL, "update");
-    LayerFunc gameInit = (LayerFunc)GetProcAddress(gameCodeDLL, "init");
-    gameInit();
+    Layer *gameLayer = engine->lm.newLayer();
+    gameLayer->onRender = Game::render;
+    gameLayer->onUninit = Game::uninit;
+    gameLayer->onUpdate = Game::update;
+    Game::init();
 
     while (true)
     {	
@@ -51,17 +42,18 @@ s32 main(){
 
 	Event e = eventDispatcher.getEvent();
 	
-        engine.lm.updateLayers(e);
+        engine->lm.updateLayers(e);
         glClear(GL_COLOR_BUFFER_BIT);
-        engine.lm.renderLayers();
+        engine->lm.renderLayers();
 
 	RenderContext::swapBuffers();
     }
 
-    engine.uninit();
-    FreeLibrary(gameCodeDLL);
+    engine->uninit();
     RenderContext::uninit(window);
     window::destroy(window);
+
+    mem::free(engine);
 
     dlog("DONE :)\n");
     return EXIT_SUCCESS;

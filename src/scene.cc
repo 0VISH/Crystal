@@ -1,13 +1,14 @@
 typedef u32 Entity;
 
 u32 componentCounter = 0;
+
 template <class T>
 u32 getID(){
     static int componentId = componentCounter++;
     return componentId;
 }
 struct ComponentPool{
-    void init(u64 size, u32 begSize=5, u32 ec=5){
+    void init(u64 size, u32 begSize, u32 ec){
 	count = 0;
 	entityCount = ec;
 	componentSize = size;
@@ -59,6 +60,11 @@ struct ComponentPool{
 	u32 off = entityToComponentOff[e];
 	return &mem[componentSize*(off)];
     };
+#if(DBG)
+    void dumpStat(){
+	log("size: %lld\nmem: %p\ncount: %d\nlen: %d\nentityToComponentOff: %p\nentityCount: %d\n", componentSize, mem, count, len, entityToComponentOff, entityCount);
+    };
+#endif
 
     u64 componentSize;
     Entity *entityToComponentOff;
@@ -66,16 +72,10 @@ struct ComponentPool{
     u32 count;
     u32 len;
     Entity entityCount;
-
-#if(DBG)
-    void dumpStat(){
-	log("size: %lld\nmem: %p\ncount: %d\nlen: %d\nentityToComponentOff: %p\nentityCount: %d\n", componentSize, mem, count, len, entityToComponentOff, entityCount);
-    };
-#endif
 };
 
 struct Scene{
-    void init(u32 begEntityCount=5){
+    void init(u32 begEntityCount){
 	entityCount = 0;
 	entityComponentMask.init(begEntityCount);
 	components.init();
