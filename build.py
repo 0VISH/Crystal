@@ -39,7 +39,7 @@ if(isWin):
     if(shouldBuildGLAD):
         runCmd("cl /nologo /Z7 /I vendor/glad/include/ vendor/glad/src/glad.c -c /Fo:"+gladPath)
     if(isDbg):
-        runCmd("cl /nologo /Z7 /std:c++14 -c /I vendor/glad/include/ /I vendor/imgui/ src/Windows/entryPoint.cc /Fo:" + folder + "crystal.obj")
+        runCmd("cl /nologo /Z7 /std:c++14 -c /I vendor/glad/include/ /I vendor/glm/ /I vendor/imgui/ src/Windows/entryPoint.cc /Fo:" + folder + "crystal.obj")
 
 runCmd("link /NOLOGO /DEBUG /PDB:" + folder + "crystal.pdb " + folder + "crystal.obj " + imguiPath + " " + gladPath + " /OUT:" + folder + "crystal.exe")
 

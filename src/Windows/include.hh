@@ -6,3 +6,4 @@
 #include "window.cc"
 #include "context.cc"
 #include "package.cc"
+#include "log.cc"

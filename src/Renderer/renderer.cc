@@ -1,3 +1,6 @@
+#include "glm/mat4x4.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
 #if(RCONTEXT_GL)
 #include "../../vendor/glad/include/glad/glad.h"
 #if(DBG)
@@ -77,6 +80,10 @@ namespace OpenGL{
     };
     void drawWireframe(){glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);};
     void drawFill(){glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);};
+    void setMat4Uniform(glm::mat4 &mat, char *uniformName, u32 shaderProgram){
+	s32 uLoc = glGetUniformLocation(shaderProgram, uniformName);
+	glUniformMatrix4fv(uLoc, 1, GL_FALSE, glm::value_ptr(mat));
+    };
 };
 #endif
 
@@ -112,6 +119,11 @@ struct Renderer{
     void drawFill(){
 #if(RCONTEXT_GL)
 	OpenGL::drawFill();
+#endif
+    };
+    void setMat4Uniform(glm::mat4 &mat, char *uniformName){
+#if(RCONTEXT_GL)
+	OpenGL::setMat4Uniform(mat, uniformName, shaderProgram);
 #endif
     };
 

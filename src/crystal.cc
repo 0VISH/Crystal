@@ -1,6 +1,10 @@
 struct Crystal{
-    LayerManager lm;
-    Renderer     r;
+    LayerManager      lm;
+    Renderer          r;
+    EventDispatcher   ed;
+    u32               windowX;
+    u32               windowY;
+    bool              shouldClose;
     
     void init(){
 	lm.init(3);

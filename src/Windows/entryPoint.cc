@@ -1,24 +1,27 @@
 #include "../include.hh"
 
+Crystal *engine;
+
+#if(PLAT_WINDOWS)
+#include "include.hh"
+#endif
+
 #if(EDITOR)
 #include "../Editor/include.hh"
 #endif
 
-Crystal *engine;
-
 #include GAME_CODE_PATH
 
 s32 main(){
-    EventDispatcher eventDispatcher;
-    eventDispatcher.init();
-    window::Window window = window::create(Game::gameName, &eventDispatcher);
+    engine = (Crystal*)mem::alloc(sizeof(Crystal));
+    
+    window::Window window = window::create(Game::gameName, 1280, 800);
     RenderContext::init(window);
 
     // Show the window
     ::ShowWindow(window, SW_SHOWDEFAULT);
     ::UpdateWindow(window);
 
-    engine = (Crystal*)mem::alloc(sizeof(Crystal));
     engine->init();
     
 #if(EDITOR)
@@ -38,9 +41,9 @@ s32 main(){
     while (true)
     {	
 	window::pollEvents();
-	if(window::shouldClose){break;};
+	if(engine->shouldClose){break;};
 
-	Event e = eventDispatcher.getEvent();
+	Event e = engine->ed.getEvent();
 	
         engine->lm.updateLayers(e);
         glClear(GL_COLOR_BUFFER_BIT);

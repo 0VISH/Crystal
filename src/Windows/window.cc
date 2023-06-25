@@ -1,8 +1,6 @@
 namespace window{
     typedef HWND Window;
     const char* className = "Crystal";
-    bool shouldClose = false;
-    EventDispatcher *eventDispatcher;
     
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 	LRESULT res = 0;
@@ -13,11 +11,15 @@ namespace window{
 	case WM_DESTROY:
 	case WM_QUIT:
 	case WM_CLOSE:{
-	    shouldClose = true;
+	    engine->shouldClose = true;
 	}break;
+	case WM_SIZE:{
+	    engine->windowX = LOWORD(lParam);
+	    engine->windowY = HIWORD(lParam);
+	};
 	case WM_KEYDOWN:{
 	    if(wParam == VK_ESCAPE){
-		shouldClose = true;
+		engine->shouldClose = true;
 		break;
 	    };
 	    e.type = EventType::KEY_DOWN;
@@ -50,16 +52,19 @@ namespace window{
 	default: res = DefWindowProc(hwnd, uMsg, wParam, lParam);
 	};
 
-	eventDispatcher->registerEvent(e);
+	engine->ed.registerEvent(e);
 	return res;
     };
     
-    Window create(char *windowName, EventDispatcher *ed){
-	eventDispatcher = ed;	
+    Window create(char *windowName, u32 windowX, u32 windowY){
+	engine->windowX = windowX;
+	engine->windowY = windowY;
+	engine->ed.init();
+	engine->shouldClose = false;
 
 	WNDCLASSEXW wc = { sizeof(wc), CS_OWNDC, WindowProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, (LPCWSTR)className, NULL };
         ::RegisterClassExW(&wc);
-	HWND hwnd = ::CreateWindowW(wc.lpszClassName, (LPCWSTR)windowName, WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, NULL, NULL, wc.hInstance, NULL);
+	HWND hwnd = ::CreateWindowW(wc.lpszClassName, (LPCWSTR)windowName, WS_OVERLAPPEDWINDOW, 100, 100, windowX, windowY, NULL, NULL, wc.hInstance, NULL);
 	return hwnd;
     };
     void destroy(Window window){
@@ -73,7 +78,7 @@ namespace window{
 	    TranslateMessage(&msg);
 	    DispatchMessage(&msg);
 	    switch(msg.message){
-	    case WM_QUIT: shouldClose = true;
+	    case WM_QUIT: engine->shouldClose = true;
 	    };
 	};
     };

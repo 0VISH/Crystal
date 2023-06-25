@@ -3,6 +3,7 @@
 #include "../../vendor/imgui/backends/imgui_impl_win32.h"
 
 namespace Editor{
+    Camera cam;
     void init(window::Window window){
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -13,6 +14,10 @@ namespace Editor{
 	ImGui_ImplWin32_InitForOpenGL(window);
 	ImGui_ImplOpenGL3_Init();
 	io.Fonts->AddFontFromFileTTF("resources/Roboto-Regular.ttf", 17.0f);
+
+	cam.initPerspective(45, (f32)engine->windowX/(f32)engine->windowY, 0.1, 100, glm::vec3(0.0f, 0.0f, 3.0f));
+	cam.calculateViewMat();
+	engine->r.setMat4Uniform(cam.projection * cam.view, "uProjectionView");
     };
     bool onUpdate(Event e){
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -28,6 +33,20 @@ namespace Editor{
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 	ImGui::ShowDemoWindow(&show_demo_window);
+
+	if(isKeyboardButtonEvent(e)){
+	    const float cameraSpeed = 0.03f;
+	    if(e.type == EventType::KEY_DOWN){
+		switch(e.buttonCode){
+		case (ButtonCode)87:{
+		    cam.pos.y += cameraSpeed;
+		    cam.calculateViewMat();
+		    engine->r.setMat4Uniform(cam.projection * cam.view, "uProjectionView");
+		}break;
+		};
+	    };
+	};
+	
 	return io.WantCaptureMouse || io.WantCaptureKeyboard;
     };
     void onRender(){

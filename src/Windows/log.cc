@@ -2,18 +2,14 @@ FILE *logOutputFile = nullptr;
 
 void initLogOutputFile(char *fileName){
     logOutputFile = fopen(fileName, "w");
-#if(PLAT_WINDOWS)
     SYSTEMTIME time;
     GetLocalTime(&time);
     fprintf(logOutputFile, "(+) [%02d:%02d:%02d %02d/%02d/%02d]\n", time.wHour, time.wMinute, time.wSecond, time.wDay, time.wMonth, time.wYear);
-#endif
 };
 void uninitLogOutputFile(){
-#if(PLAT_WINDOWS)
     SYSTEMTIME time;
     GetLocalTime(&time);
     fprintf(logOutputFile, "(-) [%02d:%02d:%02d %02d/%02d/%02d]\n", time.wHour, time.wMinute, time.wSecond, time.wDay, time.wMonth, time.wYear);
-#endif
     fclose(logOutputFile);
 };
 

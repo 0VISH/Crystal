@@ -9,12 +9,7 @@
 #include "layer.cc"
 #include "package.hh"
 #include "ds.cc"
+#include "camera.cc"
 #include "scene.cc"
 #include "Renderer/renderer.cc"
-
-#if(PLAT_WINDOWS)
-#include "Windows/include.hh"
-#endif
-
-#include "log.cc"
 #include "crystal.cc"
