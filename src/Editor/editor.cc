@@ -34,11 +34,11 @@ namespace Editor{
         ImGui::NewFrame();
 	ImGui::ShowDemoWindow(&show_demo_window);
 
-	if(isKeyboardButtonEvent(e)){
+	if(isKeyboardButtonEvent(e) && isKeyDown(ButtonCode::Key_LeftShift)){
 	    const float cameraSpeed = 0.03f;
 	    if(e.type == EventType::KEY_DOWN){
 		switch(e.buttonCode){
-		case (ButtonCode)87:{
+		case ButtonCode::Key_W:{
 		    cam.pos.y += cameraSpeed;
 		    cam.calculateViewMat();
 		    engine->r.setMat4Uniform(cam.projection * cam.view, "uProjectionView");
