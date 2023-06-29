@@ -38,14 +38,21 @@ s32 main(){
     gameLayer->onUpdate = Game::update;
     Game::init();
 
-    while (true)
-    {	
+    LARGE_INTEGER freq, start;
+    f64 end = 0;
+    QueryPerformanceFrequency(&freq);
+
+    while(true){
+	QueryPerformanceCounter(&start);
+	f64 dt = (start.QuadPart - end) / freq.QuadPart; //seconds
+	end = start.QuadPart;
+	
 	window::pollEvents();
 	if(engine->shouldClose){break;};
 
 	Event e = engine->ed.getEvent();
 	
-        engine->lm.updateLayers(e);
+        engine->lm.updateLayers(e, dt);
         glClear(GL_COLOR_BUFFER_BIT);
         engine->lm.renderLayers();
 

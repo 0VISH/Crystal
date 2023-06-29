@@ -2,12 +2,14 @@ struct Crystal{
     LayerManager      lm;
     Renderer          r;
     EventDispatcher   ed;
+    MaterialSystem    ms;
     u32               windowX;
     u32               windowY;
     bool              shouldClose;
     
     void init(){
 	lm.init(3);
+	ms.init();
 	r.init();
     };
     void uninit(){
@@ -15,6 +17,7 @@ struct Crystal{
 	    lm.uninitLayers();
 	    lm.uninit();
 	};
+	ms.uninit();
 	r.uninit();
     };
 };

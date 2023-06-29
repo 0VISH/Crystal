@@ -5,19 +5,30 @@
 #include "glm/gtc/type_ptr.hpp"
 
 namespace Game{
+    Scene s;
+    Entity s1;
+    
     void init(){
 	engine->r.drawWireframe();
+	
+	s.init();
+	
+	s1 = s.newEntity();
+	Component::Transform *s1T = s.addComponent<Component::Transform>(s1);
+	
+	Material &mat = engine->ms.newMaterial();
+	mat.col = glm::vec4(1.0, 0.5, 1.0, 1.0);
+	mat.registerEntity(s1);
     };
     void render(){
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	engine->r.setMat4Uniform(model, "uModel");
-
-	engine->r.drawQuad();
+	s.render(engine->ms, engine->r);
     };
     void uninit(){
+	s.uninit();
     };
-    bool update(Event e){
+    bool update(Event e, f64 dt){
+	Component::Transform *s1T = s.getComponent<Component::Transform>(s1);
+	s1T->rotate(5, glm::vec3(1, 0.0, 0.0));
 	return false;
     };
 

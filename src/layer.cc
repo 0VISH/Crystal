@@ -1,5 +1,5 @@
 typedef void (*LayerFunc)();
-typedef bool (*LayerUpdateFunc)(Event e);   //returns true if event handled
+typedef bool (*LayerUpdateFunc)(Event e, f64 dt);   //returns true if event handled
 
 struct Layer{
     u8 layerID;
@@ -36,11 +36,11 @@ struct LayerManager{
 	    layers[x].onUninit();
 	};
     };
-    void updateLayers(Event event){
+    void updateLayers(Event event, f64 dt){
 	for(u8 x=0; x<layerCount; x+=1){
 	    Layer& layer = layers[x];
 	    if(layer.onUpdate == nullptr){continue;};
-	    if(layer.onUpdate(event)){
+	    if(layer.onUpdate(event, dt)){
 	        event.type = EventType::NONE;
 	    };
 	};

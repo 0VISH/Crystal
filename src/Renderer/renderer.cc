@@ -84,6 +84,10 @@ namespace OpenGL{
 	s32 uLoc = glGetUniformLocation(shaderProgram, uniformName);
 	glUniformMatrix4fv(uLoc, 1, GL_FALSE, glm::value_ptr(mat));
     };
+    void setVec4Uniform(glm::vec4 &vec, char *uniformName, u32 shaderProgram){
+	s32 uLoc = glGetUniformLocation(shaderProgram, uniformName);
+	glUniform4f(uLoc, vec[0], vec[1], vec[2], vec[3]);
+    };
 };
 #endif
 
@@ -106,11 +110,6 @@ struct Renderer{
 	OpenGL::destroyQuad(qvao, qvbo, qibo);
 #endif
     };
-    void drawQuad(){
-#if(RCONTEXT_GL)
-	OpenGL::drawQuad(qvao);
-#endif
-    };
     void drawWireframe(){
 #if(RCONTEXT_GL)
 	OpenGL::drawWireframe();
@@ -125,6 +124,20 @@ struct Renderer{
 #if(RCONTEXT_GL)
 	OpenGL::setMat4Uniform(mat, uniformName, shaderProgram);
 #endif
+    };
+    void drawQuad(glm::mat4 &mat){
+	setMat4Uniform(mat, "uModel");
+#if(RCONTEXT_GL)
+	OpenGL::drawQuad(qvao);
+#endif
+    };
+    void setVec4Uniform(glm::vec4 &vec, char *uniformName){
+#if(RCONTEXT_GL)
+	OpenGL::setVec4Uniform(vec, uniformName, shaderProgram);
+#endif
+    };
+    void useMaterial(Material &mat){
+	setVec4Uniform(mat.col, "uCol");
     };
 
     u32 shaderProgram;

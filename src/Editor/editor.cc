@@ -3,7 +3,7 @@
 #include "../../vendor/imgui/backends/imgui_impl_win32.h"
 
 namespace Editor{
-    Camera cam;
+    Component::Camera cam;
     void init(window::Window window){
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -15,11 +15,12 @@ namespace Editor{
 	ImGui_ImplOpenGL3_Init();
 	io.Fonts->AddFontFromFileTTF("resources/Roboto-Regular.ttf", 17.0f);
 
-	cam.initPerspective(45, (f32)engine->windowX/(f32)engine->windowY, 0.1, 100, glm::vec3(0.0f, 0.0f, 3.0f));
+	cam.init();
+	cam.initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
 	cam.calculateViewMat();
 	engine->r.setMat4Uniform(cam.projection * cam.view, "uProjectionView");
     };
-    bool onUpdate(Event e){
+    bool onUpdate(Event e, f64 dt){
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	if(isMouseButtonEvent(e)){
 	    io.AddMouseButtonEvent((s32)e.buttonCode, e.type == EventType::MOUSE_BUTTON_DOWN);
@@ -35,17 +36,20 @@ namespace Editor{
 	ImGui::ShowDemoWindow(&show_demo_window);
 
 	if(isKeyboardButtonEvent(e) && isKeyDown(ButtonCode::Key_LeftShift)){
-	    const float cameraSpeed = 0.03f;
+	    const float cameraSpeed = 5;
 	    if(e.type == EventType::KEY_DOWN){
 		switch(e.buttonCode){
-		case ButtonCode::Key_W:{
-		    cam.pos.y += cameraSpeed;
-		    cam.calculateViewMat();
-		    engine->r.setMat4Uniform(cam.projection * cam.view, "uProjectionView");
-		}break;
+		case ButtonCode::Key_W:cam.pos.y -= cameraSpeed * dt;break;
+		case ButtonCode::Key_S:cam.pos.y += cameraSpeed * dt;break;
+		case ButtonCode::Key_D:cam.pos.x -= cameraSpeed * dt;break;
+		case ButtonCode::Key_A:cam.pos.x += cameraSpeed * dt;break;
 		};
 	    };
+	}else if(e.type == EventType::MOUSE_SCROLL){
+	    cam.updateZoomLevel(e.scroll/100);
 	};
+	cam.calculateViewMat();
+	engine->r.setMat4Uniform(cam.projection * cam.view, "uProjectionView");
 	
 	return io.WantCaptureMouse || io.WantCaptureKeyboard;
     };

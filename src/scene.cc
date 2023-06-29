@@ -1,5 +1,3 @@
-typedef u32 Entity;
-
 u32 componentCounter = 0;
 
 template <class T>
@@ -8,11 +6,11 @@ u32 getID(){
     return componentId;
 }
 struct ComponentPool{
-    void init(u64 size, u32 begSize, u32 ec){
+    void init(u64 size, u32 begLen = 5, u32 ec = 5){
 	count = 0;
 	entityCount = ec;
 	componentSize = size;
-	len = begSize;
+	len = begLen;
 	mem = (char*)mem::calloc(componentSize * len);
 	entityToComponentOff = (Entity*)mem::alloc(entityCount);
     };
@@ -75,7 +73,7 @@ struct ComponentPool{
 };
 
 struct Scene{
-    void init(u32 begEntityCount){
+    void init(u32 begEntityCount = 5){
 	entityCount = 0;
 	entityComponentMask.init(begEntityCount);
 	components.init();
@@ -104,7 +102,9 @@ struct Scene{
 	u32 &mask = entityComponentMask[componentID];
 	SET_BIT(mask, componentID);
 	ComponentPool &cp = components[componentID];
-	return (T*)cp.newComponent(e);
+	T* t = (T*)cp.newComponent(e);
+	t->init();
+	return t;
     };
     template<typename T>
     T *getComponent(Entity e){
@@ -115,6 +115,17 @@ struct Scene{
 	    return nullptr;
 	};
 	return (T*)components[componentID].getComponent(e);
+    };
+    void render(MaterialSystem &ms, Renderer &renderer){
+	for(u32 x=0; x<ms.materials.count; x+=1){
+	    Material &mat = ms.materials[x];
+	    renderer.useMaterial(mat);
+	    for(u32 i=0; i<mat.registeredEntities.count; i+=1){
+		Entity ent = mat.registeredEntities[i];
+		Component::Transform *t = getComponent<Component::Transform>(ent);
+		renderer.drawQuad(t->mat);
+	    };
+	};
     };
 
     ds::DynamicArray<u32> entityComponentMask;
