@@ -35,7 +35,7 @@ namespace OpenGL{
 	glEnableVertexAttribArray(0);
 	glGenBuffers(1, &qibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, qibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), quadIndices, GL_STATIC_DRAW); 
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), quadIndices, GL_STATIC_DRAW);
 
 	//SHADER
 	char *vertexShaderSource = Package::readTextFile("package/shader/vertex.glsl");
@@ -139,7 +139,7 @@ struct Renderer{
     void useMaterial(Material &mat){
 	setVec4Uniform(mat.col, "uCol");
     };
-
+    
     u32 shaderProgram;
 #if(RCONTEXT_GL)
     u32 qvao;

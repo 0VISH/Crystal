@@ -39,10 +39,10 @@ namespace Editor{
 	    const float cameraSpeed = 5;
 	    if(e.type == EventType::KEY_DOWN){
 		switch(e.buttonCode){
-		case ButtonCode::Key_W:cam.pos.y -= cameraSpeed * dt;break;
-		case ButtonCode::Key_S:cam.pos.y += cameraSpeed * dt;break;
-		case ButtonCode::Key_D:cam.pos.x -= cameraSpeed * dt;break;
-		case ButtonCode::Key_A:cam.pos.x += cameraSpeed * dt;break;
+		case ButtonCode::Key_W:cam.pos.y += cameraSpeed * dt;break;
+		case ButtonCode::Key_S:cam.pos.y -= cameraSpeed * dt;break;
+		case ButtonCode::Key_D:cam.pos.x += cameraSpeed * dt;break;
+		case ButtonCode::Key_A:cam.pos.x -= cameraSpeed * dt;break;
 		};
 	    };
 	}else if(e.type == EventType::MOUSE_SCROLL){

@@ -7,6 +7,7 @@
 namespace Game{
     Scene s;
     Entity s1;
+    Batch::Batcher b;
     
     void init(){
 	engine->r.drawWireframe();
@@ -19,9 +20,20 @@ namespace Game{
 	Material &mat = engine->ms.newMaterial();
 	mat.col = glm::vec4(1.0, 0.5, 1.0, 1.0);
 	mat.registerEntity(s1);
+	
+	b.init(engine->r.shaderProgram);
+	b.setMaterial(&mat);
     };
     void render(){
-	s.render(engine->ms, engine->r);
+        s.render(engine->ms, engine->r);
+
+	glm::mat4 t1 = glm::translate(glm::mat4(1.0), glm::vec3(0.0, 1.0, 0.0));
+	glm::mat4 t2 = glm::translate(glm::mat4(1.0), glm::vec3(0.0, -1.0, 0.0));
+	b.beginBatch();
+	b.submitQuad(t1);
+	b.submitQuad(t2);
+	b.endBatch();
+	b.flush();
     };
     void uninit(){
 	s.uninit();
