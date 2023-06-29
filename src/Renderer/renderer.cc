@@ -136,6 +136,11 @@ struct Renderer{
 	OpenGL::setVec4Uniform(vec, uniformName, shaderProgram);
 #endif
     };
+    char *getRenderContextInfoString(){
+#if(RCONTEXT_GL)
+	return (char*)glGetString(GL_VERSION);
+#endif
+    };
     void useMaterial(Material &mat){
 	setVec4Uniform(mat.col, "uCol");
     };

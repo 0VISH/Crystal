@@ -219,6 +219,8 @@ bool isKeyDown(ButtonCode code){
     return GetAsyncKeyState(ButtonCodeToWin32VirtualKey(code)) & 0x8000;
 };
 
+extern  LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 namespace window{
     typedef HWND Window;
     const char* className = "Crystal";

@@ -17,7 +17,6 @@ namespace ContextGL{
 	openGLRenderingContext = wglCreateContext(windowHandleToDeviceContext);
 	wglMakeCurrent(windowHandleToDeviceContext, openGLRenderingContext);
 	gladLoadGL();
-	log("[RENDER CONTEXT]: OpenGL(%s)\n", (char*)glGetString(GL_VERSION));
     };
     void swapBuffers(){SwapBuffers(windowHandleToDeviceContext);};
     void uninit(window::Window window){

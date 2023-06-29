@@ -1,9 +1,6 @@
-#include "../../vendor/imgui/imgui.h"
-#include "../../vendor/imgui/backends/imgui_impl_opengl3.h"
-#include "../../vendor/imgui/backends/imgui_impl_win32.h"
-
-namespace Editor{
+namespace Editor{ 
     Component::Camera cam;
+    Vision vs;
     void init(window::Window window){
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -19,6 +16,8 @@ namespace Editor{
 	cam.initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
 	cam.calculateViewMat();
 	engine->r.setMat4Uniform(cam.projection * cam.view, "uProjectionView");
+
+	vs.init();
     };
     bool onUpdate(Event e, f64 dt){
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -27,13 +26,11 @@ namespace Editor{
 	}else if(e.type == EventType::MOUSE_SCROLL){
 	    io.AddMouseWheelEvent(0.0f, e.scroll / 120);
 	}else if(isKeyboardButtonEvent(e)){
-	    //TODO: why is this so complicated?
+	    //TODO: WTFFFFFFFFFF WHY NO WORK???????
 	};
-        bool show_demo_window = true;
 	ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
-	ImGui::ShowDemoWindow(&show_demo_window);
 
 	if(isKeyboardButtonEvent(e) && isKeyDown(ButtonCode::Key_LeftShift)){
 	    const float cameraSpeed = 5;
@@ -45,7 +42,7 @@ namespace Editor{
 		case ButtonCode::Key_A:cam.pos.x -= cameraSpeed * dt;break;
 		};
 	    };
-	}else if(e.type == EventType::MOUSE_SCROLL){
+	}else if(e.type == EventType::MOUSE_SCROLL && !io.WantCaptureMouse){
 	    cam.updateZoomLevel(e.scroll/100);
 	};
 	cam.calculateViewMat();
@@ -54,6 +51,7 @@ namespace Editor{
 	return io.WantCaptureMouse || io.WantCaptureKeyboard;
     };
     void onRender(){
+	vs.render();
         ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     };

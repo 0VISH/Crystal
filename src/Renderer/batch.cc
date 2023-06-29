@@ -11,7 +11,6 @@ namespace Batch{
     struct Batcher{
 	Vertex   *vertices;
 	Vertex   *watermark;
-	u32      *indices;
 	Material *material;
 	u32 shaderProgram;
 	u32 qvbo;
@@ -23,6 +22,7 @@ namespace Batch{
 	    shaderProgram = shader;
 	    vertices = (Vertex*)mem::alloc(sizeof(Vertex) * maxVertexCount);
 
+#if(RCONTEXT_GL)
 	    glGenVertexArrays(1, &qvao);	
 	    glBindVertexArray(qvao);
 	    glGenBuffers(1, &qvbo);
@@ -34,7 +34,7 @@ namespace Batch{
 	    glEnableVertexAttribArray(1);
 
 	    //fill up our entire index buffer
-	    indices = (u32*)mem::alloc(sizeof(u32) * maxIndexCount);
+	    u32 *indices = (u32*)mem::alloc(sizeof(u32) * maxIndexCount);
 	    u32 offset = 0;
 	    for(u32 i=0; i<maxIndexCount; i+=6){
 		indices[i + 0] = 0 + offset;
@@ -50,23 +50,30 @@ namespace Batch{
 	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, qibo);
 	    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(u32) * maxIndexCount, indices, GL_STATIC_DRAW);
 	    mem::free(indices);
+#endif
 	};
 	void beginBatch(){
 	    watermark = vertices;
 	    indexCount = 0;
+#if(RCONTEXT_GL)
 	    s32 uLoc = glGetUniformLocation(shaderProgram, "uModel");
 	    glUniformMatrix4fv(uLoc, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0)));
 	    uLoc = glGetUniformLocation(shaderProgram, "uCol");
 	    glUniform4f(uLoc, 0, 0, 0, 0);
+#endif
 	};
 	void endBatch(){
 	    u32 size = (char*)watermark - (char*)vertices;
+#if(RCONTEXT_GL)
 	    glBindBuffer(GL_ARRAY_BUFFER, qvbo);
 	    glBufferSubData(GL_ARRAY_BUFFER, 0, size, vertices);
+#endif
 	};
 	void flush(){
+#if(RCONTEXT_GL)
 	    glBindVertexArray(qvao);
 	    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+#endif
 	};
 	void setMaterial(Material *m){
 	    material = m;
@@ -107,9 +114,11 @@ namespace Batch{
 	};
 	void uninit(){
 	    mem::free(vertices);
+#if(RCONTEXT_GL)
 	    glDeleteBuffers(1, &qibo);
 	    glDeleteBuffers(1, &qvbo);
 	    glDeleteVertexArrays(1, &qvao);
+#endif
 	};
     };
 };
