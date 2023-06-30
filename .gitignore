@@ -4,3 +4,4 @@ misc/
 **/imgui.ini
 **/*.log
 vendor/glad/
+**/**.sln

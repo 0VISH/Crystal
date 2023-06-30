@@ -7,7 +7,8 @@ def runCmd(cmd):
     if(run(cmd).returncode != 0): quit()
 
 isDbg = not("rls" in argv)
-isWin = not("and" in argv)
+plat = "win"
+if("and" in argv): plat = "and"
 shouldRun = "run" in argv
 shouldBuildIMGUI  = "imgui" in argv
 shouldBuildGLAD   = "glad" in argv
@@ -19,8 +20,7 @@ if(shouldBuildVENDOR):
 
 folder = "bin/"
 
-if(isWin): folder += "win/"
-else: folder += "and/"
+folder += plat + "/"
 
 if(isDbg): folder += "dbg/"
 else: folder += "rls/"
@@ -29,7 +29,7 @@ if not os.path.isdir(folder): os.makedirs(folder)
 
 buildCmd = None
 
-if(isWin):
+if(plat == "win"):
     imguiPath = folder + "imgui.obj"
     gladPath  = folder + "glad.obj"
     if not os.path.isfile(imguiPath): shouldBuildIMGUI = True
