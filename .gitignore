@@ -1,7 +1,7 @@
 misc/
+vendor/glad/
 **/bin/
 **/.vs/
 **/imgui.ini
 **/*.log
-vendor/glad/
-**/**.sln
+**/*.sln
