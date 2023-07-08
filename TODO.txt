@@ -1,0 +1,11 @@
+1) Use ImGui docking branch. Render into an ImGui window and have a good ImGui editor.
+
+2) Textures.
+
+3) Packaging assets.
+
+4) Package frees memory when package is unloaded.
+
+5) Port to linux
+
+6) Port to android.
