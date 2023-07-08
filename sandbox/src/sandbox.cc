@@ -25,6 +25,8 @@ namespace Game{
 	b.setMaterial(&mat);
     };
     void render(){
+	engine->fb.bind();
+	engine->r.clearColourBuffer();
         s.render(engine->ms, engine->r);
 
 	glm::mat4 t1 = glm::translate(glm::mat4(1.0), glm::vec3(0.0, 1.0, 0.0));
@@ -34,6 +36,8 @@ namespace Game{
 	b.submitQuad(t2);
 	b.endBatch();
 	b.flush();
+	
+	engine->fb.unbind();
     };
     void uninit(){
 	s.uninit();

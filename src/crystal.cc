@@ -3,6 +3,7 @@ struct Crystal{
     Renderer          r;
     EventDispatcher   ed;
     MaterialSystem    ms;
+    FrameBuffer       fb;
     u32               windowX;
     u32               windowY;
     bool              shouldClose;
@@ -11,6 +12,7 @@ struct Crystal{
 	lm.init(3);
 	ms.init();
 	r.init();
+	fb.init(windowX, windowY);
     };
     void uninit(){
 	if(lm.layers != nullptr){
@@ -19,6 +21,7 @@ struct Crystal{
 	};
 	ms.uninit();
 	r.uninit();
+	fb.uninit();
     };
 };
 

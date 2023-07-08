@@ -11,7 +11,7 @@
 #include "ds.cc"
 #include "components.cc"
 #include "material.cc"
-#include "Renderer/renderer.cc"
-#include "Renderer/Batch.cc"
+#include "Renderer/include.hh"
+
 #include "scene.cc"
 #include "crystal.cc"

@@ -41,7 +41,7 @@ s32 main(){
     LARGE_INTEGER freq, start;
     f64 end = 0;
     QueryPerformanceFrequency(&freq);
-
+    
     while(true){
 	QueryPerformanceCounter(&start);
 	f64 dt = (start.QuadPart - end) / freq.QuadPart; //seconds
@@ -53,19 +53,18 @@ s32 main(){
 	Event e = engine->ed.getEvent();
 	
         engine->lm.updateLayers(e, dt);
-        glClear(GL_COLOR_BUFFER_BIT);
         engine->lm.renderLayers();
 
 	RenderContext::swapBuffers();
     }
-
+    
     engine->uninit();
     RenderContext::uninit(window);
     window::destroy(window);
 
     mem::free(engine);
 
-    dlog("DONE :)\n");
+    dlog("CALLS: %d\n", mem::calls);
     return EXIT_SUCCESS;
 }
 

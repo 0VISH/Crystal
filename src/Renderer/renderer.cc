@@ -88,6 +88,7 @@ namespace OpenGL{
 	s32 uLoc = glGetUniformLocation(shaderProgram, uniformName);
 	glUniform4f(uLoc, vec[0], vec[1], vec[2], vec[3]);
     };
+    void clearColourBuffer(){glClear(GL_COLOR_BUFFER_BIT);};
 };
 #endif
 
@@ -143,6 +144,11 @@ struct Renderer{
     };
     void useMaterial(Material &mat){
 	setVec4Uniform(mat.col, "uCol");
+    };
+    void clearColourBuffer(){
+#if(RCONTEXT_GL)
+	OpenGL::clearColourBuffer();
+#endif
     };
     
     u32 shaderProgram;
