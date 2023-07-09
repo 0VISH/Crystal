@@ -10,7 +10,6 @@
 #include "package.hh"
 #include "ds.cc"
 #include "components.cc"
-#include "material.cc"
 #include "Renderer/include.hh"
 
 #include "scene.cc"

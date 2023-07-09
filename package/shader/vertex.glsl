@@ -3,12 +3,11 @@
 layout (location = 0) in vec3 iPos;
 layout (location = 1) in vec4 iCol;
 
-uniform mat4 uModel;
 uniform mat4 uProjectionView;
 
 layout (location = 0) out vec4 oCol;
 
 void main(){
      oCol = iCol;
-     gl_Position = uProjectionView * uModel * vec4(iPos, 1.0);
+     gl_Position = uProjectionView * vec4(iPos, 1.0);
 };

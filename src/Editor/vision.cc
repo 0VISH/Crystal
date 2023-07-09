@@ -3,10 +3,6 @@ struct Vision{
 
     void init(){
 	showDemoWindow = false;
-#if(RCONTEXT_GL)
-	char *backend = "OpenGL";
-#endif
-	//	console.AddLog("[RENDER CONTEXT]: %s %s", backend, engine->r.getRenderContextInfoString());
     };
     void render(){
 	ImGui::Begin("Vision");
@@ -14,11 +10,6 @@ struct Vision{
 	    if(ImGui::BeginTabItem("Engine")){
 		if(ImGui::TreeNode("Layer Manager")){
 		    ImGui::Text("layers: %p\ncount: %d", engine->lm.layers, engine->lm.layerCount);
-		    ImGui::TreePop();
-		};
-		if(ImGui::TreeNode("Renderer")){
-		    Renderer &r = engine->r;
-		    ImGui::Text("shaderProgram: %d\nqvao: %d\nqvbo: %d\nqibo: %d\n", r.shaderProgram, r.qvao, r.qvbo, r.qibo);
 		    ImGui::TreePop();
 		};
 		if(ImGui::TreeNode("Material System")){

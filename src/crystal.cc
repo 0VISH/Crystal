@@ -1,9 +1,10 @@
 struct Crystal{
     LayerManager      lm;
-    Renderer          r;
+    Batch::Batcher    br;
     EventDispatcher   ed;
     MaterialSystem    ms;
     FrameBuffer       fb;
+    ShaderSystem      ss;
     u32               windowX;
     u32               windowY;
     bool              shouldClose;
@@ -11,8 +12,11 @@ struct Crystal{
     void init(){
 	lm.init(3);
 	ms.init();
-	r.init();
+	ss.init();
+	u32 defaultShader = ss.newShaderProgram();
+	Renderer::createDefaultShader(defaultShader);
 	fb.init(windowX, windowY);
+	br.init();
     };
     void uninit(){
 	if(lm.layers != nullptr){
@@ -20,8 +24,9 @@ struct Crystal{
 	    lm.uninit();
 	};
 	ms.uninit();
-	r.uninit();
+	ss.uninit();
 	fb.uninit();
+	br.uninit();
     };
 };
 

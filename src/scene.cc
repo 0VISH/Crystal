@@ -116,16 +116,19 @@ struct Scene{
 	};
 	return (T*)components[componentID].getComponent(e);
     };
-    void render(MaterialSystem &ms, Renderer &renderer){
+    void render(MaterialSystem &ms, Batch::Batcher &br){
+	br.beginBatch();
 	for(u32 x=0; x<ms.materials.count; x+=1){
 	    Material &mat = ms.materials[x];
-	    renderer.useMaterial(mat);
+	    br.useMaterial(&mat);
 	    for(u32 i=0; i<mat.registeredEntities.count; i+=1){
 		Entity ent = mat.registeredEntities[i];
 		Component::Transform *t = getComponent<Component::Transform>(ent);
-		renderer.drawQuad(t->mat);
+		br.submitQuad(t->mat);
 	    };
 	};
+	br.endBatch();
+	br.flush();
     };
 
     ds::DynamicArray<u32> entityComponentMask;

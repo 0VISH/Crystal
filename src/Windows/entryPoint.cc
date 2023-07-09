@@ -32,7 +32,7 @@ s32 main(){
     editorLayer->onUninit = Editor::onUninit;
     Editor::init(window);
 
-    LOG("Render context: %s", engine->r.getRenderContextInfoString());
+    LOG("Render context: %s", Renderer::getRenderContextInfoString());
 #endif
 
     Layer *gameLayer = engine->lm.newLayer();

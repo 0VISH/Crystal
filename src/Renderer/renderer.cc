@@ -2,11 +2,6 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #if(RCONTEXT_GL)
-#include "../../vendor/glad/include/glad/glad.h"
-#if(DBG)
-#include "Renderer/debugGL.cc"
-#endif
-
 namespace OpenGL{
 #if(DBG)
     void enableDebugMode(){
@@ -14,69 +9,25 @@ namespace OpenGL{
 	glDebugMessageCallback(OpenGL::DebugCallback, nullptr);
     };
 #endif
-    void init(u32 &qvao, u32 &qvbo, u32 &qibo, u32 &shaderProgram){
-	//QUAD
-	float quadVertices[] = {
-	    0.5f,  0.5f,
-	    0.5f, -0.5f,
-	    -0.5f, -0.5f,
-	    -0.5f,  0.5f,
-	};
-	u32 quadIndices[] = {
-	    0, 1, 3,
-	    1, 2, 3
-	};
-	glGenVertexArrays(1, &qvao);	
-	glBindVertexArray(qvao);
-	glGenBuffers(1, &qvbo);
-	glBindBuffer(GL_ARRAY_BUFFER, qvbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glGenBuffers(1, &qibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, qibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), quadIndices, GL_STATIC_DRAW);
-
+    void createDefaultShader(u32 &shaderProgram){
 	//SHADER
-	char *vertexShaderSource = Package::readTextFile("package/shader/vertex.glsl");
-	char *fragmentShaderSource = Package::readTextFile("package/shader/fragment.glsl");
-	u32 vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
+	u32 vertexShader = Shader::compileShader("package/shader/vertex.glsl", ShaderType::VERTEX);
 #if(DBG)
 	OpenGL::vertexCheckErr(vertexShader);
 #endif
-	u32 fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
+	u32 fragmentShader = Shader::compileShader("package/shader/fragment.glsl", ShaderType::FRAGMENT);
 #if(DBG)
 	OpenGL::fragmentCheckErr(fragmentShader);
 #endif
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
+	Shader::attachShaderToProgram(vertexShader, shaderProgram);
+	Shader::attachShaderToProgram(fragmentShader, shaderProgram);
+	Shader::linkProgram(shaderProgram);
 #if(DBG)
 	OpenGL::linkCheckErr(shaderProgram);
 #endif
-	glUseProgram(shaderProgram);
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	//TODO: Package should handle this
-	mem::free(fragmentShaderSource);
-	mem::free(vertexShaderSource);
-    };
-    void destroyShader(u32 shaderProgram){
-	glDeleteProgram(shaderProgram);
-    };
-    void destroyQuad(u32 &vao, u32 &vbo, u32 &ibo){
-	glDeleteBuffers(1, &ibo);
-	glDeleteBuffers(1, &vbo);
-	glDeleteVertexArrays(1, &vao);
-    };
-    void drawQuad(u32 vao){
-	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	Shader::useProgram(shaderProgram);
+	Shader::deleteShader(vertexShader);
+	Shader::deleteShader(fragmentShader);
     };
     void drawWireframe(){glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);};
     void drawFill(){glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);};
@@ -92,7 +43,7 @@ namespace OpenGL{
 };
 #endif
 
-struct Renderer{
+namespace Renderer{
 #if(DBG)
     void enableDebugMode(){
 #if(RCONTEXT_GL)
@@ -100,15 +51,9 @@ struct Renderer{
 #endif
     };
 #endif
-    void init(){
+    void createDefaultShader(u32 &shaderProgram){
 #if(RCONTEXT_GL)
-	OpenGL::init(qvao, qvbo, qibo, shaderProgram);
-#endif
-    };
-    void uninit(){
-#if(RCONTEXT_GL)
-	OpenGL::destroyShader(shaderProgram);
-	OpenGL::destroyQuad(qvao, qvbo, qibo);
+	OpenGL::createDefaultShader(shaderProgram);
 #endif
     };
     void drawWireframe(){
@@ -121,20 +66,14 @@ struct Renderer{
 	OpenGL::drawFill();
 #endif
     };
-    void setMat4Uniform(glm::mat4 &mat, char *uniformName){
+    void setMat4Uniform(glm::mat4 &mat, char *uniformName, u32 shader){
 #if(RCONTEXT_GL)
-	OpenGL::setMat4Uniform(mat, uniformName, shaderProgram);
+	OpenGL::setMat4Uniform(mat, uniformName, shader);
 #endif
     };
-    void drawQuad(glm::mat4 &mat){
-	setMat4Uniform(mat, "uModel");
+    void setVec4Uniform(glm::vec4 &vec, char *uniformName, u32 shader){
 #if(RCONTEXT_GL)
-	OpenGL::drawQuad(qvao);
-#endif
-    };
-    void setVec4Uniform(glm::vec4 &vec, char *uniformName){
-#if(RCONTEXT_GL)
-	OpenGL::setVec4Uniform(vec, uniformName, shaderProgram);
+	OpenGL::setVec4Uniform(vec, uniformName, shader);
 #endif
     };
     char *getRenderContextInfoString(){
@@ -142,19 +81,9 @@ struct Renderer{
 	return (char*)glGetString(GL_VERSION);
 #endif
     };
-    void useMaterial(Material &mat){
-	setVec4Uniform(mat.col, "uCol");
-    };
     void clearColourBuffer(){
 #if(RCONTEXT_GL)
 	OpenGL::clearColourBuffer();
 #endif
     };
-    
-    u32 shaderProgram;
-#if(RCONTEXT_GL)
-    u32 qvao;
-#endif
-    u32 qvbo;
-    u32 qibo;
 };

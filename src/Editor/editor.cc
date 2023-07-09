@@ -21,8 +21,6 @@ namespace Editor{
 
 	cam.init();
 	cam.initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
-	cam.calculateViewMat();
-	engine->r.setMat4Uniform(cam.projection * cam.view, "uProjectionView");
 
 	vs.init();
     };
@@ -81,7 +79,7 @@ namespace Editor{
 	};
 	
 	if(ImGui::Begin("Scene")){
-	    ImGui::Text("Frame rate: %f", ImGui::GetIO().Framerate);
+	    ImGui::Text("Frame rate: %f\t\t\t\t\tDraw calls: %d", ImGui::GetIO().Framerate, engine->br.drawCalls);
 	    if(ImGui::IsWindowHovered()){
 		if(isKeyboardButtonEvent(e) && isKeyDown(ButtonCode::Key_LeftShift)){
 		    const float cameraSpeed = 5;
@@ -114,7 +112,7 @@ namespace Editor{
 
 	//UPDATE EDITOR CAMERA
 	cam.calculateViewMat();
-	engine->r.setMat4Uniform(cam.projection * cam.view, "uProjectionView");
+	engine->ss.setCameraProjectionViewMatrix(cam.projection * cam.view);
 	
 	return io.WantCaptureMouse || io.WantCaptureKeyboard;
     };

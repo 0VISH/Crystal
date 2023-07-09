@@ -1,8 +1,10 @@
 struct Material{
     ds::DynamicArray<Entity> registeredEntities;
     glm::vec4 col;
+    u32 shader;
 
-    void init(){
+    void init(u32 s){
+	shader = s;
 	registeredEntities.init();
     };
     void uninit(){
@@ -26,9 +28,9 @@ struct MaterialSystem{
 	};
 	materials.uninit();
     };
-    Material &newMaterial(){
+    Material &newMaterial(u32 shader){
 	Material &mat =  materials.newElem();
-	mat.init();
+	mat.init(shader);
 	return mat;
     };
 };

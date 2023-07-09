@@ -12,14 +12,13 @@ namespace Batch{
 	Vertex   *vertices;
 	Vertex   *watermark;
 	Material *material;
-	u32 shaderProgram;
 	u32 qvbo;
 	u32 qvao;
 	u32 qibo;
 	u32 indexCount;
+	u32 drawCalls;
 
-	void init(u32 shader){
-	    shaderProgram = shader;
+	void init(){
 	    vertices = (Vertex*)mem::alloc(sizeof(Vertex) * maxVertexCount);
 
 #if(RCONTEXT_GL)
@@ -53,14 +52,9 @@ namespace Batch{
 #endif
 	};
 	void beginBatch(){
+	    drawCalls = 0;
 	    watermark = vertices;
 	    indexCount = 0;
-#if(RCONTEXT_GL)
-	    s32 uLoc = glGetUniformLocation(shaderProgram, "uModel");
-	    glUniformMatrix4fv(uLoc, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0)));
-	    uLoc = glGetUniformLocation(shaderProgram, "uCol");
-	    glUniform4f(uLoc, 0, 0, 0, 0);
-#endif
 	};
 	void endBatch(){
 	    u32 size = (char*)watermark - (char*)vertices;
@@ -70,12 +64,13 @@ namespace Batch{
 #endif
 	};
 	void flush(){
+	    drawCalls += 1;
 #if(RCONTEXT_GL)
 	    glBindVertexArray(qvao);
 	    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 #endif
 	};
-	void setMaterial(Material *m){
+	void useMaterial(Material *m){
 	    material = m;
 	};
 	void submitQuad(glm::mat4 &mat){
