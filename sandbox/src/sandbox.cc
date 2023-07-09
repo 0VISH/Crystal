@@ -6,14 +6,14 @@
 
 namespace Game{
     Scene s;
-    Entity s1;
     
     void init(){
+	engine->curScene = &s;
 	Renderer::drawWireframe();
 	
 	s.init();
 	
-	s1 = s.newEntity();
+	Entity s1 = s.newEntity("spinny quad");
 	Component::Transform *s1T = s.addComponent<Component::Transform>(s1);
 	
 	Material &mat = engine->ms.newMaterial(engine->ss.getDefaultShader());
@@ -31,6 +31,7 @@ namespace Game{
 	s.uninit();
     };
     bool update(Event e, f64 dt){
+	Entity s1 = s.getEntity("spinny quad");
 	Component::Transform *s1T = s.getComponent<Component::Transform>(s1);
 	s1T->rotate(5, glm::vec3(1, 0.0, 0.0));
 	return false;

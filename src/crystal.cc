@@ -5,11 +5,13 @@ struct Crystal{
     MaterialSystem    ms;
     FrameBuffer       fb;
     ShaderSystem      ss;
+    Scene            *curScene;
     u32               windowX;
     u32               windowY;
     bool              shouldClose;
     
     void init(){
+	curScene = nullptr;
 	lm.init(3);
 	ms.init();
 	ss.init();

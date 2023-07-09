@@ -2,6 +2,7 @@ namespace Editor{
     Component::Camera cam;
     Vision vs;
     Console console;
+    EntityPanel ep;
     bool showDemo;
     
     void init(window::Window window){
@@ -16,13 +17,13 @@ namespace Editor{
 	ImGui_ImplOpenGL3_Init();
 	io.Fonts->AddFontFromFileTTF("resources/Roboto-Regular.ttf", 17.0f);
 
+	vs.init();
+	ep.init();
 	console.init();
 	showDemo = false;
 
 	cam.init();
 	cam.initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
-
-	vs.init();
     };
     bool onUpdate(Event e, f64 dt){
 	//FEEDING IMGUI EVENTS
@@ -45,16 +46,15 @@ namespace Editor{
 	ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(viewport->Pos);
-		ImGui::SetNextWindowSize(viewport->Size);
-		ImGui::SetNextWindowViewport(viewport->ID);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	ImGui::SetNextWindowPos(viewport->Pos);
+	ImGui::SetNextWindowSize(viewport->Size);
+	ImGui::SetNextWindowViewport(viewport->ID);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+	window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
-	if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-	    window_flags |= ImGuiWindowFlags_NoBackground;
+	if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode){window_flags |= ImGuiWindowFlags_NoBackground;};
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 	ImGui::Begin("DockSpace", &dockspaceOpen, window_flags);
 	ImGui::PopStyleVar();
@@ -107,7 +107,10 @@ namespace Editor{
 			 );
 	    ImGui::End();
 	}
+
 	
+	
+	//DOCKING
 	ImGui::End();
 
 	//UPDATE EDITOR CAMERA
@@ -117,6 +120,8 @@ namespace Editor{
 	return io.WantCaptureMouse || io.WantCaptureKeyboard;
     };
     void onRender(){
+	ep.renderEntities();
+	ep.renderComponents();
        	vs.render();
 	console.Draw("Console");
 	if(showDemo){ImGui::ShowDemoWindow(&showDemo);};

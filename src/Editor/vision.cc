@@ -14,10 +14,20 @@ struct Vision{
 		};
 		if(ImGui::TreeNode("Material System")){
 		    MaterialSystem &ms = engine->ms;
-		    ImGui::Text("materials: %p\ncount: %d\n", ms.materials.mem, ms.materials.count);
+		    ImGui::Text("materials: %p\ncount: %d", ms.materials.mem, ms.materials.count);
 		    ImGui::TreePop();
 		};
-		ImGui::Text("windowX: %d\nwindowY: %d\n", engine->windowX, engine->windowY);
+		if(ImGui::TreeNode("Shader System")){
+		    ShaderSystem &ss = engine->ss;
+		    ImGui::Text("shader programs: %p\nshader count: %d", ss.shaderPrograms.mem, ss.shaderPrograms.count);
+		    ImGui::TreePop();
+		};
+		if(ImGui::TreeNode("Frame Buffer")){
+		    FrameBuffer &fbo = engine->fb;
+		    ImGui::Text("fbo: %d\nrbo: %d\n texture: %d", fbo.fbo, fbo.rbo, fbo.texture);
+		    ImGui::TreePop();
+		};
+		ImGui::Text("windowX: %d\nwindowY: %d\ncurrent scene ID: %d\n", engine->windowX, engine->windowY, engine->curScene->id);
 		ImGui::EndTabItem();
 	    }
 	    ImGui::EndTabBar();

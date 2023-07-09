@@ -16,8 +16,6 @@ struct Material{
 };
 
 struct MaterialSystem{
-    ds::DynamicArray<Material> materials;
-
     void init(u32 materialCount = 5){
 	materials.init(materialCount);
     };
@@ -33,4 +31,6 @@ struct MaterialSystem{
 	mat.init(shader);
 	return mat;
     };
+
+    ds::DynamicArray<Material> materials;
 };

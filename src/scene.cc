@@ -72,8 +72,15 @@ struct ComponentPool{
     Entity entityCount;
 };
 
+static u8 sceneID = 0;
+//TODO: write a custom hashmap
+#include <unordered_map>
+#include <string>
+
 struct Scene{
     void init(u32 begEntityCount = 5){
+	id = sceneID;
+	sceneID += 1;
 	entityCount = 0;
 	entityComponentMask.init(begEntityCount);
 	components.init();
@@ -86,11 +93,17 @@ struct Scene{
 	};
 	components.uninit();
     };
-    Entity newEntity(){
+    Entity newEntity(char *name){
 	Entity e = entityCount;
+	std::string nameStr(name, strlen(name));
+	entityNameToEntity[nameStr] = e;
 	entityCount += 1;
 	entityComponentMask.push(0);
 	return e;
+    };
+    Entity getEntity(char *name){
+	std::string nameStr(name);
+	return entityNameToEntity[nameStr];
     };
     template<typename T>
     T *addComponent(Entity e){
@@ -110,10 +123,7 @@ struct Scene{
     T *getComponent(Entity e){
 	u32 componentID = getID<T>();
 	u32 mask = entityComponentMask[componentID];
-	if(!IS_BIT(mask, componentID)){
-	    dlog("entity doesn not have component: %d\n", componentID);
-	    return nullptr;
-	};
+	if(!IS_BIT(mask, componentID)){return nullptr;};
 	return (T*)components[componentID].getComponent(e);
     };
     void render(MaterialSystem &ms, Batch::Batcher &br){
@@ -131,7 +141,9 @@ struct Scene{
 	br.flush();
     };
 
+    std::unordered_map<std::string, Entity> entityNameToEntity;
     ds::DynamicArray<u32> entityComponentMask;
     ds::DynamicArray<ComponentPool> components;
     Entity entityCount;
+    u8 id;
 };
