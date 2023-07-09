@@ -1,6 +1,9 @@
 namespace Editor{ 
     Component::Camera cam;
     Vision vs;
+    Console console;
+    bool showDemo;
+    
     void init(window::Window window){
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -12,6 +15,9 @@ namespace Editor{
 	ImGui_ImplWin32_InitForOpenGL(window);
 	ImGui_ImplOpenGL3_Init();
 	io.Fonts->AddFontFromFileTTF("resources/Roboto-Regular.ttf", 17.0f);
+
+	console.init();
+	showDemo = false;
 
 	cam.init();
 	cam.initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
@@ -64,8 +70,18 @@ namespace Editor{
 	}
 	style.WindowMinSize.x = minWinSizeX;
 
+	if(ImGui::BeginMenuBar()){
+	    if(ImGui::BeginMenu("Windows")){
+		if (ImGui::MenuItem("ImGui Demo")){
+		    showDemo = !showDemo;
+		};
+		ImGui::EndMenu();
+	    };
+	    ImGui::EndMenuBar();
+	};
 	
 	if(ImGui::Begin("Scene")){
+	    ImGui::Text("Frame rate: %f", ImGui::GetIO().Framerate);
 	    if(ImGui::IsWindowHovered()){
 		if(isKeyboardButtonEvent(e) && isKeyDown(ButtonCode::Key_LeftShift)){
 		    const float cameraSpeed = 5;
@@ -104,13 +120,24 @@ namespace Editor{
     };
     void onRender(){
        	vs.render();
+	console.Draw("Console");
+	if(showDemo){ImGui::ShowDemoWindow(&showDemo);};
 
         ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     };
     void onUninit(){
+	console.uninit();
+	
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
     };
 };
+
+
+#if(DBG)
+#define LOG(fmt, ...) Editor::console.AddLog(fmt, __VA_ARGS__)
+#else
+#define LOG(fmt, ...)
+#endif

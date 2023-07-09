@@ -13,6 +13,7 @@ Crystal *engine;
 #include GAME_CODE_PATH
 
 s32 main(){
+    mem::calls = 0;
     engine = (Crystal*)mem::alloc(sizeof(Crystal));
     
     window::Window window = window::create(Game::gameName, 1280, 800);
@@ -30,6 +31,8 @@ s32 main(){
     editorLayer->onRender = Editor::onRender;
     editorLayer->onUninit = Editor::onUninit;
     Editor::init(window);
+
+    LOG("Render context: %s", engine->r.getRenderContextInfoString());
 #endif
 
     Layer *gameLayer = engine->lm.newLayer();
@@ -64,7 +67,7 @@ s32 main(){
 
     mem::free(engine);
 
-    dlog("CALLS: %d\n", mem::calls);
+    dlog("CALLS: %d\nNOT_FREED: %lld\n", mem::calls, mem::notFreed);
     return EXIT_SUCCESS;
 }
 

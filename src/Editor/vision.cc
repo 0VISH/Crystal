@@ -1,19 +1,15 @@
 struct Vision{
     bool showDemoWindow;
-    bool showConsole;
-    Console console;
 
     void init(){
 	showDemoWindow = false;
-	showConsole = true;
 #if(RCONTEXT_GL)
 	char *backend = "OpenGL";
 #endif
-	console.AddLog("[RENDER CONTEXT]: %s %s", backend, engine->r.getRenderContextInfoString());
+	//	console.AddLog("[RENDER CONTEXT]: %s %s", backend, engine->r.getRenderContextInfoString());
     };
     void render(){
 	ImGui::Begin("Vision");
-	ImGui::Text("Frame rate: %f", ImGui::GetIO().Framerate);
 	if(ImGui::BeginTabBar("MyTabBar")){
 	    if(ImGui::BeginTabItem("Engine")){
 		if(ImGui::TreeNode("Layer Manager")){
@@ -33,23 +29,11 @@ struct Vision{
 		ImGui::Text("windowX: %d\nwindowY: %d\n", engine->windowX, engine->windowY);
 		ImGui::EndTabItem();
 	    }
-	    if(ImGui::BeginTabItem("Windows")){
-		if(ImGui::SmallButton("Demo Window")){
-		    showDemoWindow = true;
-		};
-		if(ImGui::SmallButton("Console")){
-		    showConsole = true;
-		};
-		ImGui::EndTabItem();
-	    };
 	    ImGui::EndTabBar();
 	};
 	ImGui::End();
 	if(showDemoWindow){
 	    ImGui::ShowDemoWindow(&showDemoWindow);
-	};
-	if(showConsole){
-	    console.Draw("Console", &showConsole);
 	};
     };
 };

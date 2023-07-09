@@ -9,7 +9,7 @@ struct Console
     bool                  AutoScroll;
     bool                  ScrollToBottom;
 
-    Console()
+    void init()
     {
         ClearLog();
         memset(InputBuf, 0, sizeof(InputBuf));
@@ -23,7 +23,7 @@ struct Console
         AutoScroll = true;
         ScrollToBottom = false;
     }
-    ~Console()
+    void uninit()
     {
         ClearLog();
         for (int i = 0; i < History.Size; i++)
@@ -55,23 +55,13 @@ struct Console
         Items.push_back(Strdup(buf));
     }
 
-    void    Draw(const char* title, bool* p_open)
+    void    Draw(const char* title)
     {
         ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-        if (!ImGui::Begin(title, p_open))
+        if (!ImGui::Begin(title))
         {
             ImGui::End();
             return;
-        }
-
-        // As a specific feature guaranteed by the library, after calling Begin() the last Item represent the title bar.
-        // So e.g. IsItemHovered() will return true when hovering the title bar.
-        // Here we create a context menu only available from the title bar.
-        if (ImGui::BeginPopupContextItem())
-        {
-            if (ImGui::MenuItem("Close Console"))
-                *p_open = false;
-            ImGui::EndPopup();
         }
 
         ImGui::TextWrapped("Enter 'HELP' for help.");

@@ -41,6 +41,7 @@ namespace Game{
     };
     void uninit(){
 	s.uninit();
+	b.uninit();
     };
     bool update(Event e, f64 dt){
 	Component::Transform *s1T = s.getComponent<Component::Transform>(s1);
