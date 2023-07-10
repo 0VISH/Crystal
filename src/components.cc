@@ -26,11 +26,19 @@ namespace Component{
     };
 };
 namespace Component{
-    void Transform::init(){mat = glm::mat4(1.0);};
-    void Transform::move(glm::vec3 &pos){
-	mat = glm::translate(mat, pos);
+    void Transform::init(){
+	position = {0, 0, 0};
+	rotation = {0, 0, 0};
+	scale    = {1, 1, 1};
     };
-    void Transform::rotate(f32 val, glm::vec3 &axis){
-	mat = glm::rotate(mat, glm::radians(val), axis);
+
+    glm::mat4 Transform::genMatrix(){
+	glm::mat4 rot = glm::rotate(glm::mat4(1.0), rotation.x, {1, 0, 0})
+	    * glm::rotate(glm::mat4(1.0), rotation.y, {0, 1, 0})
+	    * glm::rotate(glm::mat4(1.0), rotation.z, {0, 0, 1});
+
+	return glm::translate(glm::mat4(1.0), position)
+	    * rot
+	    * glm::scale(glm::mat4(1.0), scale);
     };
 };

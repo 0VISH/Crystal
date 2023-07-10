@@ -47,14 +47,12 @@ s32 main(){
     gameLayer->onUpdate = Game::update;
     Game::init();
 
-    LARGE_INTEGER freq, start;
-    f64 end = 0;
+    LARGE_INTEGER freq, start, end;
+    f64 dt  = 0;
     QueryPerformanceFrequency(&freq);
     
     while(true){
 	QueryPerformanceCounter(&start);
-	f64 dt = (start.QuadPart - end) / freq.QuadPart; //seconds
-	end = start.QuadPart;
 	
 	window::pollEvents();
 	if(engine->shouldClose){break;};
@@ -65,6 +63,10 @@ s32 main(){
         engine->lm.renderLayers();
 
 	RenderContext::swapBuffers();
+
+	QueryPerformanceCounter(&end);
+	dt = (end.QuadPart - start.QuadPart);
+	dt /= freq.QuadPart;
     }
     
     engine->uninit();

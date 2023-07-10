@@ -107,7 +107,7 @@ void Scene::render(){
 	for(u32 i=0; i<mat.registeredEntities.count; i+=1){
 	    Entity ent = mat.registeredEntities[i];
 	    Component::Transform *t = getComponent<Component::Transform>(ent);
-	    br.submitQuad(t->mat);
+	    br.submitQuad(t->genMatrix());
 	};
     };
     br.endBatch();

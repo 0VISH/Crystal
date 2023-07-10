@@ -19,10 +19,11 @@ namespace Component{
     };
 
     struct Transform{
-	glm::mat4 mat;
+	glm::vec3 position;
+	glm::vec3 rotation;
+	glm::vec3 scale;
 
 	void init();
-	void move(glm::vec3 &pos);
-	void rotate(f32 val, glm::vec3 &axis);
+	glm::mat4 genMatrix();
     };
 };
