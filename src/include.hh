@@ -8,9 +8,13 @@
 #include "event.cc"
 #include "layer.cc"
 #include "package.hh"
-#include "ds.cc"
+#include "ds.hh"
 #include "components.cc"
 #include "Renderer/include.hh"
 
-#include "scene.cc"
 #include "crystal.cc"
+
+Crystal *engine;
+
+#include "scene.cc"
+#include "game.cc"

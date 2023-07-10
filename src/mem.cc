@@ -1,8 +1,9 @@
-#include <stdlib.h>
+#include "mem.hh"
 
 namespace mem {
     s32 calls = 0;
     u64 notFreed = 0;
+    
     //TODO: write an allocator
     void *alloc(u64 size) {
 	void *mem;

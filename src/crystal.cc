@@ -1,3 +1,5 @@
+struct Scene;
+
 struct Crystal{
     LayerManager      lm;
     Batch::Batcher    br;

@@ -4,11 +4,13 @@
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+#include "game.hh"
+
 namespace Game{
     Scene s;
-    
+
     void init(){
-	engine->curScene = &s;
+	setCurrentScene(&s);
 	Renderer::drawWireframe();
 	
 	s.init();
@@ -16,16 +18,12 @@ namespace Game{
 	Entity s1 = s.newEntity("spinny quad");
 	Component::Transform *s1T = s.addComponent<Component::Transform>(s1);
 	
-	Material &mat = engine->ms.newMaterial(engine->ss.getDefaultShader());
+	Material &mat = Cry::getMaterialSystemRef().newMaterial(Cry::getShaderSystemRef().getDefaultShader());
 	mat.col = glm::vec4(1.0, 0.5, 1.0, 1.0);
 	mat.registerEntity(s1);
     };
     void render(){
-	engine->fb.bind();
-	Renderer::clearColourBuffer();
-        s.render(engine->ms, engine->br);
-	
-	engine->fb.unbind();
+        s.render();
     };
     void uninit(){
 	s.uninit();
@@ -37,5 +35,5 @@ namespace Game{
 	return false;
     };
 
-    char* gameName  = "Sandbox";
+    char *gameName = "Sandbox";
 };

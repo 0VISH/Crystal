@@ -10,6 +10,10 @@ struct EntityPanel{
     void renderEntities(){
 	if(ImGui::Begin("Entities")){
 	    Scene *s = engine->curScene;
+	    if(s == nullptr){
+		ImGui::End();
+		return;
+	    };
 	    u32 x = 0;
 	    for(auto const &pair: s->entityNameToEntity){
 		if(ImGui::Selectable(pair.first.c_str(), selectedEntity == x)){
@@ -24,6 +28,10 @@ struct EntityPanel{
     void renderComponents(){
 	if(ImGui::Begin("Components")){
 	    Scene *s = engine->curScene;
+	    if(s == nullptr){
+		ImGui::End();
+		return;
+	    };
 	    if(selectedEntity == -1){
 		ImGui::End();
 		return;

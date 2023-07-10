@@ -27,7 +27,10 @@ struct Vision{
 		    ImGui::Text("fbo: %d\nrbo: %d\n texture: %d", fbo.fbo, fbo.rbo, fbo.texture);
 		    ImGui::TreePop();
 		};
-		ImGui::Text("windowX: %d\nwindowY: %d\ncurrent scene ID: %d\n", engine->windowX, engine->windowY, engine->curScene->id);
+		ImGui::Text("windowX: %d\nwindowY: %d\ncurrent scene: %p", engine->windowX, engine->windowY, engine->curScene);
+		if(engine->curScene != nullptr){
+		    ImGui::Text("current scene ID: %d", engine->curScene->id);
+		};
 		ImGui::EndTabItem();
 	    }
 	    ImGui::EndTabBar();

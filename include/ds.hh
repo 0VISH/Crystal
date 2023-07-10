@@ -1,3 +1,5 @@
+#pragma once
+
 namespace ds{
     template<typename T>
     struct DynamicArray {

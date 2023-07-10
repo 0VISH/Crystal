@@ -1,7 +1,5 @@
 #include "../include.hh"
 
-Crystal *engine;
-
 #if(PLAT_WINDOWS)
 #include "include.hh"
 #endif
@@ -10,7 +8,14 @@ Crystal *engine;
 #include "../Editor/include.hh"
 #endif
 
-#include GAME_CODE_PATH
+namespace Game{
+    extern void render();
+    extern void uninit();
+    extern void init();
+    extern bool update(Event e, f64 dt);
+
+    extern char *gameName;
+};
 
 s32 main(){
     mem::calls = 0;
@@ -24,6 +29,7 @@ s32 main(){
     ::UpdateWindow(window);
 
     engine->init();
+    Cry::setupGamePointers();
     
 #if(EDITOR)
     Layer *editorLayer = engine->lm.newLayer();

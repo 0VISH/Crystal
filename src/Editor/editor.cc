@@ -98,13 +98,15 @@ namespace Editor{
 		
 	    float width = ImGui::GetContentRegionAvail().x;
 	    float height = ImGui::GetContentRegionAvail().y;
-		
+
+	    if(engine->curScene != nullptr){
 	    ImGui::Image(
 			 (ImTextureID)engine->fb.texture, 
 			 ImGui::GetContentRegionAvail(), 
 			 ImVec2(0, 1), 
 			 ImVec2(1, 0)
 			 );
+	    };
 	    ImGui::End();
 	}
 
