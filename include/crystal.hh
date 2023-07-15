@@ -5,6 +5,7 @@ struct Crystal{
     EventDispatcher   ed;
     MaterialSystem    ms;
     ShaderSystem      ss;
+    FrameBuffer       fb;
     Scene            *curScene;
     u32               windowX;
     u32               windowY;

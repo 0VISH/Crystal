@@ -95,8 +95,8 @@ Entity Scene::getEntity(char *name){
     std::string nameStr(name);
     return entityNameToEntity[nameStr];
 };
-void Scene::render(MaterialSystem &ms){
-    FrameBuffer::bind();
+void Scene::render(MaterialSystem &ms, FrameBuffer &fb){
+    fb.bind();
     Renderer::clearColourBuffer();
     Batch::beginBatch();
     for(u32 x=0; x<ms.materials.count; x+=1){
@@ -110,5 +110,5 @@ void Scene::render(MaterialSystem &ms){
     };
     Batch::endBatch();
     Batch::flush();
-    FrameBuffer::unbind();
+    fb.unbind();
 };

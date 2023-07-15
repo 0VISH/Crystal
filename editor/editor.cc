@@ -1,11 +1,30 @@
+#include "glm/vec3.hpp"
+#include "glm/vec4.hpp"
+#include "glm/mat4x4.hpp"
+#include "glm/ext/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include "game.hh"
+#include "imgui.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_win32.h"
+#include "console.cc"
+#include "vision.cc"
+#include "entityPanel.cc"
+#include <windows.h>
+//#include "materialPanel.cc"s
+
+bool isKeyDown(ButtonCode code);
+Console console;
+
 namespace Editor{ 
     Component::Camera cam;
     Vision vs;
-    Console console;
     EntityPanel ep;
     bool showDemo;
+    u32 *drawCalls;
     
-    void init(window::Window window){
+    void init(HWND window, u32 *batchDrawCall){
+	drawCalls = batchDrawCall;
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -25,7 +44,7 @@ namespace Editor{
 	cam.init();
 	cam.initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
     };
-    bool onUpdate(Event e, f64 dt){
+    bool update(Event e, f64 dt){
 	//FEEDING IMGUI EVENTS
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	if(isMouseButtonEvent(e)){
@@ -79,7 +98,7 @@ namespace Editor{
 	};
 	
 	if(ImGui::Begin("Scene")){
-	    ImGui::Text("Frame rate: %f\t\t\t\t\tDraw calls: %d", ImGui::GetIO().Framerate, Batch::drawCalls);
+	    ImGui::Text("Frame rate: %f\t\t\t\t\tDraw calls: %d", ImGui::GetIO().Framerate, *drawCalls);
 	    if(ImGui::IsWindowHovered()){
 		if(isKeyboardButtonEvent(e) && isKeyDown(ButtonCode::Key_LeftShift)){
 		    const float cameraSpeed = 5;
@@ -101,7 +120,7 @@ namespace Editor{
 
 	    if(engine->curScene != nullptr){
 	    ImGui::Image(
-			 (ImTextureID)FrameBuffer::texture, 
+			 (ImTextureID)engine->fb.texture, 
 			 ImGui::GetContentRegionAvail(), 
 			 ImVec2(0, 1), 
 			 ImVec2(1, 0)
@@ -121,7 +140,7 @@ namespace Editor{
 	
 	return io.WantCaptureMouse || io.WantCaptureKeyboard;
     };
-    void onRender(){
+    void render(){
 	ep.renderEntities();
 	ep.renderComponents();
        	vs.render();
@@ -131,7 +150,7 @@ namespace Editor{
         ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     };
-    void onUninit(){
+    void uninit(){
 	console.uninit();
 	
 	ImGui_ImplOpenGL3_Shutdown();
@@ -139,10 +158,3 @@ namespace Editor{
 	ImGui::DestroyContext();
     };
 };
-
-
-#if(DBG)
-#define LOG(fmt, ...) Editor::console.AddLog(fmt, __VA_ARGS__)
-#else
-#define LOG(fmt, ...)
-#endif

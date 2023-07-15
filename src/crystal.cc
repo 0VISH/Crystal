@@ -8,7 +8,7 @@ void Crystal::init(){
     ss.init();
     u32 defaultShader = ss.newShaderProgram();
     Renderer::createDefaultShader(defaultShader);
-    FrameBuffer::init(windowX, windowY);
+    fb.init(windowX, windowY);
     Batch::init();
 };
 void Crystal::uninit(){
@@ -18,6 +18,6 @@ void Crystal::uninit(){
     };
     ms.uninit();
     ss.uninit();
-    FrameBuffer::uninit();
+    fb.uninit();
     Batch::uninit();
 };

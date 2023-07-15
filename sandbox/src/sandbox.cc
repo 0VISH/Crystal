@@ -22,7 +22,7 @@ namespace Game{
 	mat.registerEntity(s1);
     };
     void render(){
-        s.render(engine->ms);
+        s.render(engine->ms, engine->fb);
     };
     void uninit(){
 	s.uninit();

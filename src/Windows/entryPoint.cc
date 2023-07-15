@@ -2,12 +2,17 @@
 
 Crystal *engine;
 
-#if(PLAT_WINDOWS)
 #include "include.hh"
-#endif
 
 #if(EDITOR)
-#include "../Editor/include.hh"
+#include "console.hh"
+
+namespace Editor{
+    extern void render();
+    extern void uninit();
+    extern void init(window::Window window, u32 *batchDrawCalls);
+    extern bool update(Event e, f64 dt);
+};
 #endif
 
 namespace Game{
@@ -34,10 +39,10 @@ s32 main(){
     
 #if(EDITOR)
     Layer *editorLayer = engine->lm.newLayer();
-    editorLayer->onUpdate = Editor::onUpdate;
-    editorLayer->onRender = Editor::onRender;
-    editorLayer->onUninit = Editor::onUninit;
-    Editor::init(window);
+    editorLayer->onUpdate = Editor::update;
+    editorLayer->onRender = Editor::render;
+    editorLayer->onUninit = Editor::uninit;
+    Editor::init(window, &Batch::drawCalls);
 
     LOG("Render context: %s", Renderer::getRenderContextInfoString());
 #endif
