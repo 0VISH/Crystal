@@ -8,13 +8,13 @@ u32 getID(){
     return componentId;
 }
 
-void ComponentPool::init(u64 size, u32 begLen, u32 ec){
+void ComponentPool::init(u64 size, u32 begLen, u32 ew){
     count = 0;
-    entityCount = ec;
+    entityWatermark = ew;
     componentSize = size;
     len = begLen;
     mem = (char*)mem::calloc(componentSize * len);
-    entityToComponentOff = (Entity*)mem::alloc(entityCount);
+    entityToComponentOff = (Entity*)mem::alloc(entityWatermark);
 };
 void ComponentPool::uninit(){
     mem::free(mem);
@@ -31,12 +31,12 @@ void ComponentPool::uninit(){
   POINTER 'f' MIGHT BE INVALIDATED!!!!!
 */
 void *ComponentPool::newComponent(Entity e){
-    if(e > entityCount){
+    if(e > entityWatermark){
 	void *newMem = mem::alloc(sizeof(Entity) * e);
-	memcpy(newMem, entityToComponentOff, sizeof(Entity)*entityCount);
+	memcpy(newMem, entityToComponentOff, sizeof(Entity)*entityWatermark);
 	mem::free(mem);
 	entityToComponentOff = (Entity*)newMem;
-	entityCount = e;
+	entityWatermark = e;
     };
     entityToComponentOff[e] = count;
     if(count == len){
@@ -50,10 +50,19 @@ void *ComponentPool::newComponent(Entity e){
     count += 1;
     return &mem[componentSize*(count-1)];
 };
+void ComponentPool::removeComponent(Entity e){
+    u32 off = count - 1;
+    void *lastComponent = mem + (componentSize * off);
+    void *curComponent  = &mem[componentSize*entityToComponentOff[e]];
+    if(lastComponent != curComponent){
+	memcpy(curComponent, lastComponent, componentSize);
+    };
+    entityToComponentOff[off] = entityToComponentOff[e];
+};
 void *ComponentPool::getComponent(Entity e){
 #if(DBG)
-    if(e >= entityCount){
-	dlog("e >= entityCount");
+    if(e >= entityWatermark){
+	dlog("e >= entityWatermark");
 	return nullptr;
     };
 #endif
@@ -62,7 +71,7 @@ void *ComponentPool::getComponent(Entity e){
 };
 #if(DBG)
 void ComponentPool::dumpStat(){
-    log("size: %lld\nmem: %p\ncount: %d\nlen: %d\nentityToComponentOff: %p\nentityCount: %d\n", componentSize, mem, count, len, entityToComponentOff, entityCount);
+    log("size: %lld\nmem: %p\ncount: %d\nlen: %d\nentityToComponentOff: %p\nentityWatermark: %d\n", componentSize, mem, count, len, entityToComponentOff, entityWatermark);
 };
 #endif
 
@@ -105,7 +114,7 @@ void Scene::render(MaterialSystem &ms, FrameBuffer &fb){
 	for(u32 i=0; i<mat.registeredEntities.count; i+=1){
 	    Entity ent = mat.registeredEntities[i];
 	    Component::Transform *t = getComponent<Component::Transform>(ent);
-	    Batch::submitQuad(t->genMatrix());
+	    if(t != nullptr){Batch::submitQuad(t->genMatrix());};
 	};
     };
     Batch::endBatch();

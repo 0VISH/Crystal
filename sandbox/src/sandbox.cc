@@ -30,7 +30,7 @@ namespace Game{
     bool update(Event e, f64 dt){
 	Entity s1 = s.getEntity("spinny quad");
 	Component::Transform *s1T = s.getComponent<Component::Transform>(s1);
-	s1T->rotation.x += dt;
+	if(s1T != nullptr){s1T->rotation.x += dt;};
 	return false;
     };
 

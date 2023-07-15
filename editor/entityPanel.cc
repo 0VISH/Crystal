@@ -1,4 +1,5 @@
 #include "imgui_internal.h"
+
 //THANK YOU CHERNO!!
 void DrawVec3Control(char *label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f){
     ImGuiIO& io = ImGui::GetIO();
@@ -70,11 +71,25 @@ struct EntityPanel{
 	selectedEntity = -1;
     };
 
-    void drawTransformComponent(Component::Transform *t){
-	ImGui::Text("TRANSFORM");
-	DrawVec3Control("position", t->position);
-	DrawVec3Control("rotation", t->rotation);
-	DrawVec3Control("scale", t->scale);
+    template<typename T, typename Function>
+    void drawComponent(char *name, Entity e, Scene *s, Function func){
+	T *t = s->getComponent<T>(e);
+	if(t == nullptr){return;};
+	const ImGuiTreeNodeFlags f = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
+	ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
+	float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+	if(ImGui::TreeNodeEx(name, f)){
+	    ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
+	    if(ImGui::Button("-", ImVec2{ lineHeight, lineHeight })){
+	        s->removeComponent<T>(e);
+		ImGui::TreePop();
+		return;
+	    };
+
+	    func(t);
+
+	    ImGui::TreePop();
+	};
     };
     void renderEntities(){
 	if(ImGui::Begin("Entities")){
@@ -106,8 +121,11 @@ struct EntityPanel{
 		return;
 	    };
 
-	    Component::Transform *T = s->getComponent<Component::Transform>(e);
-	    if(T != nullptr){drawTransformComponent(T);};
+	    drawComponent<Component::Transform>("Transform", e, s, [](auto *c){
+		DrawVec3Control("position", c->position);
+		DrawVec3Control("rotation", c->rotation);
+		DrawVec3Control("scale", c->scale);
+	    });
 	    
 	    ImGui::End();
 	};
