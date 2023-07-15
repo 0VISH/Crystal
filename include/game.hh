@@ -1,6 +1,6 @@
 #pragma once
 
-#include "crystal.hh"
+#include "basic.hh"
 #include "log.hh"
 #include "mem.hh"
 #include "ds.hh"
@@ -9,19 +9,8 @@
 #include "scene.hh"
 #include "renderer.hh"
 #include "event.hh"
-#include "shaderSystem.hh"
+#include "shader.hh"
+#include "layer.hh"
+#include "crystal.hh"
 
-namespace Cry{
-    ShaderSystem &getShaderSystemRef();
-    MaterialSystem &getMaterialSystemRef();
-};
-
-namespace Game{
-    Scene **engineScenePointer;
-    
-    void setCurrentScene(Scene *s){
-	*engineScenePointer = s;
-    };
-
-    //char *gameName
-};
+extern Crystal *engine;

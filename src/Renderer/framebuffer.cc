@@ -1,4 +1,4 @@
-struct FrameBuffer{
+namespace FrameBuffer{
     u32 fbo;
     u32 rbo;
     u32 texture;

@@ -23,8 +23,7 @@ struct Vision{
 		    ImGui::TreePop();
 		};
 		if(ImGui::TreeNode("Frame Buffer")){
-		    FrameBuffer &fbo = engine->fb;
-		    ImGui::Text("fbo: %d\nrbo: %d\n texture: %d", fbo.fbo, fbo.rbo, fbo.texture);
+		    ImGui::Text("fbo: %d\nrbo: %d\n texture: %d", FrameBuffer::fbo, FrameBuffer::rbo, FrameBuffer::texture);
 		    ImGui::TreePop();
 		};
 		ImGui::Text("windowX: %d\nwindowY: %d\ncurrent scene: %p", engine->windowX, engine->windowY, engine->curScene);

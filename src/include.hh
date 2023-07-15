@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string.h>
-#include "crystal.hh"
+#include "basic.hh"
 #include "config.hh"
 #include "log.hh"
 #include "mem.cc"
@@ -11,10 +11,5 @@
 #include "ds.hh"
 #include "components.cc"
 #include "Renderer/include.hh"
-
-#include "crystal.cc"
-
-Crystal *engine;
-
 #include "scene.cc"
-#include "game.cc"
+#include "crystal.cc"

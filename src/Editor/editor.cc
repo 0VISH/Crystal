@@ -79,7 +79,7 @@ namespace Editor{
 	};
 	
 	if(ImGui::Begin("Scene")){
-	    ImGui::Text("Frame rate: %f\t\t\t\t\tDraw calls: %d", ImGui::GetIO().Framerate, engine->br.drawCalls);
+	    ImGui::Text("Frame rate: %f\t\t\t\t\tDraw calls: %d", ImGui::GetIO().Framerate, Batch::drawCalls);
 	    if(ImGui::IsWindowHovered()){
 		if(isKeyboardButtonEvent(e) && isKeyDown(ButtonCode::Key_LeftShift)){
 		    const float cameraSpeed = 5;
@@ -101,7 +101,7 @@ namespace Editor{
 
 	    if(engine->curScene != nullptr){
 	    ImGui::Image(
-			 (ImTextureID)engine->fb.texture, 
+			 (ImTextureID)FrameBuffer::texture, 
 			 ImGui::GetContentRegionAvail(), 
 			 ImVec2(0, 1), 
 			 ImVec2(1, 0)

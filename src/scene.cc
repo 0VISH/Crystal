@@ -95,22 +95,20 @@ Entity Scene::getEntity(char *name){
     std::string nameStr(name);
     return entityNameToEntity[nameStr];
 };
-void Scene::render(){
-    MaterialSystem &ms = engine->ms;
-    Batch::Batcher &br = engine->br;
-    engine->fb.bind();
+void Scene::render(MaterialSystem &ms){
+    FrameBuffer::bind();
     Renderer::clearColourBuffer();
-    br.beginBatch();
+    Batch::beginBatch();
     for(u32 x=0; x<ms.materials.count; x+=1){
 	Material &mat = ms.materials[x];
-	br.useMaterial(&mat);
+	Batch::useMaterial(&mat);
 	for(u32 i=0; i<mat.registeredEntities.count; i+=1){
 	    Entity ent = mat.registeredEntities[i];
 	    Component::Transform *t = getComponent<Component::Transform>(ent);
-	    br.submitQuad(t->genMatrix());
+	    Batch::submitQuad(t->genMatrix());
 	};
     };
-    br.endBatch();
-    br.flush();
-    engine->fb.unbind();
+    Batch::endBatch();
+    Batch::flush();
+    FrameBuffer::unbind();
 };

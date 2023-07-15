@@ -10,20 +10,19 @@ namespace Game{
     Scene s;
 
     void init(){
-	setCurrentScene(&s);
-	Renderer::drawWireframe();
+	engine->curScene = &s;
 	
 	s.init();
 	
 	Entity s1 = s.newEntity("spinny quad");
 	Component::Transform *s1T = s.addComponent<Component::Transform>(s1);
 	
-	Material &mat = Cry::getMaterialSystemRef().newMaterial(Cry::getShaderSystemRef().getDefaultShader());
+	Material &mat = engine->ms.newMaterial(engine->ss.getDefaultShader());
 	mat.col = glm::vec4(1.0, 0.5, 1.0, 1.0);
 	mat.registerEntity(s1);
     };
     void render(){
-        s.render();
+        s.render(engine->ms);
     };
     void uninit(){
 	s.uninit();

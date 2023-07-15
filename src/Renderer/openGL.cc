@@ -1,5 +1,8 @@
+#include "../../vendor/glad/include/glad/glad.h"
+
+//NOTE: debug stuff
 namespace OpenGL{
-#if(RCONTEXT_GL)
+#if(DBG)
     void APIENTRY DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
     {
 	//https://learnopengl.com/In-Practice/Debugging
@@ -68,5 +71,64 @@ namespace OpenGL{
 	    log("[SHADER LINK ERROR]: %s\n", infoLog);
 	}
     };
+    void enableDebugMode(){
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(OpenGL::DebugCallback, nullptr);
+    };
 #endif
+};
+
+namespace OpenGL{
+    u32 compileShader(char *shaderSrc, GLenum type){
+	char *src = Package::readTextFile(shaderSrc);
+	u32 shader = glCreateShader(type);
+	glShaderSource(shader, 1, &src, NULL);
+	glCompileShader(shader);
+	//TODO: Package should handle this
+	mem::free(src);
+	return shader;
+    };
+    void attachShaderToProgram(u32 shader, u32 program){
+	glAttachShader(program, shader);
+    };
+    void linkProgram(u32 program){
+	glLinkProgram(program);
+    };
+    void useProgram(u32 program){
+	glUseProgram(program);
+    };
+    void deleteShader(u32 shader){
+	glDeleteShader(shader);
+    };
+    void createDefaultShader(u32 &shaderProgram){
+	//SHADER
+	u32 vertexShader = OpenGL::compileShader("package/shader/vertex.glsl", GL_VERTEX_SHADER);
+#if(DBG)
+	OpenGL::vertexCheckErr(vertexShader);
+#endif
+	u32 fragmentShader = OpenGL::compileShader("package/shader/fragment.glsl", GL_FRAGMENT_SHADER);
+#if(DBG)
+	OpenGL::fragmentCheckErr(fragmentShader);
+#endif
+	OpenGL::attachShaderToProgram(vertexShader, shaderProgram);
+	OpenGL::attachShaderToProgram(fragmentShader, shaderProgram);
+	OpenGL::linkProgram(shaderProgram);
+#if(DBG)
+	OpenGL::linkCheckErr(shaderProgram);
+#endif
+	OpenGL::useProgram(shaderProgram);
+	OpenGL::deleteShader(vertexShader);
+	OpenGL::deleteShader(fragmentShader);
+    };
+    void drawWireframe(){glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);};
+    void drawFill(){glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);};
+    void setMat4Uniform(glm::mat4 &mat, char *uniformName, u32 shaderProgram){
+	s32 uLoc = glGetUniformLocation(shaderProgram, uniformName);
+	glUniformMatrix4fv(uLoc, 1, GL_FALSE, glm::value_ptr(mat));
+    };
+    void setVec4Uniform(glm::vec4 &vec, char *uniformName, u32 shaderProgram){
+	s32 uLoc = glGetUniformLocation(shaderProgram, uniformName);
+	glUniform4f(uLoc, vec[0], vec[1], vec[2], vec[3]);
+    };
+    void clearColourBuffer(){glClear(GL_COLOR_BUFFER_BIT);};
 };

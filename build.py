@@ -17,7 +17,7 @@ gameMain = None
 plat = None
 for i in argv:
     if i.startswith("main:"):
-        gameMain = i[len("path:"):]
+        gameMain = i[len("main:"):]
     if i.startswith("plat:"):
         plat = i[len("plat:"):]
 
