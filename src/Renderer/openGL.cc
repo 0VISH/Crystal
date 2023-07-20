@@ -8,40 +8,40 @@ namespace OpenGL{
 	//https://learnopengl.com/In-Practice/Debugging
 	if(id == 131169 || id == 131185 || id == 131218 || id == 131204) return; 
 
-	log("------[OPENGL ERROR]---------\n");
-	log("%s\n", message);
+	print("------[OPENGL ERROR]---------\n");
+	print("%s\n", message);
 
 	switch (source)
 	    {
-	    case GL_DEBUG_SOURCE_API:             log("Source: API"); break;
-	    case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   log("Source: Window System"); break;
-	    case GL_DEBUG_SOURCE_SHADER_COMPILER: log("Source: Shader Compile"); break;
-	    case GL_DEBUG_SOURCE_THIRD_PARTY:     log("Source: Third Party"); break;
-	    case GL_DEBUG_SOURCE_APPLICATION:     log("Source: Application"); break;
-	    case GL_DEBUG_SOURCE_OTHER:           log("Source: Other"); break;
+	    case GL_DEBUG_SOURCE_API:             print("Source: API"); break;
+	    case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   print("Source: Window System"); break;
+	    case GL_DEBUG_SOURCE_SHADER_COMPILER: print("Source: Shader Compile"); break;
+	    case GL_DEBUG_SOURCE_THIRD_PARTY:     print("Source: Third Party"); break;
+	    case GL_DEBUG_SOURCE_APPLICATION:     print("Source: Application"); break;
+	    case GL_DEBUG_SOURCE_OTHER:           print("Source: Other"); break;
 	    };
-	log("\n");
+	print("\n");
 	switch (type)
 	    {
-	    case GL_DEBUG_TYPE_ERROR:               log("Type: Error"); break;
-	    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: log("Type: Deprecated Behaviour"); break;
-	    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  log("Type: Undefined Behaviour"); break; 
-	    case GL_DEBUG_TYPE_PORTABILITY:         log("Type: Portability"); break;
-	    case GL_DEBUG_TYPE_PERFORMANCE:         log("Type: Performance"); break;
-	    case GL_DEBUG_TYPE_MARKER:              log("Type: Marker"); break;
-	    case GL_DEBUG_TYPE_PUSH_GROUP:          log("Type: Push Group"); break;
-	    case GL_DEBUG_TYPE_POP_GROUP:           log("Type: Pop Group"); break;
-	    case GL_DEBUG_TYPE_OTHER:               log("Type: Other"); break;
+	    case GL_DEBUG_TYPE_ERROR:               print("Type: Error"); break;
+	    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: print("Type: Deprecated Behaviour"); break;
+	    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  print("Type: Undefined Behaviour"); break; 
+	    case GL_DEBUG_TYPE_PORTABILITY:         print("Type: Portability"); break;
+	    case GL_DEBUG_TYPE_PERFORMANCE:         print("Type: Performance"); break;
+	    case GL_DEBUG_TYPE_MARKER:              print("Type: Marker"); break;
+	    case GL_DEBUG_TYPE_PUSH_GROUP:          print("Type: Push Group"); break;
+	    case GL_DEBUG_TYPE_POP_GROUP:           print("Type: Pop Group"); break;
+	    case GL_DEBUG_TYPE_OTHER:               print("Type: Other"); break;
 	    };
-	log("\n");
+	print("\n");
 	switch (severity)
 	    {
-	    case GL_DEBUG_SEVERITY_HIGH:         log("Severity: high"); break;
-	    case GL_DEBUG_SEVERITY_MEDIUM:       log("Severity: medium"); break;
-	    case GL_DEBUG_SEVERITY_LOW:          log("Severity: low"); break;
-	    case GL_DEBUG_SEVERITY_NOTIFICATION: log("Severity: notification"); break;
+	    case GL_DEBUG_SEVERITY_HIGH:         print("Severity: high"); break;
+	    case GL_DEBUG_SEVERITY_MEDIUM:       print("Severity: medium"); break;
+	    case GL_DEBUG_SEVERITY_LOW:          print("Severity: low"); break;
+	    case GL_DEBUG_SEVERITY_NOTIFICATION: print("Severity: notification"); break;
 	    };
-	log("\n");
+	print("\n");
     }
 
     void vertexCheckErr(u32 shader){
@@ -50,7 +50,7 @@ namespace OpenGL{
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if(!success){
 	    glGetShaderInfoLog(shader, 512, NULL, infoLog);
-	    log("[VERTEX SHADER ERROR]: %s\n", infoLog);
+	    print("[VERTEX SHADER ERROR]: %s\n", infoLog);
 	};
     };
     void fragmentCheckErr(u32 shader){
@@ -59,7 +59,7 @@ namespace OpenGL{
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if(!success){
 	    glGetShaderInfoLog(shader, 512, NULL, infoLog);
-	    log("[FRAGMENT SHADER ERROR]: %s\n", infoLog);
+	    print("[FRAGMENT SHADER ERROR]: %s\n", infoLog);
 	};
     };
     void linkCheckErr(u32 shaderProgram){
@@ -68,7 +68,7 @@ namespace OpenGL{
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if(!success) {
 	    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-	    log("[SHADER LINK ERROR]: %s\n", infoLog);
+	    print("[SHADER LINK ERROR]: %s\n", infoLog);
 	}
     };
     void enableDebugMode(){

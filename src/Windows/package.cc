@@ -6,7 +6,7 @@ namespace Package{
 
 #if(DBG)
 	if(f == nullptr){
-	    log("%s path does not exist", filePath);
+	    print("%s path does not exist", filePath);
 	    return nullptr;
 	};
 #endif

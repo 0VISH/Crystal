@@ -7,28 +7,16 @@ Crystal *engine;
 #if(EDITOR)
 #include "console.hh"
 
-namespace Editor{
-    extern void render();
-    extern void uninit();
-    extern void init(window::Window window, u32 *batchDrawCalls);
-    extern bool update(Event e, f64 dt);
-};
 #endif
 
-namespace Game{
-    extern void render();
-    extern void uninit();
-    extern void init();
-    extern bool update(Event e, f64 dt);
-
-    extern char *gameName;
-};
+#include "utils.hh"
+#include "gamee.hh"
 
 s32 main(){
     mem::calls = 0;
     engine = (Crystal*)mem::alloc(sizeof(Crystal));
     
-    window::Window window = window::create(Game::gameName, 1280, 800);
+    window::Window window = window::create("TODO: CLEANUP", 1280, 800);
     RenderContext::init(window);
 
     // Show the window
@@ -36,22 +24,26 @@ s32 main(){
     ::UpdateWindow(window);
 
     engine->init();
+
+    HMODULE dllHandle = LoadLibraryA("sandbox/bin/game.dll");
+    if(dllHandle == nullptr){
+	print("Not able to load game DLL");
+	return EXIT_SUCCESS;
+    };
+    auto setupUtilPointer = (void(*)(logType l))GetProcAddress(dllHandle, "setupUtilPointers");
+    setupUtilPointer(print);
+
+    auto setupPointers = (void(*)(materialInitType mit, materialUninitType mut, materialRegisterEntityType mret,
+				  materialSystemInitType msit, materialSystemUninitType msut, newMaterialType nmt))GetProcAddress(dllHandle, "setupPointers");
+    setupPointers(materialInit, materialUninit, materialRegisterEntity,
+		  materialSystemInit, materialSystemUninit, newMaterial);
     
-#if(EDITOR)
-    Layer *editorLayer = engine->lm.newLayer();
-    editorLayer->onUpdate = Editor::update;
-    editorLayer->onRender = Editor::render;
-    editorLayer->onUninit = Editor::uninit;
-    Editor::init(window, &Batch::drawCalls);
-
-    LOG("Render context: %s", Renderer::getRenderContextInfoString());
-#endif
-
     Layer *gameLayer = engine->lm.newLayer();
-    gameLayer->onRender = Game::render;
-    gameLayer->onUninit = Game::uninit;
-    gameLayer->onUpdate = Game::update;
-    Game::init();
+    gameLayer->onRender = (LayerFunc)GetProcAddress(dllHandle, "render");
+    gameLayer->onUninit = (LayerFunc)GetProcAddress(dllHandle, "uninit");
+    gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(dllHandle, "update");
+    auto ginit = (LayerFunc)GetProcAddress(dllHandle, "init");
+    ginit();
 
     LARGE_INTEGER freq, start, end;
     f64 dt  = 0;
@@ -74,8 +66,10 @@ s32 main(){
 	dt = (end.QuadPart - start.QuadPart);
 	dt /= freq.QuadPart;
     }
+
     
     engine->uninit();
+    FreeLibrary(dllHandle);
     RenderContext::uninit(window);
     window::destroy(window);
 

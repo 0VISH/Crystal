@@ -1,5 +1,3 @@
-#include "log.hh"
-
 namespace mem {
     s32 calls = 0;
     u64 notFreed = 0;

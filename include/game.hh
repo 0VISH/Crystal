@@ -1,22 +1,40 @@
 #pragma once
 
+#define EXPORT extern "C" __declspec(dllexport)
+
 #include "basic.hh"
 #include "config.hh"
-#include "log.hh"
-#include "mem.hh"
+
+#include "utils.hh"
+logType print;
+EXPORT void setupUtilPointers(logType l){
+    print = l;
+};
+
+#include "mem.cc"
 #include "ds.hh"
-#include "components.hh"
+#include "components.cc"
 #include "material.hh"
-#include "framebuffer.hh"
-#include "scene.hh"
-#include "renderer.hh"
+#include "scene.cc"
 #include "event.hh"
-#include "shader.hh"
-#include "layer.hh"
-#include "crystal.hh"
 
-#if(EDITOR)
-#include "console.hh"
-#endif
+#include "gamee.hh"
+materialInitType materialInit;
+materialUninitType materialUninit;
+materialRegisterEntityType materialRegisterEntity;
 
-extern Crystal *engine;
+materialSystemInitType materialSystemInit;
+materialSystemUninitType materialSystemUninit;
+newMaterialType newMaterial;
+
+EXPORT void setupPointers(materialInitType mit, materialUninitType mut, materialRegisterEntityType mret,
+			  materialSystemInitType msit, materialSystemUninitType msut, newMaterialType nmt){
+    
+    materialInit = mit;
+    materialUninit = mut;
+    materialRegisterEntity = mret;
+
+    materialSystemInit = msit;
+    materialSystemUninit = msut;
+    newMaterial = nmt;
+};

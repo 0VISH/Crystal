@@ -128,21 +128,9 @@ struct Event{
     f32 scroll;
 };
 
-struct EventDispatcher{
-    Event events[EVENT_COUNT];
-    u8 off;
-
-    void init();
-    void registerEvent(Event e);
-    Event getEvent();
-#if(DBG)
-    void dumpEvents();
-#endif
+bool isMouseButtonEvent(Event e){
+    return e.type == EventType::MOUSE_BUTTON_DOWN || e.type == EventType::MOUSE_BUTTON_UP;
 };
-
-bool isMouseButtonEvent(Event e);
-bool isKeyboardButtonEvent(Event e);
-
-#if(DBG)
-void dumpEvent(Event e);
-#endif
+bool isKeyboardButtonEvent(Event e){
+    return e.type == EventType::KEY_DOWN || e.type == EventType::KEY_UP;
+};

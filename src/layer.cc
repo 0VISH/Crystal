@@ -1,52 +1,64 @@
-#include "layer.hh"
+typedef void (*LayerFunc)();
+typedef bool (*LayerUpdateFunc)(Event e, f64 dt);   //returns true if event handled
 
+struct Layer{
+    u8 layerID;
+    LayerFunc onUninit;
+    LayerFunc onRender;
+    LayerUpdateFunc onUpdate;
+};
 
-void LayerManager::init(u8 len){
-    layerCount = 0;
-    layers = (Layer*)mem::alloc(sizeof(Layer) * len);
-};
-void LayerManager::uninit(){
-    mem::free(layers);
-};
-Layer *LayerManager::newLayer(){
-    Layer *layer = layers + layerCount;
-    layer->layerID = layerCount;
-    layerCount += 1;
-    return layer;
-};
-void LayerManager::popLayer(){
-    layerCount -= 1;
-    Layer *layer = layers + layerCount;
-    if(layer->onUninit != nullptr){layer->onUninit();};
-};
-void LayerManager::uninitLayers(){
-    for(u8 x=layerCount; x>0;){
-	x -= 1;
-	layers[x].onUninit();
+struct LayerManager{
+    Layer *layers;
+    u8 layerCount;
+
+    void init(u8 len){
+	layerCount = 0;
+	layers = (Layer*)mem::alloc(sizeof(Layer) * len);
     };
-};
-void LayerManager::updateLayers(Event event, f64 dt){
-    for(u8 x=0; x<layerCount; x+=1){
-	Layer& layer = layers[x];
-	if(layer.onUpdate == nullptr){continue;};
-	if(layer.onUpdate(event, dt)){
-	    event.type = EventType::NONE;
+    void uninit(){
+	mem::free(layers);
+    };
+    Layer *newLayer(){
+	Layer *layer = layers + layerCount;
+	layer->layerID = layerCount;
+	layerCount += 1;
+	return layer;
+    };
+    void popLayer(){
+	layerCount -= 1;
+	Layer *layer = layers + layerCount;
+	if(layer->onUninit != nullptr){layer->onUninit();};
+    };
+    void uninitLayers(){
+	for(u8 x=layerCount; x>0;){
+	    x -= 1;
+	    layers[x].onUninit();
 	};
     };
-};
-void LayerManager::renderLayers(){
-    for(u8 x=layerCount; x>0;){
-	x -= 1;
-	Layer& layer = layers[x];
-	if(layer.onRender == nullptr){continue;};
-	layer.onRender();
+    void updateLayers(Event event, f64 dt){
+	for(u8 x=0; x<layerCount; x+=1){
+	    Layer& layer = layers[x];
+	    if(layer.onUpdate == nullptr){continue;};
+	    if(layer.onUpdate(event, dt)){
+		event.type = EventType::NONE;
+	    };
+	};
     };
-};
+    void renderLayers(){
+	for(u8 x=layerCount; x>0;){
+	    x -= 1;
+	    Layer& layer = layers[x];
+	    if(layer.onRender == nullptr){continue;};
+	    layer.onRender();
+	};
+    };
 #if(DBG)
-void LayerManager::dumpLayersStat(){
-    for(u8 x=0; x<layerCount; x+=1){
-	Layer *layer = layers + x;
-	log("id: %d\nonUpdate: %p\nonRender: %p\nonUninit: %p\n", layer->layerID, layer->onUpdate, layer->onRender, layer->onUninit);
+    void dumpLayersStat(){
+	for(u8 x=0; x<layerCount; x+=1){
+	    Layer *layer = layers + x;
+	    print("id: %d\nonUpdate: %p\nonRender: %p\nonUninit: %p\n", layer->layerID, layer->onUpdate, layer->onRender, layer->onUninit);
+	};
     };
-};
 #endif
+};

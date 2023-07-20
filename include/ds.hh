@@ -17,7 +17,7 @@ namespace ds{
 	T &getElement(u32 index) {
 #if(DBG)
 	    if (index >= len) {
-		dlog("\n[ERROR]: abc(dynamic_array) failed");
+		print("\n[ERROR]: abc(dynamic_array) failed");
 	    };
 #endif
 	    return mem[index];
@@ -50,7 +50,7 @@ namespace ds{
 	}
 #if(DBG)
 	void dumpStat() {
-	    log("\n[DYNAMIC_ARRAY] mem: %p; count: %d; len: %d\n", mem, count, len);
+	    print("\n[DYNAMIC_ARRAY] mem: %p; count: %d; len: %d\n", mem, count, len);
 	};
 #endif
     };

@@ -13,7 +13,7 @@ void uninitLogOutputFile(){
     fclose(logOutputFile);
 };
 
-void log(const char *fmt, ...){
+void print(char *fmt, ...){
     va_list args;
     va_start(args, fmt);
     FILE *out = (logOutputFile==nullptr)?stdout:logOutputFile;

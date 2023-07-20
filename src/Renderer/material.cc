@@ -1,28 +1,28 @@
 #include "material.hh"
 
-void Material::init(u32 s){
-    shader = s;
-    registeredEntities.init();
+void materialInit(Material &m, u32 s){
+    m.shader = s;
+    m.registeredEntities.init();
 };
-void Material::uninit(){
-    registeredEntities.uninit();
+void materialUninit(Material &m){
+    m.registeredEntities.uninit();
 };
-void Material::registerEntity(Entity e){
-    registeredEntities.push(e);
+void materialRegisterEntity(Material &m, Entity e){
+    m.registeredEntities.push(e);
 };
 
-void MaterialSystem::init(u32 materialCount){
-    materials.init(materialCount);
+void materialSystemInit(MaterialSystem &ms, u32 materialCount = 5){
+    ms.materials.init(materialCount);
 };
-void MaterialSystem::uninit(){
-    for(u32 x=0; x<materials.count; x+=1){
-	Material &mat = materials[x];
-	mat.uninit();
+void materialSystemUninit(MaterialSystem &ms){
+    for(u32 x=0; x<ms.materials.count; x+=1){
+	Material &mat = ms.materials[x];
+	materialUninit(mat);
     };
-    materials.uninit();
+    ms.materials.uninit();
 };
-Material &MaterialSystem::newMaterial(u32 shader){
-    Material &mat =  materials.newElem();
-    mat.init(shader);
+Material &newMaterial(MaterialSystem &ms, u32 shader){
+    Material &mat =  ms.materials.newElem();
+    materialInit(mat, shader);
     return mat;
 };

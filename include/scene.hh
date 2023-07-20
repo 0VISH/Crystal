@@ -60,7 +60,6 @@ struct Scene{
 	if(!IS_BIT(mask, componentID)){return nullptr;};
 	return (T*)components[componentID].getComponent(e);
     };
-    void render(MaterialSystem &ms, FrameBuffer &fb);
 
     std::unordered_map<std::string, Entity> entityNameToEntity;
     ds::DynamicArray<u32> entityComponentMask;

@@ -9,30 +9,15 @@
 namespace Game{
     Scene s;
 
-    void init(){
-	engine->curScene = &s;
-	
+    EXPORT void init(){
 	s.init();
-	
-	Entity s1 = s.newEntity("spinny quad");
-	Component::Transform *s1T = s.addComponent<Component::Transform>(s1);
-	
-	Material &mat = engine->ms.newMaterial(engine->ss.getDefaultShader());
-	mat.col = glm::vec4(1.0, 0.5, 1.0, 1.0);
-	mat.registerEntity(s1);
     };
-    void render(){
-        s.render(engine->ms, engine->fb);
+    EXPORT void render(){
     };
-    void uninit(){
+    EXPORT void uninit(){
 	s.uninit();
     };
-    bool update(Event e, f64 dt){
-	Entity s1 = s.getEntity("spinny quad");
-	Component::Transform *s1T = s.getComponent<Component::Transform>(s1);
-	if(s1T != nullptr){s1T->rotation.x += dt;};
+    EXPORT bool update(Event e, f64 dt){
 	return false;
     };
-
-    char *gameName = "Sandbox";
 };
