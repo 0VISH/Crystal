@@ -93,7 +93,7 @@ struct EntityPanel{
     };
     void renderEntities(){
 	if(ImGui::Begin("Entities")){
-	    Scene *s = engine->curScene;
+	    Scene *s = getCurrentScene();
 	    if(s == nullptr){
 		ImGui::End();
 		return;
@@ -111,7 +111,7 @@ struct EntityPanel{
     };
     void renderComponents(){
 	if(ImGui::Begin("Components")){
-	    Scene *s = engine->curScene;
+	    Scene *s = getCurrentScene();
 	    if(s == nullptr){
 		ImGui::End();
 		return;

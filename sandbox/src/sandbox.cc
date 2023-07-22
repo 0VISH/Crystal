@@ -10,12 +10,16 @@ namespace Game{
     Scene s;
 
     EXPORT void init(){
-	s.init();
+	sceneInit(s, 10);
+	setCurrentScene(&s);
+
+	Entity e = sceneNewEntity(s, "spinny quad");
+	s.addComponent<Component::Transform>(e);
     };
     EXPORT void render(){
     };
     EXPORT void uninit(){
-	s.uninit();
+	sceneUninit(s);
     };
     EXPORT bool update(Event e, f64 dt){
 	return false;

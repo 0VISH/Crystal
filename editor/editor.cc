@@ -1,29 +1,65 @@
+#include <stdio.h>
+#include <windows.h>
+#include <Commdlg.h>
+#include <ShObjIdl.h>
+#include <ShlObj.h>
+
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
 #include "glm/mat4x4.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include "game.hh"
 #include "imgui.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_win32.h"
+#include "game.hh"
 #include "console.cc"
-#include "vision.cc"
 #include "entityPanel.cc"
-#include <windows.h>
-//#include "materialPanel.cc"s
 
 bool isKeyDown(ButtonCode code);
 Console console;
 
+void openGameFolder(){
+    CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+
+    IFileOpenDialog* pFileOpen;
+    HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pFileOpen));
+
+    if (SUCCEEDED(hr)) {
+        DWORD dwOptions;
+        pFileOpen->GetOptions(&dwOptions);
+        pFileOpen->SetOptions(dwOptions | FOS_PICKFOLDERS); // Set the folder selection option
+
+        if (pFileOpen->Show(NULL) == S_OK) {
+            IShellItem* pItem;
+            if (pFileOpen->GetResult(&pItem) == S_OK) {
+                PWSTR folderPath;
+                pItem->GetDisplayName(SIGDN_FILESYSPATH, &folderPath);
+
+                // Convert the folderPath from wide character to multi-byte character
+                int bufferSize = WideCharToMultiByte(CP_UTF8, 0, folderPath, -1, NULL, 0, NULL, NULL);
+                char* folderPathUtf8 = (char*)mem::alloc(bufferSize);
+                WideCharToMultiByte(CP_UTF8, 0, folderPath, -1, folderPathUtf8, bufferSize, NULL, NULL);
+
+                setGameFolder(folderPathUtf8);
+
+		mem::free(folderPathUtf8);
+                CoTaskMemFree(folderPath);
+                pItem->Release();
+            }
+        }
+        pFileOpen->Release();
+    }
+
+    CoUninitialize();
+};
+
 namespace Editor{ 
-    Component::Camera cam;
-    Vision vs;
     EntityPanel ep;
     bool showDemo;
     u32 *drawCalls;
     
-    void init(HWND window, u32 *batchDrawCall){
+    EXPORT void init(HWND window, u32 *batchDrawCall){
 	drawCalls = batchDrawCall;
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -60,15 +96,11 @@ namespace Editor{
 	colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 	colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 
-	vs.init();
 	ep.init();
 	console.init();
 	showDemo = false;
-
-	cam.init();
-	cam.initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
     };
-    bool update(Event e, f64 dt){
+    EXPORT bool update(Event e, f64 dt){
 	//FEEDING IMGUI EVENTS
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	if(isMouseButtonEvent(e)){
@@ -112,6 +144,12 @@ namespace Editor{
 	style.WindowMinSize.x = minWinSizeX;
 
 	if(ImGui::BeginMenuBar()){
+	    if(ImGui::BeginMenu("File")){
+		if (ImGui::MenuItem("Open")){
+		    openGameFolder();
+		};
+		ImGui::EndMenu();
+	    };
 	    if(ImGui::BeginMenu("Windows")){
 		if (ImGui::MenuItem("ImGui Demo")){
 		    showDemo = !showDemo;
@@ -124,24 +162,13 @@ namespace Editor{
 	if(ImGui::Begin("Scene")){
 	    ImGui::Text("Frame rate: %f\t\t\t\t\tDraw calls: %d", ImGui::GetIO().Framerate, *drawCalls);
 	    if(ImGui::IsWindowHovered()){
-		if(isKeyboardButtonEvent(e) && isKeyDown(ButtonCode::Key_LeftShift)){
-		    const float cameraSpeed = 5;
-		    if(e.type == EventType::KEY_DOWN){
-			switch(e.buttonCode){
-			case ButtonCode::Key_W:cam.pos.y += cameraSpeed * dt;break;
-			case ButtonCode::Key_S:cam.pos.y -= cameraSpeed * dt;break;
-			case ButtonCode::Key_D:cam.pos.x += cameraSpeed * dt;break;
-			case ButtonCode::Key_A:cam.pos.x -= cameraSpeed * dt;break;
-			};
-		    };
-		}else if(e.type == EventType::MOUSE_SCROLL){
-		    cam.updateZoomLevel(e.scroll/100);
-		};
+		
 	    };
 		
 	    float width = ImGui::GetContentRegionAvail().x;
 	    float height = ImGui::GetContentRegionAvail().y;
 
+	    /*
 	    if(engine->curScene != nullptr){
 #pragma warning(disable: 4312)
 	    ImGui::Image(
@@ -152,6 +179,7 @@ namespace Editor{
 			 );
 #pragma warning(default: 4312)
 	    };
+	    */
 	    ImGui::End();
 	}
 
@@ -159,24 +187,19 @@ namespace Editor{
 	
 	//DOCKING
 	ImGui::End();
-
-	//UPDATE EDITOR CAMERA
-	cam.calculateViewMat();
-	engine->ss.setCameraProjectionViewMatrix(cam.projection * cam.view);
 	
 	return io.WantCaptureMouse || io.WantCaptureKeyboard;
     };
-    void render(){
+    EXPORT void render(){
 	ep.renderEntities();
 	ep.renderComponents();
-       	vs.render();
 	console.Draw("Console");
 	if(showDemo){ImGui::ShowDemoWindow(&showDemo);};
 
         ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     };
-    void uninit(){
+    EXPORT void uninit(){
 	console.uninit();
 	
 	ImGui_ImplOpenGL3_Shutdown();
@@ -184,3 +207,7 @@ namespace Editor{
 	ImGui::DestroyContext();
     };
 };
+
+#pragma comment(lib, "Comdlg32.lib")
+#pragma comment(lib, "Shell32.lib")
+#pragma comment(lib, "Ole32.lib")

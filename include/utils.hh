@@ -1,3 +1,5 @@
 #pragma once
 
-typedef void (*logType)(char *fmt, ...);
+typedef void  (*setGameFolderType)(char *path);
+typedef u32   (*getComponentUIDType)();
+typedef void  (*logType)(char *fmt, ...);

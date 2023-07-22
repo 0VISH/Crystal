@@ -5,18 +5,12 @@
 #include <string>
 
 template <class T>
-u32 getID();
+u32 getID(){
+    static u32 componentId = getComponentUID();
+    return componentId;
+}
 
 struct ComponentPool{
-    void init(u64 size, u32 begLen = 5, u32 ew = 5);
-    void uninit();
-    void *newComponent(Entity e);
-    void removeComponent(Entity e);
-    void *getComponent(Entity e);
-#if(DBG)
-    void dumpStat();
-#endif
-
     u64 componentSize;
     char *mem;
     u32 count;
@@ -26,23 +20,18 @@ struct ComponentPool{
 };
 
 struct Scene{
-    void init(u32 begEntityCount = 5);
-    void uninit();
-    Entity newEntity(char *name);
-    Entity getEntity(char *name);
-
     //TODO: maybe check??
     template<typename T>
     T *addComponent(Entity e){
 	u32 componentID = getID<T>();
 	if(componentID >= components.count){
 	    ComponentPool &cp = components.newElem();
-	    cp.init(sizeof(T));
+	    componentPoolInit(cp, sizeof(T), 5, 5);
 	};
 	u32 &mask = entityComponentMask[e];
 	SET_BIT(mask, componentID);
 	ComponentPool &cp = components[componentID];
-	T* t = (T*)cp.newComponent(e);
+	T* t = (T*)componentPoolNewComponent(cp, e);
 	t->init();
 	return t;
     };
@@ -51,14 +40,14 @@ struct Scene{
 	u32 componentID = getID<T>();
 	u32 &mask = entityComponentMask[e];
 	CLEAR_BIT(mask, componentID);
-	components[componentID].removeComponent(e);
+	componentPoolRemoveComponent(components[componentID], e);
     };
     template<typename T>
     T *getComponent(Entity e){
 	u32 componentID = getID<T>();
 	u32 mask = entityComponentMask[e];
 	if(!IS_BIT(mask, componentID)){return nullptr;};
-	return (T*)components[componentID].getComponent(e);
+	return (T*)componentPoolGetComponent(components[componentID], e);
     };
 
     std::unordered_map<std::string, Entity> entityNameToEntity;

@@ -11,4 +11,5 @@
 #include "ds.hh"
 #include "components.cc"
 #include "Renderer/include.hh"
+#include "scene.cc"
 #include "crystal.cc"

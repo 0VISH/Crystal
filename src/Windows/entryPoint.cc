@@ -2,15 +2,18 @@
 
 Crystal *engine;
 
+void setCurrentScene(Scene *s){
+    engine->curScene = s;
+};
+Scene *getCurrentScene(){
+    return engine->curScene;
+};
+
 #include "include.hh"
-
-#if(EDITOR)
-#include "console.hh"
-
-#endif
 
 #include "utils.hh"
 #include "gamee.hh"
+#include "code.cc"
 
 s32 main(){
     mem::calls = 0;
@@ -25,29 +28,24 @@ s32 main(){
 
     engine->init();
 
-    HMODULE dllHandle = LoadLibraryA("sandbox/bin/game.dll");
-    if(dllHandle == nullptr){
-	print("Not able to load game DLL");
-	return EXIT_SUCCESS;
-    };
-    auto setupUtilPointer = (void(*)(logType l))GetProcAddress(dllHandle, "setupUtilPointers");
-    setupUtilPointer(print);
-
-    auto setupPointers = (void(*)(materialInitType mit, materialUninitType mut, materialRegisterEntityType mret,
-				  materialSystemInitType msit, materialSystemUninitType msut, newMaterialType nmt))GetProcAddress(dllHandle, "setupPointers");
-    setupPointers(materialInit, materialUninit, materialRegisterEntity,
-		  materialSystemInit, materialSystemUninit, newMaterial);
-    
-    Layer *gameLayer = engine->lm.newLayer();
-    gameLayer->onRender = (LayerFunc)GetProcAddress(dllHandle, "render");
-    gameLayer->onUninit = (LayerFunc)GetProcAddress(dllHandle, "uninit");
-    gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(dllHandle, "update");
-    auto ginit = (LayerFunc)GetProcAddress(dllHandle, "init");
-    ginit();
-
     LARGE_INTEGER freq, start, end;
     f64 dt  = 0;
     QueryPerformanceFrequency(&freq);
+
+    HMODULE editorCode = nullptr;
+    HMODULE gameCode = LoadLibraryA("gameWin.dll");
+    if(gameCode == nullptr){
+	editorCode = LoadLibraryA("bin/win/dbg/editor.dll");
+
+	SETUP_POINTERS(editorCode);
+
+	Layer *editorLayer = engine->lm.newLayer();
+	editorLayer->onRender = (LayerFunc)GetProcAddress(editorCode, "render");
+	editorLayer->onUninit = (LayerFunc)GetProcAddress(editorCode, "uninit");
+	editorLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(editorCode, "update");
+	auto einit = (void(*)(HWND window, u32 *batchDrawCall))GetProcAddress(editorCode, "init");
+	einit(window, &Batch::drawCalls);
+    };
     
     while(true){
 	QueryPerformanceCounter(&start);
@@ -66,10 +64,8 @@ s32 main(){
 	dt = (end.QuadPart - start.QuadPart);
 	dt /= freq.QuadPart;
     }
-
     
     engine->uninit();
-    FreeLibrary(dllHandle);
     RenderContext::uninit(window);
     window::destroy(window);
 
