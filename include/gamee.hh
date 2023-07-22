@@ -15,10 +15,11 @@ typedef void* (*componentPoolNewComponentType)(ComponentPool &cp, Entity e);
 typedef void  (*componentPoolRemoveComponentType)(ComponentPool &cp, Entity e);
 typedef void* (*componentPoolGetComponentType)(ComponentPool &cp, Entity e);
 
+typedef Scene* (*allocSceneType)();
+typedef void   (*freeSceneType)(Scene *s);
 typedef void   (*sceneInitType)(Scene &s, u32 begEntityCount);
 typedef void   (*sceneUninitType)(Scene &s);
-typedef Entity (*sceneNewEntityType)(Scene &s, char *name);
-typedef Entity (*sceneGetEntityType)(Scene &s, char *name);
+typedef Entity (*sceneNewEntityType)(Scene &s);
 
 typedef void   (*setCurrentSceneType)(Scene *s);
 typedef Scene* (*getCurrentSceneType)();

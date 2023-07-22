@@ -7,21 +7,18 @@
 #include "game.hh"
 
 namespace Game{
-    Scene s;
+    Scene *s;
 
     EXPORT void init(){
-	sceneInit(s, 10);
-	setCurrentScene(&s);
 
-	Entity e = sceneNewEntity(s, "spinny quad");
-	s.addComponent<Component::Transform>(e);
     };
     EXPORT void render(){
     };
     EXPORT void uninit(){
-	sceneUninit(s);
+
     };
     EXPORT bool update(Event e, f64 dt){
+	print("4443");
 	return false;
     };
 };

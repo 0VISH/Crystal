@@ -28,16 +28,10 @@ s32 main(){
 
     engine->init();
 
-    LARGE_INTEGER freq, start, end;
-    f64 dt  = 0;
-    QueryPerformanceFrequency(&freq);
-
     HMODULE editorCode = nullptr;
-    HMODULE gameCode = LoadLibraryA("gameWin.dll");
-    if(gameCode == nullptr){
-	editorCode = LoadLibraryA("bin/win/dbg/editor.dll");
-
-	SETUP_POINTERS(editorCode);
+    engine->gameCode = Code::load("gameWin.dll");
+    if(engine->gameCode == NULL){
+	editorCode = Code::load("bin/win/dbg/editor.dll");
 
 	Layer *editorLayer = engine->lm.newLayer();
 	editorLayer->onRender = (LayerFunc)GetProcAddress(editorCode, "render");
@@ -45,10 +39,33 @@ s32 main(){
 	editorLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(editorCode, "update");
 	auto einit = (void(*)(HWND window, u32 *batchDrawCall))GetProcAddress(editorCode, "init");
 	einit(window, &Batch::drawCalls);
+    }else{
+	//TODO: 
     };
+
+    LARGE_INTEGER freq, start, end;
+    f64 dt  = 0;
+    QueryPerformanceFrequency(&freq);
+    
     
     while(true){
 	QueryPerformanceCounter(&start);
+
+	if(editorCode != NULL && engine->gameCode != NULL){
+	    FILETIME curTime = Code::getLastWriteTime();
+	    
+	    if(CompareFileTime(&curTime, &engine->lastTime) != 0){
+		Code::unload(engine->gameCode);
+		engine->gameCode = Code::cpySrcAndLoadTemp();
+		engine->lastTime = curTime;
+		print("\nRELOADED\n");
+
+		Layer *gameLayer = &engine->lm.layers[engine->lm.layerCount - 1];
+		gameLayer->onRender = (LayerFunc)GetProcAddress(engine->gameCode, "render");
+		gameLayer->onUninit = (LayerFunc)GetProcAddress(engine->gameCode, "uninit");
+		gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(engine->gameCode, "update");
+	    };
+	};
 	
 	window::pollEvents();
 	if(engine->shouldClose){break;};
@@ -66,6 +83,8 @@ s32 main(){
     }
     
     engine->uninit();
+    Code::unload(engine->gameCode);
+    Code::unload(editorCode);
     RenderContext::uninit(window);
     window::destroy(window);
 

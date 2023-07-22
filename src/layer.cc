@@ -30,6 +30,9 @@ struct LayerManager{
 	Layer *layer = layers + layerCount;
 	if(layer->onUninit != nullptr){layer->onUninit();};
     };
+    void popLayerWithoutUninit(){
+	layerCount -= 1;
+    };
     void uninitLayers(){
 	for(u8 x=layerCount; x>0;){
 	    x -= 1;

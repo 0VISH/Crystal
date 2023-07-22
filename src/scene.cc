@@ -87,15 +87,15 @@ void sceneUninit(Scene &s){
     };
     s.components.uninit();
 };
-Entity sceneNewEntity(Scene &s, char *name){
+Entity sceneNewEntity(Scene &s){
     Entity e = s.entityCount;
-    std::string nameStr(name, strlen(name));
-    s.entityNameToEntity[nameStr] = e;
     s.entityCount += 1;
     s.entityComponentMask.push(0);
     return e;
 };
-Entity sceneGetEntity(Scene &s, char *name){
-    std::string nameStr(name);
-    return s.entityNameToEntity[nameStr];
+Scene *allocScene(){
+    return (Scene*)mem::alloc(sizeof(Scene));
+};
+void freeScene(Scene *s){
+    mem::free(s);
 };

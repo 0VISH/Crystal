@@ -1,4 +1,5 @@
 #include "scene.hh"
+#include<windows.h>
 
 struct Crystal{
     LayerManager      lm;
@@ -10,8 +11,14 @@ struct Crystal{
     u32               windowX;
     u32               windowY;
     bool              shouldClose;
+
     
-    void init(){	
+    HMODULE           gameCode;
+    FILETIME          lastTime;
+    
+    void init(){
+	lastTime = {};
+	gameCode = nullptr;
 	curScene = nullptr;
 	lm.init(3);
 	materialSystemInit(ms);

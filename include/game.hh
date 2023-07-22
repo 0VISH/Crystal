@@ -37,10 +37,11 @@ componentPoolNewComponentType componentPoolNewComponent;
 componentPoolRemoveComponentType componentPoolRemoveComponent;
 componentPoolGetComponentType componentPoolGetComponent;
 
+allocSceneType allocScene;
+freeSceneType  freeScene;
 sceneInitType sceneInit;
 sceneUninitType sceneUninit;
 sceneNewEntityType sceneNewEntity;
-sceneGetEntityType sceneGetEntity;
 
 setCurrentSceneType setCurrentScene;
 getCurrentSceneType getCurrentScene;
@@ -48,7 +49,7 @@ getCurrentSceneType getCurrentScene;
 EXPORT void setupPointers(materialInitType mit, materialUninitType mut, materialRegisterEntityType mret,
 			  materialSystemInitType msit, materialSystemUninitType msut, newMaterialType nmt,
 			  componentPoolInitType cpit, componentPoolNewComponentType cpnct, componentPoolRemoveComponentType cprct, componentPoolGetComponentType cpgct,
-			  sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, sceneGetEntityType sget,
+			  allocSceneType ast, freeSceneType fst, sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet,
 			  setCurrentSceneType scst,getCurrentSceneType gcst){
     
     materialInit = mit;
@@ -64,10 +65,11 @@ EXPORT void setupPointers(materialInitType mit, materialUninitType mut, material
     componentPoolRemoveComponent = cprct;
     componentPoolGetComponent = cpgct;
 
+    allocScene = ast;
+    freeScene = fst;
     sceneInit = sit;
     sceneUninit = sut;
     sceneNewEntity = snet;
-    sceneGetEntity = sget;
 
     setCurrentScene = scst;
     getCurrentScene = gcst;

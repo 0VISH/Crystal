@@ -1,8 +1,6 @@
 #pragma once
 
 //TODO: write a custom hashmap
-#include <unordered_map>
-#include <string>
 
 template <class T>
 u32 getID(){
@@ -50,7 +48,6 @@ struct Scene{
 	return (T*)componentPoolGetComponent(components[componentID], e);
     };
 
-    std::unordered_map<std::string, Entity> entityNameToEntity;
     ds::DynamicArray<u32> entityComponentMask;
     ds::DynamicArray<ComponentPool> components;
     Entity entityCount;

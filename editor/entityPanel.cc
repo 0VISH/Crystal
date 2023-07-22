@@ -99,6 +99,7 @@ struct EntityPanel{
 		return;
 	    };
 	    u32 x = 0;
+	    /*
 	    for(auto const &pair: s->entityNameToEntity){
 		if(ImGui::Selectable(pair.first.c_str(), selectedEntity == x)){
 		    selectedEntity = x;
@@ -106,6 +107,7 @@ struct EntityPanel{
 		};
 		x += 1;
 	    };
+	    */
 	    ImGui::End();
 	};
     };
