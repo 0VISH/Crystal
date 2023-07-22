@@ -21,5 +21,6 @@ typedef void   (*sceneInitType)(Scene &s, u32 begEntityCount);
 typedef void   (*sceneUninitType)(Scene &s);
 typedef Entity (*sceneNewEntityType)(Scene &s);
 
+typedef void   (*editorSignalType)();
 typedef void   (*setCurrentSceneType)(Scene *s);
 typedef Scene* (*getCurrentSceneType)();

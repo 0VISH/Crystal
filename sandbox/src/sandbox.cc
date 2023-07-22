@@ -18,7 +18,7 @@ namespace Game{
 
     };
     EXPORT bool update(Event e, f64 dt){
-	print("4443");
+	print("1");
 	return false;
     };
 };

@@ -8,12 +8,24 @@ void setCurrentScene(Scene *s){
 Scene *getCurrentScene(){
     return engine->curScene;
 };
+void editorSignal();
 
 #include "include.hh"
 
 #include "utils.hh"
 #include "gamee.hh"
 #include "code.cc"
+
+void editorSignal(){
+    Code::unload(engine->gameCode);
+    engine->gameCode = Code::cpySrcAndLoadTemp();
+    print("\nRELOADED\n");
+
+    Layer *gameLayer = &engine->lm.layers[engine->lm.layerCount - 1];
+    gameLayer->onRender = (LayerFunc)GetProcAddress(engine->gameCode, "render");
+    gameLayer->onUninit = (LayerFunc)GetProcAddress(engine->gameCode, "uninit");
+    gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(engine->gameCode, "update");
+};
 
 s32 main(){
     mem::calls = 0;
@@ -50,22 +62,6 @@ s32 main(){
     
     while(true){
 	QueryPerformanceCounter(&start);
-
-	if(editorCode != NULL && engine->gameCode != NULL){
-	    FILETIME curTime = Code::getLastWriteTime();
-	    
-	    if(CompareFileTime(&curTime, &engine->lastTime) != 0){
-		Code::unload(engine->gameCode);
-		engine->gameCode = Code::cpySrcAndLoadTemp();
-		engine->lastTime = curTime;
-		print("\nRELOADED\n");
-
-		Layer *gameLayer = &engine->lm.layers[engine->lm.layerCount - 1];
-		gameLayer->onRender = (LayerFunc)GetProcAddress(engine->gameCode, "render");
-		gameLayer->onUninit = (LayerFunc)GetProcAddress(engine->gameCode, "uninit");
-		gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(engine->gameCode, "update");
-	    };
-	};
 	
 	window::pollEvents();
 	if(engine->shouldClose){break;};

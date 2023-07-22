@@ -187,6 +187,12 @@ namespace Editor{
 	
 	//DOCKING
 	ImGui::End();
+
+	if(isKeyboardButtonEvent(e)){
+	    if(e.buttonCode == ButtonCode::Key_R){
+		editorSignal();
+	    };
+	};
 	
 	return io.WantCaptureMouse || io.WantCaptureKeyboard;
     };

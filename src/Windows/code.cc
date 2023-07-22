@@ -1,3 +1,4 @@
+
 #define SETUP_POINTERS(HANDLE)						\
     auto setupUtilPointer = (void(*)(logType l, getComponentUIDType gcut, setGameFolderType sgft))GetProcAddress(HANDLE, "setupUtilPointers"); \
     setupUtilPointer(print, getComponentUID, Code::setGameFolder);	\
@@ -6,12 +7,14 @@
 				  materialSystemInitType msit, materialSystemUninitType msut, newMaterialType nmt, \
 				  componentPoolInitType cpit, componentPoolNewComponentType cpnct, componentPoolRemoveComponentType cprct, componentPoolGetComponentType cpgct, \
 				  allocSceneType ast, freeSceneType fst, sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, \
-				  setCurrentSceneType scst, getCurrentSceneType gcst))GetProcAddress(HANDLE, "setupPointers"); \
+				  setCurrentSceneType scst, getCurrentSceneType gcst,\
+				  editorSignalType est))GetProcAddress(HANDLE, "setupPointers"); \
     setupPointers(materialInit, materialUninit, materialRegisterEntity,	\
 		  materialSystemInit, materialSystemUninit, newMaterial, \
 		  componentPoolInit, componentPoolNewComponent, componentPoolRemoveComponent, componentPoolGetComponent, \
 		  allocScene, freeScene, sceneInit, sceneUninit, sceneNewEntity, \
-		  setCurrentScene, getCurrentScene);			\
+		  setCurrentScene, getCurrentScene,			\
+		  editorSignal);					\
 
 namespace Code{
     char dllTemp[1000];
