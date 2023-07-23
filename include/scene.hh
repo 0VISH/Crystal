@@ -1,5 +1,7 @@
 #pragma once
 
+typedef u32 Entity;
+
 //TODO: write a custom hashmap
 
 template <class T>

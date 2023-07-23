@@ -58,10 +58,13 @@ namespace Editor{
     Console console;
 
     EXPORT void addLog(char *fmt, ...){
+	char buf[1024];
 	va_list args;
 	va_start(args, fmt);
-	console.AddLog(fmt, args);
+	vsnprintf(buf, IM_ARRAYSIZE(buf), fmt, args);
+	buf[IM_ARRAYSIZE(buf)-1] = 0;
 	va_end(args);
+	console.Items.push_back(Strdup(buf));
     };
     
     EXPORT void init(HWND window, u32 *batchDrawCall){
@@ -103,6 +106,7 @@ namespace Editor{
 
 	ep.init();
 	console.init();
+	print = addLog;
 	showDemo = false;
     };
     EXPORT bool update(Event e, f64 dt){

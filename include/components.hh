@@ -1,7 +1,5 @@
 #pragma once
 
-typedef u32 Entity;
-
 //NOTE: all components need to have function 'init'
 namespace Component{
     struct Camera{

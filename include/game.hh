@@ -20,14 +20,15 @@ EXPORT void setupUtilPointers(logType l, getComponentUIDType gcut, setGameFolder
     editorSignal = est;
 };
 
-#include "mem.cc"
 #include "ds.hh"
-#include "components.cc"
-#include "material.hh"
 #include "scene.hh"
+#include "material.hh"
 #include "event.hh"
 
-#include "gamee.hh"
+//cpp code which every game has to compile
+#include "../game/include.hh"
+
+#include "enginePointers.hh"
 materialInitType materialInit;
 materialUninitType materialUninit;
 materialRegisterEntityType materialRegisterEntity;

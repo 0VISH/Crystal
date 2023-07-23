@@ -7,3 +7,7 @@
 #include "window.cc"
 #include "context.cc"
 #include "package.cc"
+
+void editorSignal();
+#include "code.cc"
+#include "utils.cc"

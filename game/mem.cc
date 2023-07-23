@@ -1,3 +1,6 @@
+//TODO: This is a copy of engine's mem.cc. We would like engine to hand over
+//the game some memory and this files decides how to allocate from that pool.
+
 namespace mem {
     s32 calls = 0;
     u64 notFreed = 0;

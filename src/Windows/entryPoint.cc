@@ -1,37 +1,8 @@
 #include "basic.hh"
-
 #include "utils.hh"
 logType print;
-
 #include "../include.hh"
-
-
-Crystal *engine;
-
-void setCurrentScene(Scene *s){
-    engine->curScene = s;
-};
-Scene *getCurrentScene(){
-    return engine->curScene;
-};
-void editorSignal();
-
-
 #include "include.hh"
-
-#include "gamee.hh"
-#include "code.cc"
-
-void editorSignal(){
-    Code::unload(engine->gameCode);
-    engine->gameCode = Code::cpySrcAndLoadTemp();
-    print("\nRELOADED\n");
-
-    Layer *gameLayer = &engine->lm.layers[engine->lm.layerCount - 1];
-    gameLayer->onRender = (LayerFunc)GetProcAddress(engine->gameCode, "render");
-    gameLayer->onUninit = (LayerFunc)GetProcAddress(engine->gameCode, "uninit");
-    gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(engine->gameCode, "update");
-};
 
 #if(DBG)
 s32 main(){
@@ -39,13 +10,11 @@ s32 main(){
 //no console
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow){
 #endif
-
-    
     
     mem::calls = 0;
     engine = (Crystal*)mem::alloc(sizeof(Crystal));
     
-    window::Window window = window::create("TODO: CLEANUP", 1280, 800);
+    window::Window window = window::create("Crystal", 1280, 800);
     RenderContext::init(window);
 
     // Show the window
@@ -68,11 +37,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 	print = (logType)GetProcAddress(editorCode, "addLog");
     }else{
-	//TODO:
 	print = _log;
+	//TODO:
     };
 
-    print("hello, world");
+    print("Render context: %s", Renderer::getRenderContextInfoString());
     
     LARGE_INTEGER freq, start, end;
     f64 dt  = 0;

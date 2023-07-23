@@ -1,5 +1,12 @@
 #include "scene.hh"
-#include<windows.h>
+
+#if(PLAT_WINDOWS)
+
+#pragma warning(disable: 4005) //glad.h redifines APIENTRY
+#include <windows.h>
+#pragma warning(default: 4005)
+
+#endif
 
 struct Crystal{
     LayerManager      lm;
@@ -12,9 +19,10 @@ struct Crystal{
     u32               windowY;
     bool              shouldClose;
 
-    
+#if(PLAT_WINDOWS) 
     HMODULE           gameCode;
     FILETIME          lastTime;
+#endif
     
     void init(){
 	lastTime = {};
@@ -38,4 +46,13 @@ struct Crystal{
 	fb.uninit();
 	Batch::uninit();
     };
+};
+
+static Crystal *engine;
+
+void setCurrentScene(Scene *s){
+    engine->curScene = s;
+};
+Scene *getCurrentScene(){
+    return engine->curScene;
 };
