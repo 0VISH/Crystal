@@ -1,4 +1,5 @@
 #include "../../vendor/glad/include/glad/glad.h"
+#include "renderer.hh"
 
 //NOTE: debug stuff
 namespace OpenGL{
@@ -131,4 +132,53 @@ namespace OpenGL{
 	glUniform4f(uLoc, vec[0], vec[1], vec[2], vec[3]);
     };
     void clearColourBuffer(){glClear(GL_COLOR_BUFFER_BIT);};
+
+    void init(Renderer &r){
+	glGenVertexArrays(1, &r.qvao);	
+	glBindVertexArray(r.qvao);
+	glGenBuffers(1, &r.qvbo);
+	glBindBuffer(GL_ARRAY_BUFFER, r.qvbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Draw::Vertex) * Draw::maxVertexCount, nullptr, GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Draw::Vertex), (const void*)offsetof(Draw::Vertex, pos));
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Draw::Vertex), (const void*)offsetof(Draw::Vertex, col));
+	glEnableVertexAttribArray(1);
+
+	//fill up our entire index buffer
+	u32 *indices = (u32*)mem::alloc(sizeof(u32) * Draw::maxIndexCount);
+	u32 offset = 0;
+	for(u32 i=0; i<Draw::maxIndexCount; i+=6){
+	    indices[i + 0] = 0 + offset;
+	    indices[i + 1] = 1 + offset;
+	    indices[i + 2] = 3 + offset;
+	    indices[i + 3] = 1 + offset;
+	    indices[i + 4] = 2 + offset;
+	    indices[i + 5] = 3 + offset;
+
+	    offset += 4;
+	};
+	glGenBuffers(1, &r.qibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, r.qibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(u32) * Draw::maxIndexCount, indices, GL_STATIC_DRAW);
+	mem::free(indices);
+    };
+
+    void uninit(Renderer &r){
+	glDeleteBuffers(1, &r.qibo);
+	glDeleteBuffers(1, &r.qvbo);
+	glDeleteVertexArrays(1, &r.qvao);
+    };
+
+    void batchAndDraw(Renderer &r, void *begin, void *end){
+	u32 size = (char*)end - (char*)begin;
+	
+	glBindBuffer(GL_ARRAY_BUFFER, r.qvbo);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, size, begin);
+	
+	glBindVertexArray(r.qvao);
+	glDrawElements(GL_TRIANGLES, r.indexCount, GL_UNSIGNED_INT, 0);
+
+	r.drawCalls += 1;
+	r.indexCount = 0;
+    };
 };

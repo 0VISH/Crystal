@@ -159,6 +159,7 @@ void    Console::Draw(const char* title)
 		    if (strstr(item, "[error]")) { color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); has_color = true; }
 		    else if (strncmp(item, "# ", 2) == 0) { color = ImVec4(1.0f, 0.8f, 0.6f, 1.0f); has_color = true; }
 		    else if(strstr(item, "[warning]")){color = ImVec4(0.7, 0.8f, 0.1f, 1.0f); has_color = true; }
+		    else if(strncmp(item, "@", 1) == 0){color = ImVec4(0.2, 0.7, 0.2, 1.0); has_color = true;}
 		    if (has_color)
 			ImGui::PushStyleColor(ImGuiCol_Text, color);
 		    ImGui::TextUnformatted(item);

@@ -24,17 +24,13 @@ EXPORT void setupUtilPointers(logType l, getComponentUIDType gcut, setGameFolder
 #include "scene.hh"
 #include "material.hh"
 #include "event.hh"
+#include "renderer.hh"
 
 //cpp code which every game has to compile
 #include "../game/include.hh"
 
 #include "enginePointers.hh"
-materialInitType materialInit;
-materialUninitType materialUninit;
 materialRegisterEntityType materialRegisterEntity;
-
-materialSystemInitType materialSystemInit;
-materialSystemUninitType materialSystemUninit;
 newMaterialType newMaterial;
 
 componentPoolInitType         componentPoolInit;
@@ -51,21 +47,19 @@ sceneNewEntityType sceneNewEntity;
 setCurrentSceneType setCurrentScene;
 getCurrentSceneType getCurrentScene;
 
+getRendererType     getRenderer;
+getMaterialSystemType getMaterialSystem;
+
 isKeyDownType    isKeyDown;
 
-EXPORT void setupPointers(materialInitType mit, materialUninitType mut, materialRegisterEntityType mret,
-			  materialSystemInitType msit, materialSystemUninitType msut, newMaterialType nmt,
+EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
 			  componentPoolInitType cpit, componentPoolNewComponentType cpnct, componentPoolRemoveComponentType cprct, componentPoolGetComponentType cpgct,
 			  allocSceneType ast, freeSceneType fst, sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet,
-			  setCurrentSceneType scst,getCurrentSceneType gcst,
+			  setCurrentSceneType scst, getCurrentSceneType gcst,
+			  getRendererType grt, getMaterialSystemType gmst,
 			  isKeyDownType ikdt){
     
-    materialInit = mit;
-    materialUninit = mut;
     materialRegisterEntity = mret;
-
-    materialSystemInit = msit;
-    materialSystemUninit = msut;
     newMaterial = nmt;
 
     componentPoolInit         = cpit;
@@ -82,5 +76,8 @@ EXPORT void setupPointers(materialInitType mit, materialUninitType mut, material
     setCurrentScene = scst;
     getCurrentScene = gcst;
 
+    getRenderer = grt;
+    getMaterialSystem = gmst;
+    
     isKeyDown = ikdt;
 };

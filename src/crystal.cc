@@ -14,6 +14,7 @@ struct Crystal{
     MaterialSystem    ms;
     ShaderSystem      ss;
     FrameBuffer       fb;
+    Renderer          r;
     Scene            *curScene;
     u32               windowX;
     u32               windowY;
@@ -21,30 +22,28 @@ struct Crystal{
 
 #if(PLAT_WINDOWS) 
     HMODULE           gameCode;
-    FILETIME          lastTime;
 #endif
     
     void init(){
-	lastTime = {};
 	gameCode = nullptr;
 	curScene = nullptr;
 	lm.init(3);
-	materialSystemInit(ms);
+	Draw::init(r);
+	materialSystemInit(&ms);
 	ss.init();
 	u32 defaultShader = ss.newShaderProgram();
-	Renderer::createDefaultShader(defaultShader);
+	Draw::createDefaultShader(defaultShader);
 	fb.init(windowX, windowY);
-	Batch::init();
     };
     void uninit(){
 	if(lm.layers != nullptr){
 	    lm.uninitLayers();
 	    lm.uninit();
 	};
-	materialSystemUninit(ms);
+	Draw::uninit(r);
+	materialSystemUninit(&ms);
 	ss.uninit();
 	fb.uninit();
-	Batch::uninit();
     };
 };
 
@@ -55,4 +54,10 @@ void setCurrentScene(Scene *s){
 };
 Scene *getCurrentScene(){
     return engine->curScene;
+};
+Renderer *getRenderer(){
+    return &engine->r;
+};
+MaterialSystem *getMaterialSystem(){
+    return &engine->ms;
 };

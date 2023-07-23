@@ -4,6 +4,9 @@ logType print;
 #include "../include.hh"
 #include "include.hh"
 
+
+
+
 #if(DBG)
 s32 main(){
 #else
@@ -32,16 +35,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	editorLayer->onRender = (LayerFunc)GetProcAddress(editorCode, "render");
 	editorLayer->onUninit = (LayerFunc)GetProcAddress(editorCode, "uninit");
 	editorLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(editorCode, "update");
-	auto einit = (void(*)(HWND window, u32 *batchDrawCall))GetProcAddress(editorCode, "init");
-	einit(window, &Batch::drawCalls);
+	auto einit = (void(*)(HWND window))GetProcAddress(editorCode, "init");
+	einit(window);
 
 	print = (logType)GetProcAddress(editorCode, "addLog");
+	auto setGameTextureAdd = (void(*)(u32* tAdd))GetProcAddress(editorCode, "setGameTextureAdd");
+	setGameTextureAdd(&engine->fb.texture);
     }else{
 	print = _log;
 	//TODO:
     };
-
-    print("Render context: %s", Renderer::getRenderContextInfoString());
+    
+    print("Render context: %s", Draw::getRenderContextInfoString());
     
     LARGE_INTEGER freq, start, end;
     f64 dt  = 0;
@@ -59,6 +64,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         engine->lm.updateLayers(e, dt);
         engine->lm.renderLayers();
 
+        Draw::beginFrame(engine->r, engine->fb);
+	Draw::draw(engine->r);
+	Draw::endFrame(engine->r, engine->fb);
+	
 	RenderContext::swapBuffers();
 
 	QueryPerformanceCounter(&end);

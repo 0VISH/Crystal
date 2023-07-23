@@ -56,7 +56,12 @@ namespace Editor{
     bool showDemo;
     u32 *drawCalls;
     Console console;
+    Renderer *r;
+    u32 *gameTexture;
 
+    EXPORT void setGameTextureAdd(u32 *tAdd){
+	gameTexture = tAdd;
+    };
     EXPORT void addLog(char *fmt, ...){
 	char buf[1024];
 	va_list args;
@@ -67,8 +72,9 @@ namespace Editor{
 	console.Items.push_back(Strdup(buf));
     };
     
-    EXPORT void init(HWND window, u32 *batchDrawCall){
-	drawCalls = batchDrawCall;
+    EXPORT void init(HWND window){
+	gameTexture = nullptr;
+	r = getRenderer();
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -169,7 +175,7 @@ namespace Editor{
 	};
 	
 	if(ImGui::Begin("Scene")){
-	    ImGui::Text("Frame rate: %f\t\t\t\t\tDraw calls: %d", ImGui::GetIO().Framerate, *drawCalls);
+	    ImGui::Text("Frame rate: %f\t\t\t\t\tDraw calls: %d", ImGui::GetIO().Framerate, r->drawCalls);
 	    if(ImGui::IsWindowHovered()){
 		
 	    };
@@ -177,18 +183,16 @@ namespace Editor{
 	    float width = ImGui::GetContentRegionAvail().x;
 	    float height = ImGui::GetContentRegionAvail().y;
 
-	    /*
-	    if(engine->curScene != nullptr){
+	    if(gameTexture != nullptr){
 #pragma warning(disable: 4312)
 	    ImGui::Image(
-			 (ImTextureID)engine->fb.texture, 
+			 (ImTextureID)(*gameTexture), 
 			 ImGui::GetContentRegionAvail(), 
 			 ImVec2(0, 1), 
 			 ImVec2(1, 0)
 			 );
 #pragma warning(default: 4312)
 	    };
-	    */
 	    ImGui::End();
 	}
 

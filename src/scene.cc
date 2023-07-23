@@ -72,25 +72,25 @@ void *componentPoolGetComponent(ComponentPool &cp, Entity e){
 
 static u8 sceneID = 0;
 
-void sceneInit(Scene &s, u32 begEntityCount){
-    s.id = sceneID;
+void sceneInit(Scene *s, u32 begEntityCount){
+    s->id = sceneID;
     sceneID += 1;
-    s.entityCount = 0;
-    s.entityComponentMask.init(begEntityCount);
-    s.components.init();
+    s->entityCount = 0;
+    s->entityComponentMask.init(begEntityCount);
+    s->components.init();
 };
-void sceneUninit(Scene &s){
-    s.entityComponentMask.uninit();
-    for(u32 x=0; x<s.components.count; x+=1){
-	ComponentPool &cp = s.components[x];
+void sceneUninit(Scene *s){
+    s->entityComponentMask.uninit();
+    for(u32 x=0; x<s->components.count; x+=1){
+	ComponentPool &cp = s->components[x];
 	componentPoolUninit(cp);
     };
-    s.components.uninit();
+    s->components.uninit();
 };
-Entity sceneNewEntity(Scene &s){
-    Entity e = s.entityCount;
-    s.entityCount += 1;
-    s.entityComponentMask.push(0);
+Entity sceneNewEntity(Scene *s){
+    Entity e = s->entityCount;
+    s->entityCount += 1;
+    s->entityComponentMask.push(0);
     return e;
 };
 Scene *allocScene(){
