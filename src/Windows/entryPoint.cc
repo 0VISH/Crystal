@@ -1,4 +1,10 @@
+#include "basic.hh"
+
+#include "utils.hh"
+logType print;
+
 #include "../include.hh"
+
 
 Crystal *engine;
 
@@ -10,9 +16,9 @@ Scene *getCurrentScene(){
 };
 void editorSignal();
 
+
 #include "include.hh"
 
-#include "utils.hh"
 #include "gamee.hh"
 #include "code.cc"
 
@@ -27,7 +33,15 @@ void editorSignal(){
     gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(engine->gameCode, "update");
 };
 
+#if(DBG)
 s32 main(){
+#else
+//no console
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow){
+#endif
+
+    
+    
     mem::calls = 0;
     engine = (Crystal*)mem::alloc(sizeof(Crystal));
     
@@ -51,10 +65,15 @@ s32 main(){
 	editorLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(editorCode, "update");
 	auto einit = (void(*)(HWND window, u32 *batchDrawCall))GetProcAddress(editorCode, "init");
 	einit(window, &Batch::drawCalls);
+
+	print = (logType)GetProcAddress(editorCode, "addLog");
     }else{
-	//TODO: 
+	//TODO:
+	print = _log;
     };
 
+    print("hello, world");
+    
     LARGE_INTEGER freq, start, end;
     f64 dt  = 0;
     QueryPerformanceFrequency(&freq);

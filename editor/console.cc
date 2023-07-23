@@ -16,7 +16,7 @@ struct Console
 
     void    ClearLog();
 
-    void    AddLog(const char* fmt, ...) IM_FMTARGS(2);
+    void    AddLog(char* fmt, ...) IM_FMTARGS(2);
 
     void    Draw(const char* title);
 
@@ -60,7 +60,7 @@ void    Console::ClearLog()
     Items.clear();
 }
 
-void    Console::AddLog(const char* fmt, ...) IM_FMTARGS(2)
+void    Console::AddLog(char* fmt, ...) IM_FMTARGS(2)
 {
     // FIXME-OPT
     char buf[1024];
@@ -342,10 +342,3 @@ int     Console::TextEditCallback(ImGuiInputTextCallbackData* data)
         }
     return 0;
 }
-
-#if(DBG)
-extern Console console;
-#define LOG(fmt, ...) console.AddLog(fmt, __VA_ARGS__)
-#else
-#define LOG(fmt, ...)
-#endif

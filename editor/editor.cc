@@ -16,9 +16,6 @@
 #include "console.cc"
 #include "entityPanel.cc"
 
-bool isKeyDown(ButtonCode code);
-Console console;
-
 void openGameFolder(){
     CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 
@@ -58,6 +55,14 @@ namespace Editor{
     EntityPanel ep;
     bool showDemo;
     u32 *drawCalls;
+    Console console;
+
+    EXPORT void addLog(char *fmt, ...){
+	va_list args;
+	va_start(args, fmt);
+	console.AddLog(fmt, args);
+	va_end(args);
+    };
     
     EXPORT void init(HWND window, u32 *batchDrawCall){
 	drawCalls = batchDrawCall;
@@ -189,7 +194,7 @@ namespace Editor{
 	ImGui::End();
 
 	if(isKeyboardButtonEvent(e)){
-	    if(e.buttonCode == ButtonCode::Key_R){
+	    if(e.buttonCode == ButtonCode::Key_R && isKeyDown(ButtonCode::Key_LeftShift)){
 		editorSignal();
 	    };
 	};

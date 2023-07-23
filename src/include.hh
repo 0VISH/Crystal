@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string.h>
-#include "basic.hh"
 #include "config.hh"
 #include "log.hh"
 #include "mem.cc"

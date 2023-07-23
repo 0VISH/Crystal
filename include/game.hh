@@ -9,11 +9,15 @@
 logType print;
 getComponentUIDType getComponentUID;
 setGameFolderType setGameFolder;
+editorSignalType editorSignal;
 
-EXPORT void setupUtilPointers(logType l, getComponentUIDType gcut, setGameFolderType sgft){
+EXPORT void setupUtilPointers(logType l, getComponentUIDType gcut, setGameFolderType sgft,
+			      editorSignalType est){
     print = l;
     getComponentUID = gcut;
     setGameFolder = sgft;
+
+    editorSignal = est;
 };
 
 #include "mem.cc"
@@ -46,14 +50,14 @@ sceneNewEntityType sceneNewEntity;
 setCurrentSceneType setCurrentScene;
 getCurrentSceneType getCurrentScene;
 
-editorSignalType  editorSignal;
+isKeyDownType    isKeyDown;
 
 EXPORT void setupPointers(materialInitType mit, materialUninitType mut, materialRegisterEntityType mret,
 			  materialSystemInitType msit, materialSystemUninitType msut, newMaterialType nmt,
 			  componentPoolInitType cpit, componentPoolNewComponentType cpnct, componentPoolRemoveComponentType cprct, componentPoolGetComponentType cpgct,
 			  allocSceneType ast, freeSceneType fst, sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet,
 			  setCurrentSceneType scst,getCurrentSceneType gcst,
-			  editorSignalType est){
+			  isKeyDownType ikdt){
     
     materialInit = mit;
     materialUninit = mut;
@@ -76,5 +80,6 @@ EXPORT void setupPointers(materialInitType mit, materialUninitType mut, material
 
     setCurrentScene = scst;
     getCurrentScene = gcst;
-    editorSignal = est;
+
+    isKeyDown = ikdt;
 };

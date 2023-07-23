@@ -1,20 +1,19 @@
-
 #define SETUP_POINTERS(HANDLE)						\
-    auto setupUtilPointer = (void(*)(logType l, getComponentUIDType gcut, setGameFolderType sgft))GetProcAddress(HANDLE, "setupUtilPointers"); \
-    setupUtilPointer(print, getComponentUID, Code::setGameFolder);	\
+    auto setupUtilPointer = (void(*)(logType l, getComponentUIDType gcut, setGameFolderType sgft, editorSignalType est))GetProcAddress(HANDLE, "setupUtilPointers"); \
+    setupUtilPointer(print, getComponentUID, Code::setGameFolder, editorSignal); \
 									\
     auto setupPointers = (void(*)(materialInitType mit, materialUninitType mut, materialRegisterEntityType mret, \
 				  materialSystemInitType msit, materialSystemUninitType msut, newMaterialType nmt, \
 				  componentPoolInitType cpit, componentPoolNewComponentType cpnct, componentPoolRemoveComponentType cprct, componentPoolGetComponentType cpgct, \
 				  allocSceneType ast, freeSceneType fst, sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, \
-				  setCurrentSceneType scst, getCurrentSceneType gcst,\
-				  editorSignalType est))GetProcAddress(HANDLE, "setupPointers"); \
+				  setCurrentSceneType scst, getCurrentSceneType gcst, \
+				  isKeyDownType ikdt))GetProcAddress(HANDLE, "setupPointers"); \
     setupPointers(materialInit, materialUninit, materialRegisterEntity,	\
 		  materialSystemInit, materialSystemUninit, newMaterial, \
 		  componentPoolInit, componentPoolNewComponent, componentPoolRemoveComponent, componentPoolGetComponent, \
 		  allocScene, freeScene, sceneInit, sceneUninit, sceneNewEntity, \
 		  setCurrentScene, getCurrentScene,			\
-		  editorSignal);					\
+		  isKeyDown);						\
 
 namespace Code{
     char dllTemp[1000];
