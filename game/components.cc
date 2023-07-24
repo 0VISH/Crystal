@@ -17,7 +17,7 @@ namespace Component{
 	zoomLevel += zLevel;
 	projection = glm::perspective(glm::radians(fieldOfView+(zoomLevel*-5)), aspectRatio, 0.1f, 100.0f);
     };
-    void Camera::initPerspective(f32 fov, f32 aRatio, glm::vec3 &cameraStartPos){
+    void Camera::initPerspective(f32 fov, f32 aRatio, const glm::vec3 &cameraStartPos){
 	aspectRatio = aRatio;
 	fieldOfView = fov;
 	pos = cameraStartPos;

@@ -9,33 +9,38 @@
 namespace Game{
     Scene *s;
     Entity sq;
+    Component::Camera cam;
 
     EXPORT void init(){
 	s = allocScene();
 	sceneInit(s, 5);
-	setCurrentScene(s);
 		
 	sq = sceneNewEntity(s);
-        s->addComponent<Component::Transform>(sq);
+        auto t = s->addComponent<Component::Transform>(sq);
 
 	MaterialSystem *ms = getMaterialSystem();
-	Material &mat = newMaterial(ms, 0);
+	Material &mat = newMaterial(ms, 1);
 	
 	mat.col = glm::vec4(1.0, 0.5, 1.0, 1.0);
 	materialRegisterEntity(mat, sq);
 
 	Renderer *r = getRenderer();
-	useMaterial(r, &mat);
+
+	cam.init();
+        cam.initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
     };
     EXPORT void render(){
 	Renderer *r = getRenderer();
-	Component::Transform *s1T = s->getComponent<Component::Transform>(sq);
-	submitQuad(r, s1T->genMatrix());
-
-	r->bufferEmpty = false;
+	MaterialSystem *ms = getMaterialSystem();
+	
+	cam.calculateViewMat();
+	
+	fillRenderBufferHeader(r, cam.projection * cam.view);
+	fillRenderBufferWithGivenMS(r, ms, s);
     };
     EXPORT void uninit(){
-
+	sceneUninit(s);
+	freeScene(s);
     };
     EXPORT bool update(Event e, f64 dt){
 	Component::Transform *s1T = s->getComponent<Component::Transform>(sq);

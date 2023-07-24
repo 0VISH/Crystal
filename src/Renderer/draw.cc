@@ -2,6 +2,9 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #include "renderer.hh"
+#include "../../game/components.cc"
+
+#include <math.h>
 
 namespace Draw{
     void init(Renderer &r){
@@ -19,11 +22,30 @@ namespace Draw{
 	OpenGL::uninit(r);
 #endif
     };
+    void bindShader(u32 shader){
+#if(RCONTEXT_GL)
+	OpenGL::useProgram(shader);
+#endif
+    };
     void draw(Renderer &r){
 	if(r.bufferEmpty){return;};
+	Draw::Vertex *x = r.renderBuffer + (u32)ceil((f64)sizeof(glm::mat4)/(f64)sizeof(Draw::Vertex));
+	u32 curShader = x->pos.x;
+	bindShader(curShader);
+	while(x != r.watermark){
+	    Draw::Vertex *info = x;
+	    if(info->pos.x != curShader){
+		curShader = info->pos.x;
+		bindShader(curShader);
+	    };
+	    x += 1;
+	    u32 quadVerticesCount = (u32)info->pos.y * 4;
 #if(RCONTEXT_GL)
-	OpenGL::batchAndDraw(r, r.renderBuffer, r.watermark);
+	    OpenGL::setMat4Uniform(*(glm::mat4*)r.renderBuffer, "uProjectionView", curShader);
+	    OpenGL::batchAndDraw(r, x, x + quadVerticesCount);
 #endif
+	    x += quadVerticesCount;
+	};
     };
     void clearColourBuffer(){
 #if(RCONTEXT_GL)

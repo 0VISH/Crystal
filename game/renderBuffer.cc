@@ -1,8 +1,6 @@
 #include "renderer.hh"
+#include <math.h>
 
-void useMaterial(Renderer *r, Material *m){
-    r->curMat = m;
-};
 void submitQuad(Renderer *r, glm::mat4 &mat){
     float quadVertices[] = {
 	0.5f,  0.5f,
@@ -31,4 +29,30 @@ void submitQuad(Renderer *r, glm::mat4 &mat){
     r->watermark += 1;
 	    
     r->indexCount += 6;
+};
+void fillRenderBufferWithGivenMat(Renderer *r, Material &m, Scene *s){
+    r->curMat = &m;
+    Draw::Vertex *info = r->watermark;
+    info->pos.x = m.shader;
+    r->watermark += 1;
+    u32 x = 0;
+    for(; x<m.registeredEntities.count; x+=1){
+	Entity e = m.registeredEntities[x];
+	Component::Transform *transform = s->getComponent<Component::Transform>(e);
+	submitQuad(r, transform->genMatrix());
+    };
+    info->pos.y = x;
+};
+void fillRenderBufferWithGivenMS(Renderer *r, MaterialSystem *ms, Scene *s){
+    for(u32 x=0; x<ms->materials.count; x+=1){
+	fillRenderBufferWithGivenMat(r, ms->materials[x], s);
+    };
+};
+void fillRenderBufferHeader(Renderer *r, glm::mat4 &projectionView){
+    r->watermark = r->renderBuffer;
+    r->bufferEmpty = false;
+
+    glm::mat4 *mat = (glm::mat4*)r->watermark;
+    *mat = projectionView;
+    r->watermark += (u32)ceil((f64)sizeof(glm::mat4)/(f64)sizeof(Draw::Vertex));
 };
