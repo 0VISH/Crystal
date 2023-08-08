@@ -45,6 +45,7 @@ namespace Game{
     EXPORT bool update(Event e, f64 dt){
 	Entity sq = getEntity(s, "spinny quad");
 	Component::Transform *s1T = s->getComponent<Component::Transform>(sq);
+	if(s1T == nullptr){return false;};
 	s1T->rotation.x += dt;
 	return false;
     };

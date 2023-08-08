@@ -35,13 +35,19 @@ void fillRenderBufferWithGivenMat(Renderer *r, Material &m, Scene *s){
     Draw::Vertex *info = r->watermark;
     info->pos.x = m.shader;
     r->watermark += 1;
-    u32 x = 0;
-    for(; x<m.registeredEntities.count; x+=1){
+    u32 submittedQuads = 0;
+    for(u32 x=0; x<m.registeredEntities.count; x+=1){
 	Entity e = m.registeredEntities[x];
 	Component::Transform *transform = s->getComponent<Component::Transform>(e);
+	if(transform == nullptr){continue;};
 	submitQuad(r, transform->genMatrix());
+	submittedQuads += 1;
     };
-    info->pos.y = x;
+    if(submittedQuads == 0){
+	r->watermark -= 1;
+	return;
+    };
+    info->pos.y = submittedQuads;
 };
 void fillRenderBufferWithGivenMS(Renderer *r, MaterialSystem *ms, Scene *s){
     for(u32 x=0; x<ms->materials.count; x+=1){
