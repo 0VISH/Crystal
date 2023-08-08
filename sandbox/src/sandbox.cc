@@ -8,14 +8,14 @@
 
 namespace Game{
     Scene *s;
-    Entity sq;
     Component::Camera cam;
 
     EXPORT void init(){
 	s = allocScene();
 	sceneInit(s, 5);
+	setCurrentScene(s);
 		
-	sq = sceneNewEntity(s);
+	Entity sq = sceneNewEntity(s, "spinny quad");
         auto t = s->addComponent<Component::Transform>(sq);
 
 	MaterialSystem *ms = getMaterialSystem();
@@ -43,6 +43,7 @@ namespace Game{
 	freeScene(s);
     };
     EXPORT bool update(Event e, f64 dt){
+	Entity sq = getEntity(s, "spinny quad");
 	Component::Transform *s1T = s->getComponent<Component::Transform>(sq);
 	s1T->rotation.x += dt;
 	return false;

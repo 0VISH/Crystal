@@ -99,18 +99,19 @@ struct EntityPanel{
 		return;
 	    };
 	    u32 x = 0;
-	    /*
-	    for(auto const &pair: s->entityNameToEntity){
-		if(ImGui::Selectable(pair.first.c_str(), selectedEntity == x)){
+	    const char *key;
+	    map_iter_t iter = map_iter(&s->entityNameToID);
+	    while(key = map_next(&s->entityNameToID, &iter)){
+		if(ImGui::Selectable(key, selectedEntity == x)){
 		    selectedEntity = x;
-		    e = pair.second;
+		    e = *map_get(&s->entityNameToID, key);
 		};
 		x += 1;
 	    };
-	    */
 	    ImGui::End();
 	};
     };
+    
     void renderComponents(){
 	if(ImGui::Begin("Components")){
 	    Scene *s = getCurrentScene();
@@ -122,7 +123,7 @@ struct EntityPanel{
 		ImGui::End();
 		return;
 	    };
-
+	    auto *v = s->getComponent<Component::Transform>(e);
 	    drawComponent<Component::Transform>("Transform", e, s, [](auto *c){
 		DrawVec3Control("position", c->position);
 		DrawVec3Control("rotation", c->rotation);

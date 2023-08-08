@@ -4,9 +4,11 @@ typedef u32 Entity;
 
 //TODO: write a custom hashmap
 
+extern u32 componentUID;
 template <class T>
 u32 getID(){
-    static u32 componentId = getComponentUID();
+    static u32 componentId = componentUID;
+    componentUID += 1;
     return componentId;
 }
 
@@ -50,6 +52,7 @@ struct Scene{
 	return (T*)componentPoolGetComponent(components[componentID], e);
     };
 
+    map_int_t entityNameToID;
     ds::DynamicArray<u32> entityComponentMask;
     ds::DynamicArray<ComponentPool> components;
     Entity entityCount;

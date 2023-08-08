@@ -7,19 +7,17 @@
 
 #include "utils.hh"
 logType print;
-getComponentUIDType getComponentUID;
 setGameFolderType setGameFolder;
 editorSignalType editorSignal;
 
-EXPORT void setupUtilPointers(logType l, getComponentUIDType gcut, setGameFolderType sgft,
-			      editorSignalType est){
+EXPORT void setupUtilPointers(logType l, setGameFolderType sgft, editorSignalType est){
     print = l;
-    getComponentUID = gcut;
     setGameFolder = sgft;
 
     editorSignal = est;
 };
 
+#include "map.hh"
 #include "ds.hh"
 #include "scene.hh"
 #include "material.hh"
@@ -43,6 +41,7 @@ freeSceneType  freeScene;
 sceneInitType sceneInit;
 sceneUninitType sceneUninit;
 sceneNewEntityType sceneNewEntity;
+getEntityType getEntity;
 
 setCurrentSceneType setCurrentScene;
 getCurrentSceneType getCurrentScene;
@@ -54,7 +53,7 @@ isKeyDownType    isKeyDown;
 
 EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
 			  componentPoolInitType cpit, componentPoolNewComponentType cpnct, componentPoolRemoveComponentType cprct, componentPoolGetComponentType cpgct,
-			  allocSceneType ast, freeSceneType fst, sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet,
+			  allocSceneType ast, freeSceneType fst, sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, getEntityType get,
 			  setCurrentSceneType scst, getCurrentSceneType gcst,
 			  getRendererType grt, getMaterialSystemType gmst,
 			  isKeyDownType ikdt){
@@ -72,6 +71,7 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
     sceneInit = sit;
     sceneUninit = sut;
     sceneNewEntity = snet;
+    getEntity = get;
 
     setCurrentScene = scst;
     getCurrentScene = gcst;
@@ -81,3 +81,5 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
     
     isKeyDown = ikdt;
 };
+
+u32 componentUID = 0;

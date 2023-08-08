@@ -1,14 +1,6 @@
 #include "scene.hh"
 
-u32 componentCounter = 0;
-
-u32 getComponentUID(){
-    u32 id = componentCounter;
-    componentCounter += 1;
-    return id;
-};
-
-void componentPoolInit(ComponentPool &cp, u64 size, u32 begLen, u32 ew){
+void componentPoolInit(ComponentPool &cp, u64 size, u32 begLen, u32 ew=1){
     cp.count = 0;
     cp.entityWatermark = ew;
     cp.componentSize = size;
@@ -61,8 +53,8 @@ void componentPoolRemoveComponent(ComponentPool &cp, Entity e){
 };
 void *componentPoolGetComponent(ComponentPool &cp, Entity e){
 #if(DBG)
-    if(e >= cp.entityWatermark){
-	print("e >= entityWatermark");
+    if(e > cp.entityWatermark){
+	print("e(%d) > cp.entityWatermark(%d)", e, cp.entityWatermark);
 	return nullptr;
     };
 #endif
@@ -73,6 +65,7 @@ void *componentPoolGetComponent(ComponentPool &cp, Entity e){
 static u8 sceneID = 0;
 
 void sceneInit(Scene *s, u32 begEntityCount){
+    map_init(&s->entityNameToID);
     s->id = sceneID;
     sceneID += 1;
     s->entityCount = 0;
@@ -87,15 +80,22 @@ void sceneUninit(Scene *s){
     };
     s->components.uninit();
 };
-Entity sceneNewEntity(Scene *s){
+Entity sceneNewEntity(Scene *s, char *name){
     Entity e = s->entityCount;
     s->entityCount += 1;
     s->entityComponentMask.push(0);
+    map_set(&s->entityNameToID, name, e);
     return e;
+};
+Entity getEntity(Scene *s, char *name){
+    Entity *e = (Entity*)map_get(&s->entityNameToID, name);
+    if(e == nullptr){return 0;};
+    return *e;
 };
 Scene *allocScene(){
     return (Scene*)mem::alloc(sizeof(Scene));
 };
 void freeScene(Scene *s){
+    map_deinit(&s->entityNameToID);
     mem::free(s);
 };

@@ -12,7 +12,8 @@ typedef Scene* (*allocSceneType)();
 typedef void   (*freeSceneType)(Scene *s);
 typedef void   (*sceneInitType)(Scene *s, u32 begEntityCount);
 typedef void   (*sceneUninitType)(Scene *s);
-typedef Entity (*sceneNewEntityType)(Scene *s);
+typedef Entity (*sceneNewEntityType)(Scene *s, char *name);
+typedef Entity (*getEntityType)(Scene *s, char *name);
 
 typedef void   (*setCurrentSceneType)(Scene *s);
 typedef Scene* (*getCurrentSceneType)();
