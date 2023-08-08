@@ -66,6 +66,7 @@ static u8 sceneID = 0;
 
 void sceneInit(Scene *s, u32 begEntityCount){
     map_init(&s->entityNameToID);
+    s->physicsWorld = new b2World({0.0, 9.8});
     s->id = sceneID;
     sceneID += 1;
     s->entityCount = 0;
@@ -79,6 +80,7 @@ void sceneUninit(Scene *s){
 	componentPoolUninit(cp);
     };
     s->components.uninit();
+    delete s->physicsWorld;
 };
 Entity sceneNewEntity(Scene *s, char *name){
     Entity e = s->entityCount;

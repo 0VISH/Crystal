@@ -1,5 +1,7 @@
 #pragma once
 
+#include "box2d/box2d.h"
+
 typedef u32 Entity;
 
 //TODO: write a custom hashmap
@@ -52,6 +54,7 @@ struct Scene{
 	return (T*)componentPoolGetComponent(components[componentID], e);
     };
 
+    b2World *physicsWorld;
     map_int_t entityNameToID;
     ds::DynamicArray<u32> entityComponentMask;
     ds::DynamicArray<ComponentPool> components;
