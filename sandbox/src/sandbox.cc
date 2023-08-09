@@ -26,7 +26,7 @@ namespace Game{
 
 	Renderer *r = getRenderer();
 
-	cam.init();
+	cam.init(s);
         cam.initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
     };
     EXPORT void render(){

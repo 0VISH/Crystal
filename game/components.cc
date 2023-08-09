@@ -6,7 +6,7 @@
 #include "components.hh"
 
 namespace Component{
-    void Camera::init(){
+    void Camera::init(Scene *s){
 	zoomLevel = 1;
     };
     void Camera::calculateViewMat(){
@@ -26,7 +26,7 @@ namespace Component{
     };
 };
 namespace Component{
-    void Transform::init(){
+    void Transform::init(Scene *s){
 	position = {0, 0, 0};
 	rotation = {0, 0, 0};
 	scale    = {1, 1, 1};
@@ -40,5 +40,21 @@ namespace Component{
 	return glm::translate(glm::mat4(1.0), position)
 	    * rot
 	    * glm::scale(glm::mat4(1.0), scale);
+    };
+};
+
+namespace Component{
+    void RigidBody::init(Scene *s){
+	bodyType = b2_dynamicBody;
+	fixedRotation = false;
+	//TODO: create a body and register it
+    };
+};
+
+namespace Component{
+    void BoxCollider::init(Scene *s){
+	off = {0.0, 0.0};
+	size = {0.5, 0.5};
+	//TODO: create a fixture
     };
 };

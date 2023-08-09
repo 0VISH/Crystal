@@ -24,7 +24,6 @@ struct ComponentPool{
 };
 
 struct Scene{
-    //TODO: maybe check??
     template<typename T>
     T *addComponent(Entity e){
 	u32 componentID = getID<T>();
@@ -33,16 +32,18 @@ struct Scene{
 	    componentPoolInit(cp, sizeof(T), 5, 5);
 	};
 	u32 &mask = entityComponentMask[e];
+	if(IS_BIT(mask, componentID)){return nullptr;};
 	SET_BIT(mask, componentID);
 	ComponentPool &cp = components[componentID];
 	T* t = (T*)componentPoolNewComponent(cp, e);
-	t->init();
+	t->init(this);
 	return t;
     };
     template<typename T>
     void removeComponent(Entity e){
 	u32 componentID = getID<T>();
 	u32 &mask = entityComponentMask[e];
+	if(!IS_BIT(mask, componentID)){return;};
 	CLEAR_BIT(mask, componentID);
 	componentPoolRemoveComponent(components[componentID], e);
     };

@@ -123,7 +123,14 @@ struct EntityPanel{
 		ImGui::End();
 		return;
 	    };
-	    auto *v = s->getComponent<Component::Transform>(e);
+	    if(ImGui::Button("Add component")){ImGui::OpenPopup("Add component");};
+	    if(ImGui::BeginPopup("Add component")){
+		if(ImGui::MenuItem("Transform")){
+		    s->addComponent<Component::Transform>(e);
+		    ImGui::CloseCurrentPopup();
+		};
+		ImGui::EndPopup();
+	    };
 	    drawComponent<Component::Transform>("Transform", e, s, [](auto *c){
 		DrawVec3Control("position", c->position);
 		DrawVec3Control("rotation", c->rotation);

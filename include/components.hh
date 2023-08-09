@@ -3,7 +3,7 @@
 //NOTE: all components need to have function 'init'
 namespace Component{
     struct Camera{
-	void init();
+	void init(Scene *s);
 	void calculateViewMat();
 	void updateZoomLevel(f32 zLevel);
 	void initPerspective(f32 fov, f32 aRatio, const glm::vec3 &cameraStartPos);
@@ -21,7 +21,23 @@ namespace Component{
 	glm::vec3 rotation;
 	glm::vec3 scale;
 
-	void init();
+	void init(Scene *s);
 	glm::mat4 genMatrix();
+    };
+
+    struct RigidBody{
+	void init(Scene *s);
+
+	b2Body *runtimeBody;
+	b2BodyType bodyType;
+	bool fixedRotation;
+    };
+
+    struct BoxCollider{
+	void init(Scene *s);
+
+	glm::vec2 off;
+	glm::vec2 size;
+	b2FixtureDef* runtimeFixture;
     };
 };
