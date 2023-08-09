@@ -36,8 +36,9 @@ namespace Component{
     struct BoxCollider{
 	void init(Scene *s, Entity e);
 
-	glm::vec2 off;
-	glm::vec2 size;
-	b2FixtureDef* runtimeFixture;
+	//TODO: off, size
+	f32 friction;
+	f32 density;
+	b2Fixture* runtimeFixture;
     };
 };

@@ -49,17 +49,34 @@ namespace Component{
 	fixedRotation = false;
 
 	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(0.0f, 4.0f);
-	runtimeBody = createPhysicsBody(&bodyDef, s->physicsWorld);
- 
+	bodyDef.type = bodyType;
+	bodyDef.fixedRotation = fixedRotation;
+	Component::Transform *transform = s->getComponent<Component::Transform>(e);
+	if(transform == nullptr){
+	    bodyDef.position.Set(0.0f, 0.0f);
+	}else{
+	    bodyDef.position.Set(transform->position.x, transform->position.y);
+	};
+	runtimeBody = createRigidBody(&bodyDef, s->physicsWorld);
     };
 };
 
 namespace Component{
     void BoxCollider::init(Scene *s, Entity e){
-	off = {0.0, 0.0};
-	size = {0.5, 0.5};
-	//TODO: create a fixture
+	friction = 1.3;
+	density = 1;
+
+	Component::RigidBody *rigidBody = s->getComponent<Component::RigidBody>(e);
+	if(rigidBody == nullptr){
+	    rigidBody = s->addComponent<Component::RigidBody>(e);
+	};
+	b2Body *body = rigidBody->runtimeBody;
+	
+	Component::Transform *transform = s->getComponent<Component::Transform>(e);
+	if(transform == nullptr){
+	    runtimeFixture = createBoxColliderFixture(0.0f, 0.0f, density, friction, body);
+	}else{
+	    runtimeFixture = createBoxColliderFixture(transform->position.x * transform->scale.x, transform->position.y * transform->position.y, density, friction, body);
+	};
     };
 };

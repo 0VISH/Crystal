@@ -43,7 +43,8 @@ getEntityType getEntity;
 setCurrentSceneType setCurrentScene;
 getCurrentSceneType getCurrentScene;
 
-createPhysicsBodyType createPhysicsBody;
+createRigidBodyType createRigidBody;
+createBoxColliderFixtureType createBoxColliderFixture;
 
 getRendererType     getRenderer;
 getMaterialSystemType getMaterialSystem;
@@ -54,7 +55,7 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
 			  componentPoolInitType cpit, componentPoolNewComponentType cpnct, componentPoolRemoveComponentType cprct, componentPoolGetComponentType cpgct,
 			  allocSceneType ast, freeSceneType fst, sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, getEntityType get,
 			  setCurrentSceneType scst, getCurrentSceneType gcst,
-			  createPhysicsBodyType cpbt,
+			  createRigidBodyType crbt, createBoxColliderFixtureType cbcft,
 			  getRendererType grt, getMaterialSystemType gmst,
 			  isKeyDownType ikdt){
     
@@ -76,7 +77,8 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
     setCurrentScene = scst;
     getCurrentScene = gcst;
 
-    createPhysicsBody = cpbt;
+    createRigidBody = crbt;
+    createBoxColliderFixture = cbcft;
     
     getRenderer = grt;
     getMaterialSystem = gmst;
@@ -86,5 +88,3 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
 
 //cpp code which every game has to compile
 #include "../game/include.hh"
-
-u32 componentUID = 0;

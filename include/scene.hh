@@ -6,7 +6,7 @@ typedef u32 Entity;
 
 //TODO: write a custom hashmap
 
-extern u32 componentUID;
+static u32 componentUID = 0;
 template <class T>
 u32 getID(){
     static u32 componentId = componentUID;
