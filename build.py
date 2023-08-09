@@ -57,7 +57,7 @@ if(plat == "win"):
         runCmd(buildUsual + "/I vendor/imgui/ /I vendor/glm/ /I vendor/box2d/include/ /I include/ editor/editor.cc /Fo:" + editorPath)
         runCmd("link /NOLOGO /DEBUG /DLL /PDB:" + folder + "editor.pdb " + editorPath + " " + imguiPath + " /OUT:" + folder + "editor.dll")
     if(shouldBuildBox2d):
-        runCmd(buildUsual + "/I vendor/box2d/include/ /I vendor/box2d/src/ src/box2d.cc /Fo:" + box2dPath)
+        runCmd(buildUsual + "/I vendor/box2d/include/ /I vendor/box2d/src/ src/box2dInclude.cc /Fo:" + box2dPath)
     runCmd(buildUsual + "/I include/ /I vendor/imgui/ /I vendor/glad/include/ /I vendor/glm/ /I vendor/box2d/include/ src/Windows/entryPoint.cc /Fo:"+enginePath)
 
 runCmd("link /NOLOGO /DEBUG /PDB:" + folder + "crystal.pdb " + folder + "crystal.obj " + gladPath + " " + box2dPath + " /OUT:" + folder + "crystal.exe")

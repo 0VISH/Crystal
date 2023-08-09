@@ -17,6 +17,7 @@
 #include "package.hh"
 #include "ds.hh"
 #include "scene.cc"
+#include "physics.cc"
 #include "Renderer/include.hh"
 #include "crystal.cc"
 #include "enginePointers.hh"

@@ -6,7 +6,7 @@
 #include "components.hh"
 
 namespace Component{
-    void Camera::init(Scene *s){
+    void Camera::init(Scene *s, Entity e){
 	zoomLevel = 1;
     };
     void Camera::calculateViewMat(){
@@ -26,7 +26,7 @@ namespace Component{
     };
 };
 namespace Component{
-    void Transform::init(Scene *s){
+    void Transform::init(Scene *s, Entity e){
 	position = {0, 0, 0};
 	rotation = {0, 0, 0};
 	scale    = {1, 1, 1};
@@ -44,15 +44,20 @@ namespace Component{
 };
 
 namespace Component{
-    void RigidBody::init(Scene *s){
+    void RigidBody::init(Scene *s, Entity e){
 	bodyType = b2_dynamicBody;
 	fixedRotation = false;
-	//TODO: create a body and register it
+
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(0.0f, 4.0f);
+	runtimeBody = createPhysicsBody(&bodyDef, s->physicsWorld);
+ 
     };
 };
 
 namespace Component{
-    void BoxCollider::init(Scene *s){
+    void BoxCollider::init(Scene *s, Entity e){
 	off = {0.0, 0.0};
 	size = {0.5, 0.5};
 	//TODO: create a fixture

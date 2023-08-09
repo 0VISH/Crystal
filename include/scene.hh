@@ -36,7 +36,7 @@ struct Scene{
 	SET_BIT(mask, componentID);
 	ComponentPool &cp = components[componentID];
 	T* t = (T*)componentPoolNewComponent(cp, e);
-	t->init(this);
+	t->init(this, e);
 	return t;
     };
     template<typename T>

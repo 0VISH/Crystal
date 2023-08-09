@@ -1,19 +1,21 @@
 #define SETUP_POINTERS(HANDLE)						\
     auto setupUtilPointer = (void(*)(logType l, setGameFolderType sgft, editorSignalType est))GetProcAddress(HANDLE, "setupUtilPointers"); \
-    setupUtilPointer(print, Code::setGameFolder, editorSignal); \
+    setupUtilPointer(print, Code::setGameFolder, editorSignal);		\
 									\
     auto setupPointers = (void(*)(materialRegisterEntityType mret, newMaterialType nmt, \
 				  componentPoolInitType cpit, componentPoolNewComponentType cpnct, componentPoolRemoveComponentType cprct, componentPoolGetComponentType cpgct, \
 				  allocSceneType ast, freeSceneType fst, sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, getEntityType get, \
 				  setCurrentSceneType scst, getCurrentSceneType gcst, \
+				  createPhysicsBodyType cbt,		\
 				  getRendererType grt, getMaterialSystemType gmst, \
 				  isKeyDownType ikdt))GetProcAddress(HANDLE, "setupPointers"); \
     setupPointers(materialRegisterEntity,  newMaterial,			\
-		  componentPoolInit, componentPoolNewComponent, componentPoolRemoveComponent, componentPoolGetComponent, \
-		  allocScene, freeScene, sceneInit, sceneUninit, sceneNewEntity, getEntity, \
-		  setCurrentScene, getCurrentScene,			\
-		  getRenderer,	getMaterialSystem,			\
-		  isKeyDown);						\
+	componentPoolInit, componentPoolNewComponent, componentPoolRemoveComponent, componentPoolGetComponent, \
+	allocScene, freeScene, sceneInit, sceneUninit, sceneNewEntity, getEntity, \
+	setCurrentScene, getCurrentScene,				\
+	createPhysicsBody,						\
+	getRenderer,	getMaterialSystem,				\
+	isKeyDown);							\
 
 namespace Code{
     char dllTemp[100];

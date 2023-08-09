@@ -24,9 +24,6 @@ EXPORT void setupUtilPointers(logType l, setGameFolderType sgft, editorSignalTyp
 #include "event.hh"
 #include "renderer.hh"
 
-//cpp code which every game has to compile
-#include "../game/include.hh"
-
 #include "enginePointers.hh"
 materialRegisterEntityType materialRegisterEntity;
 newMaterialType newMaterial;
@@ -46,6 +43,8 @@ getEntityType getEntity;
 setCurrentSceneType setCurrentScene;
 getCurrentSceneType getCurrentScene;
 
+createPhysicsBodyType createPhysicsBody;
+
 getRendererType     getRenderer;
 getMaterialSystemType getMaterialSystem;
 
@@ -55,6 +54,7 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
 			  componentPoolInitType cpit, componentPoolNewComponentType cpnct, componentPoolRemoveComponentType cprct, componentPoolGetComponentType cpgct,
 			  allocSceneType ast, freeSceneType fst, sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, getEntityType get,
 			  setCurrentSceneType scst, getCurrentSceneType gcst,
+			  createPhysicsBodyType cpbt,
 			  getRendererType grt, getMaterialSystemType gmst,
 			  isKeyDownType ikdt){
     
@@ -76,10 +76,15 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
     setCurrentScene = scst;
     getCurrentScene = gcst;
 
+    createPhysicsBody = cpbt;
+    
     getRenderer = grt;
     getMaterialSystem = gmst;
     
     isKeyDown = ikdt;
 };
+
+//cpp code which every game has to compile
+#include "../game/include.hh"
 
 u32 componentUID = 0;

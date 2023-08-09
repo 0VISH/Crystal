@@ -18,6 +18,8 @@ typedef Entity (*getEntityType)(Scene *s, char *name);
 typedef void   (*setCurrentSceneType)(Scene *s);
 typedef Scene* (*getCurrentSceneType)();
 
+typedef b2Body* (*createPhysicsBodyType)(b2BodyDef *def, b2World *world);
+
 typedef Renderer* (*getRendererType)();
 typedef MaterialSystem* (*getMaterialSystemType)();
 
