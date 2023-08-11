@@ -88,3 +88,7 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
 
 //cpp code which every game has to compile
 #include "../game/include.hh"
+
+namespace Game{
+    EXPORT void reload();
+}

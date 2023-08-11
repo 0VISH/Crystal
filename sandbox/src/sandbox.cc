@@ -8,15 +8,18 @@
 
 namespace Game{
     Scene *s;
-    Component::Camera cam;
 
+    EXPORT void reload(){
+	s = getCurrentScene();
+    };
+    
     EXPORT void init(){
 	s = allocScene();
 	sceneInit(s, 5);
 	setCurrentScene(s);
 		
 	Entity sq = sceneNewEntity(s, "spinny quad");
-        auto t = s->addComponent<Component::Transform>(sq);
+	s->addComponent<Component::Transform>(sq);
 
 	MaterialSystem *ms = getMaterialSystem();
 	Material &mat = newMaterial(ms, 1);
@@ -26,16 +29,18 @@ namespace Game{
 
 	Renderer *r = getRenderer();
 
-	cam.init(s, sq);
-        cam.initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
+	Component::Camera *cam = s->addComponent<Component::Camera>(sq);
+        cam->initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
     };
     EXPORT void render(){
 	Renderer *r = getRenderer();
 	MaterialSystem *ms = getMaterialSystem();
+
+	Entity sq = getEntity(s, "spinny quad");
+	Component::Camera *cam = s->getComponent<Component::Camera>(sq);
+	cam->calculateViewMat();
 	
-	cam.calculateViewMat();
-	
-	fillRenderBufferHeader(r, cam.projection * cam.view);
+	fillRenderBufferHeader(r, cam->projection * cam->view);
 	fillRenderBufferWithGivenMS(r, ms, s);
     };
     EXPORT void uninit(){
