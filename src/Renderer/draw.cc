@@ -14,6 +14,10 @@ namespace Draw{
 	r.drawCalls = 0;
 #if(RCONTEXT_GL)
 	OpenGL::init(r);
+#if(DBG)
+	OpenGL::enableDebugMode();
+#endif
+
 #endif
     };
     void uninit(Renderer &r){
@@ -62,13 +66,6 @@ namespace Draw{
 	r.bufferEmpty = true;
 	r.watermark = r.renderBuffer;
     };
-#if(DBG)
-    void enableDebugMode(){
-#if(RCONTEXT_GL)
-	OpenGL::enableDebugMode();
-#endif
-    };
-#endif
     void createDefaultShader(u32 &shaderProgram){
 #if(RCONTEXT_GL)
 	OpenGL::createDefaultShader(shaderProgram);
@@ -98,5 +95,6 @@ namespace Draw{
 #if(RCONTEXT_GL)
 	return (char*)glGetString(GL_VERSION);
 #endif
+	return nullptr;
     };
 };

@@ -41,8 +41,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	auto setGameTextureAdd = (void(*)(u32* tAdd))GetProcAddress(editorCode, "setGameTextureAdd");
 	setGameTextureAdd(&engine->fb.texture);
     }else{
+	initLogOutputFile("runtime.log");
 	print = _log;
-	//TODO:
+	//TODO: 
     };
     
     print("Render context: %s", Draw::getRenderContextInfoString());
@@ -50,7 +51,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     LARGE_INTEGER freq, start, end;
     f64 dt  = 0;
     QueryPerformanceFrequency(&freq);
-    
     
     while(true){
 	QueryPerformanceCounter(&start);
@@ -83,6 +83,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     mem::free(engine);
 
     dlog("CALLS: %d\nNOT_FREED: %lld\n", mem::calls, mem::notFreed);
+    if(logOutputFile == nullptr){uninitLogOutputFile();};
     return EXIT_SUCCESS;
 }
 

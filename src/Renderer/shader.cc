@@ -13,6 +13,7 @@ namespace Shader{
 	};
 	return OpenGL::compileShader(shaderSrc, shaderType);
 #endif
+	return 0;
     };
     void attachShaderToProgram(u32 shader, u32 program){
 #if(RCONTEXT_GL)
@@ -43,7 +44,10 @@ struct ShaderSystem{
 	shaderPrograms.init();
     };
     u32 newShaderProgram(){
-	u32 program = glCreateProgram();
+	u32 program;
+#if(RCONTEXT_GL)
+	program = glCreateProgram();
+#endif
 	shaderPrograms.push(program);
 	return program;
     };

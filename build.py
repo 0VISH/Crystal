@@ -6,7 +6,6 @@ def runCmd(cmd):
     print("[CMD]", cmd)
     if(run(cmd).returncode != 0): quit()
 
-isDbg = not("rls" in argv)
 shouldRun = "run" in argv
 shouldBuildIMGUI  = "imgui"  in argv
 shouldBuildGLAD   = "glad"   in argv
@@ -14,13 +13,32 @@ shouldBuildVENDOR = "vendor" in argv
 shouldBuildEditor = "editor" in argv
 shouldBuildBox2d  = "box2d"  in argv
 
-plat = None
-for i in argv:
-    if i.startswith("plat:"):
-        plat = i[len("plat:"):]
-if(plat == None):
-    plat = "win"
+def goThroughArgsAndFindOutTheSwitch(switchName, default):
+    switch = None
+    switchName += ":"
+    for i in argv:
+        if i.startswith(switchName):
+            switch = i[len(switchName):]
+    if(switch == None): return default
+    return switch
 
+plat = goThroughArgsAndFindOutTheSwitch("plat", "win")
+renderingAPI = goThroughArgsAndFindOutTheSwitch("api", "gl")
+    
+defines = {}
+defines["DBG"] = not("rls" in argv)
+defines["PLAT_WINDOWS"] = plat == "win"
+defines["PLAT_ANDROID"] = plat == "and"
+defines["PLAT_LINUX"] = plat == "lin"
+defines["RCONTEXT_GL"] = renderingAPI == "gl"
+defines["RCONTEXT_VK"] = renderingAPI == "vk"
+    
+def genDefinesString(define):
+    d = ""
+    for i in defines:
+        d += define + " " + i + "=" + str(defines[i]).lower() + " "
+    return d
+    
 if(shouldBuildVENDOR):
     shouldBuildIMGUI = True
     shouldBuildGLAD  = True
@@ -30,7 +48,7 @@ folder = "bin/"
 
 folder += plat + "/"
 
-if(isDbg): folder += "dbg/"
+if(defines["DBG"]): folder += "dbg/"
 else: folder += "rls/"
 
 if not os.path.isdir(folder): os.makedirs(folder)
@@ -38,6 +56,7 @@ if not os.path.isdir(folder): os.makedirs(folder)
 buildCmd = None
 
 if(plat == "win"):
+    defineStr = genDefinesString("/D")
     buildUsual = "cl /nologo /Z7 /std:c++14 -c "
     imguiPath  = folder + "imgui.obj"
     gladPath   = folder + "glad.obj"
@@ -58,7 +77,7 @@ if(plat == "win"):
         runCmd("link /NOLOGO /DEBUG /DLL /PDB:" + folder + "editor.pdb " + editorPath + " " + imguiPath + " /OUT:" + folder + "editor.dll")
     if(shouldBuildBox2d):
         runCmd(buildUsual + "/I vendor/box2d/include/ /I vendor/box2d/src/ src/box2dInclude.cc /Fo:" + box2dPath)
-    runCmd(buildUsual + "/I include/ /I vendor/imgui/ /I vendor/glad/include/ /I vendor/glm/ /I vendor/box2d/include/ src/Windows/entryPoint.cc /Fo:"+enginePath)
+    runCmd(buildUsual + defineStr + " /I include/ /I vendor/imgui/ /I vendor/glad/include/ /I vendor/glm/ /I vendor/box2d/include/ src/Windows/entryPoint.cc /Fo:"+enginePath)
 
 runCmd("link /NOLOGO /DEBUG /PDB:" + folder + "crystal.pdb " + folder + "crystal.obj " + gladPath + " " + box2dPath + " /OUT:" + folder + "crystal.exe")
 
