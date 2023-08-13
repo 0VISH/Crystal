@@ -126,7 +126,7 @@ struct EntityPanel{
 	    if(ImGui::Button("Add component")){ImGui::OpenPopup("Add component");};
 	    if(ImGui::BeginPopup("Add component")){
 		if(ImGui::MenuItem("Transform")){
-		    s->addComponent<Component::Transform>(e);
+		    addComponent<Component::Transform>(s, e);
 		    ImGui::CloseCurrentPopup();
 		};
 		ImGui::EndPopup();

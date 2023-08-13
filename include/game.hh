@@ -3,7 +3,6 @@
 #define EXPORT extern "C" __declspec(dllexport)
 
 #include "basic.hh"
-#include "config.hh"
 
 #include "utils.hh"
 logType print;
@@ -29,7 +28,7 @@ materialRegisterEntityType materialRegisterEntity;
 newMaterialType newMaterial;
 
 componentPoolInitType         componentPoolInit;
-componentPoolNewComponentType componentPoolNewComponent;
+componentPoolAddComponentType componentPoolAddComponent;
 componentPoolRemoveComponentType componentPoolRemoveComponent;
 componentPoolGetComponentType componentPoolGetComponent;
 
@@ -52,7 +51,7 @@ getMaterialSystemType getMaterialSystem;
 isKeyDownType    isKeyDown;
 
 EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
-			  componentPoolInitType cpit, componentPoolNewComponentType cpnct, componentPoolRemoveComponentType cprct, componentPoolGetComponentType cpgct,
+			  componentPoolInitType cpit, componentPoolAddComponentType cpact, componentPoolRemoveComponentType cprct, componentPoolGetComponentType cpgct,
 			  allocSceneType ast, freeSceneType fst, sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, getEntityType get,
 			  setCurrentSceneType scst, getCurrentSceneType gcst,
 			  createRigidBodyType crbt, createBoxColliderFixtureType cbcft,
@@ -63,7 +62,7 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
     newMaterial = nmt;
 
     componentPoolInit         = cpit;
-    componentPoolNewComponent = cpnct;
+    componentPoolAddComponent = cpact;
     componentPoolRemoveComponent = cprct;
     componentPoolGetComponent = cpgct;
 

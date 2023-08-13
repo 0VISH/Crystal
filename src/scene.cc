@@ -22,7 +22,7 @@ void componentPoolUninit(ComponentPool &cp){
   THIS MIGHT NOT WORK SINCE THE SECOND CALL MIGHT REALLOC MEM AND 
   POINTER 'f' MIGHT BE INVALIDATED!!!!!
 */
-void *componentPoolNewComponent(ComponentPool &cp, Entity e){
+void *componentPoolAddComponent(ComponentPool &cp, Entity e){
     if(e > cp.entityWatermark){
 	void *newMem = mem::alloc(sizeof(Entity) * e);
 	memcpy(newMem, cp.entityToComponentOff, sizeof(Entity)*cp.entityWatermark);

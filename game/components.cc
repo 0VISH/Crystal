@@ -68,7 +68,7 @@ namespace Component{
 
 	Component::RigidBody *rigidBody = s->getComponent<Component::RigidBody>(e);
 	if(rigidBody == nullptr){
-	    rigidBody = s->addComponent<Component::RigidBody>(e);
+	    rigidBody = addComponent<Component::RigidBody>(s, e);
 	};
 	b2Body *body = rigidBody->runtimeBody;
 	

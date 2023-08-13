@@ -25,21 +25,6 @@ struct ComponentPool{
 
 struct Scene{
     template<typename T>
-    T *addComponent(Entity e){
-	u32 componentID = getID<T>();
-	if(componentID >= components.count){
-	    ComponentPool &cp = components.newElem();
-	    componentPoolInit(cp, sizeof(T), 5, 5);
-	};
-	u32 &mask = entityComponentMask[e];
-	if(IS_BIT(mask, componentID)){return nullptr;};
-	SET_BIT(mask, componentID);
-	ComponentPool &cp = components[componentID];
-	T* t = (T*)componentPoolNewComponent(cp, e);
-	t->init(this, e);
-	return t;
-    };
-    template<typename T>
     void removeComponent(Entity e){
 	u32 componentID = getID<T>();
 	u32 &mask = entityComponentMask[e];
@@ -61,4 +46,20 @@ struct Scene{
     ds::DynamicArray<ComponentPool> components;
     Entity entityCount;
     u8 id;
+};
+
+template<typename T>
+T *addComponent(Scene *s, Entity e){
+    u32 componentID = getID<T>();
+    if(componentID >= s->components.count){
+	ComponentPool &cp = s->components.newElem();
+	componentPoolInit(cp, sizeof(T), 5, 5);
+    };
+    u32 &mask = s->entityComponentMask[e];
+    if(IS_BIT(mask, componentID)){return nullptr;};
+    SET_BIT(mask, componentID);
+    ComponentPool &cp = s->components[componentID];
+    T* t = (T*)componentPoolAddComponent(cp, e);
+    t->init(s, e);
+    return t;
 };

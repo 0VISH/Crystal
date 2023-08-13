@@ -19,7 +19,7 @@ namespace Game{
 	setCurrentScene(s);
 		
 	Entity sq = sceneNewEntity(s, "spinny quad");
-	s->addComponent<Component::Transform>(sq);
+	addComponent<Component::Transform>(s, sq);
 
 	MaterialSystem *ms = getMaterialSystem();
 	Material &mat = newMaterial(ms, 1);
@@ -29,7 +29,7 @@ namespace Game{
 
 	Renderer *r = getRenderer();
 
-	Component::Camera *cam = s->addComponent<Component::Camera>(sq);
+	Component::Camera *cam = addComponent<Component::Camera>(s, sq);
         cam->initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
     };
     EXPORT void render(){

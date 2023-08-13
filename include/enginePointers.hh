@@ -4,7 +4,7 @@ typedef void (*materialRegisterEntityType)(Material &m, Entity e);
 typedef Material& (*newMaterialType)(MaterialSystem *ms, u32 shader);
 
 typedef void  (*componentPoolInitType)(ComponentPool &cp, u64 size, u32 begLen, u32 ew);
-typedef void* (*componentPoolNewComponentType)(ComponentPool &cp, Entity e);
+typedef void* (*componentPoolAddComponentType)(ComponentPool &cp, Entity e);
 typedef void  (*componentPoolRemoveComponentType)(ComponentPool &cp, Entity e);
 typedef void* (*componentPoolGetComponentType)(ComponentPool &cp, Entity e);
 
