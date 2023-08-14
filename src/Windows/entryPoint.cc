@@ -4,9 +4,6 @@ logType print;
 #include "../include.hh"
 #include "include.hh"
 
-
-
-
 #if(DBG)
 s32 main(){
 #else

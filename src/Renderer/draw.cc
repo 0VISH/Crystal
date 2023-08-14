@@ -26,21 +26,16 @@ namespace Draw{
 	OpenGL::uninit(r);
 #endif
     };
-    void bindShader(u32 shader){
-#if(RCONTEXT_GL)
-	OpenGL::useProgram(shader);
-#endif
-    };
     void draw(Renderer &r){
 	if(r.bufferEmpty){return;};
 	Draw::Vertex *x = r.renderBuffer + (u32)ceil((f64)sizeof(glm::mat4)/(f64)sizeof(Draw::Vertex));
 	u32 curShader = x->pos.x;
-	bindShader(curShader);
+	Shader::useShader(curShader);
 	while(x != r.watermark){
 	    Draw::Vertex *info = x;
 	    if(info->pos.x != curShader){
 		curShader = info->pos.x;
-		bindShader(curShader);
+		Shader::useShader(curShader);
 	    };
 	    x += 1;
 	    u32 quadVerticesCount = (u32)info->pos.y * 4;
@@ -65,11 +60,6 @@ namespace Draw{
 	fb.unbind();
 	r.bufferEmpty = true;
 	r.watermark = r.renderBuffer;
-    };
-    void createDefaultShader(u32 &shaderProgram){
-#if(RCONTEXT_GL)
-	OpenGL::createDefaultShader(shaderProgram);
-#endif
     };
     void drawWireframe(){
 #if(RCONTEXT_GL)

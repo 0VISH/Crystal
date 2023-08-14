@@ -80,47 +80,6 @@ namespace OpenGL{
 };
 
 namespace OpenGL{
-    u32 compileShader(char *shaderSrc, GLenum type){
-	char *src = Package::readTextFile(shaderSrc);
-	u32 shader = glCreateShader(type);
-	glShaderSource(shader, 1, &src, NULL);
-	glCompileShader(shader);
-	//TODO: Package should handle this
-	mem::free(src);
-	return shader;
-    };
-    void attachShaderToProgram(u32 shader, u32 program){
-	glAttachShader(program, shader);
-    };
-    void linkProgram(u32 program){
-	glLinkProgram(program);
-    };
-    void useProgram(u32 program){
-	glUseProgram(program);
-    };
-    void deleteShader(u32 shader){
-	glDeleteShader(shader);
-    };
-    void createDefaultShader(u32 &shaderProgram){
-	//SHADER
-	u32 vertexShader = OpenGL::compileShader("package/shader/vertex.glsl", GL_VERTEX_SHADER);
-#if(DBG)
-	OpenGL::vertexCheckErr(vertexShader);
-#endif
-	u32 fragmentShader = OpenGL::compileShader("package/shader/fragment.glsl", GL_FRAGMENT_SHADER);
-#if(DBG)
-	OpenGL::fragmentCheckErr(fragmentShader);
-#endif
-	OpenGL::attachShaderToProgram(vertexShader, shaderProgram);
-	OpenGL::attachShaderToProgram(fragmentShader, shaderProgram);
-	OpenGL::linkProgram(shaderProgram);
-#if(DBG)
-	OpenGL::linkCheckErr(shaderProgram);
-#endif
-	OpenGL::useProgram(shaderProgram);
-	OpenGL::deleteShader(vertexShader);
-	OpenGL::deleteShader(fragmentShader);
-    };
     void drawWireframe(){glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);};
     void drawFill(){glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);};
     void setMat4Uniform(glm::mat4 &mat, char *uniformName, u32 shaderProgram){

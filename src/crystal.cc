@@ -18,6 +18,8 @@ struct Crystal{
     Scene            *curScene;
     u32               windowX;
     u32               windowY;
+    u32               defaultShader;
+    u32               screenShader;
     bool              shouldClose;
 
 #if(PLAT_WINDOWS) 
@@ -31,8 +33,9 @@ struct Crystal{
 	Draw::init(r);
 	materialSystemInit(&ms);
 	ss.init();
-	u32 defaultShader = ss.newShaderProgram();
-	Draw::createDefaultShader(defaultShader);
+	defaultShader = ss.newShaderProgram();
+	Shader::createShader("package/shader/vertex.glsl", "package/shader/fragment.glsl", defaultShader);
+	Shader::useShader(defaultShader);
 	fb.init(windowX, windowY);
     };
     void uninit(){

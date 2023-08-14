@@ -1,39 +1,38 @@
-enum class ShaderType{
-    VERTEX,
-    FRAGMENT,
-};
-
 namespace Shader{
-    u32 compileShader(char *shaderSrc, ShaderType type){
-#if(RCONTEXT_GL)
-	GLenum shaderType;
-	switch(type){
-	case ShaderType::VERTEX: shaderType = GL_VERTEX_SHADER; break;
-	case ShaderType::FRAGMENT: shaderType = GL_FRAGMENT_SHADER; break;
-	};
-	return OpenGL::compileShader(shaderSrc, shaderType);
-#endif
-	return 0;
+    u32 compileShader(char *shaderSrc, GLenum type){
+	char *src = Package::readTextFile(shaderSrc);
+	u32 shader = glCreateShader(type);
+	glShaderSource(shader, 1, &src, NULL);
+	glCompileShader(shader);
+	//TODO: Package should handle this
+	mem::free(src);
+	return shader;
     };
-    void attachShaderToProgram(u32 shader, u32 program){
-#if(RCONTEXT_GL)
-	OpenGL::attachShaderToProgram(shader, program);
+    void createShader(char *vertexShaderPath, char *fragmentShaderPath, u32 shaderProgram){
+	//SHADER
+	u32 vertexShader = compileShader(vertexShaderPath, GL_VERTEX_SHADER);
+#if(DBG)
+	OpenGL::vertexCheckErr(vertexShader);
 #endif
+	u32 fragmentShader = compileShader(fragmentShaderPath, GL_FRAGMENT_SHADER);
+#if(DBG)
+	OpenGL::fragmentCheckErr(fragmentShader);
+#endif
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+#if(DBG)
+	OpenGL::linkCheckErr(shaderProgram);
+#endif
+	glUseProgram(shaderProgram);
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
     };
-    void linkProgram(u32 program){
-#if(RCONTEXT_GL)
-	OpenGL::linkProgram(program);
-#endif
+    void destroyShader(u32 shaderProgram){
+	glDeleteProgram(shaderProgram);
     };
-    void useProgram(u32 program){
-#if(RCONTEXT_GL)
-	OpenGL::useProgram(program);
-#endif
-    };
-    void deleteShader(u32 shader){
-#if(RCONTEXT_GL)
-	OpenGL::deleteShader(shader);
-#endif
+    void useShader(u32 shaderProgram){
+	glUseProgram(shaderProgram);
     };
 };
 
@@ -56,7 +55,7 @@ struct ShaderSystem{
     };
     void uninit(){
 	for(u32 x=0; x<shaderPrograms.count; x+=1){
-	    Shader::deleteShader(shaderPrograms[x]);
+	    Shader::destroyShader(shaderPrograms[x]);
 	};
 	shaderPrograms.uninit();
     };
