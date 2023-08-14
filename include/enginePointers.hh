@@ -5,8 +5,6 @@ typedef Material& (*newMaterialType)(MaterialSystem *ms, u32 shader);
 
 typedef void  (*componentPoolInitType)(ComponentPool &cp, u64 size, u32 begLen, u32 ew);
 typedef void* (*componentPoolAddComponentType)(ComponentPool &cp, Entity e);
-typedef void  (*componentPoolRemoveComponentType)(ComponentPool &cp, Entity e);
-typedef void* (*componentPoolGetComponentType)(ComponentPool &cp, Entity e);
 
 typedef Scene* (*allocSceneType)();
 typedef void   (*freeSceneType)(Scene *s);
@@ -14,6 +12,8 @@ typedef void   (*sceneInitType)(Scene *s, u32 begEntityCount);
 typedef void   (*sceneUninitType)(Scene *s);
 typedef Entity (*sceneNewEntityType)(Scene *s, char *name);
 typedef Entity (*getEntityType)(Scene *s, char *name);
+typedef void  (*removeComponentType)(Scene *s, Entity e, u32 componentID);
+typedef void* (*getComponentType)(Scene *s, Entity e, u32 componentID);
 
 typedef void   (*setCurrentSceneType)(Scene *s);
 typedef Scene* (*getCurrentSceneType)();

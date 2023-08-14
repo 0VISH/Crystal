@@ -37,7 +37,7 @@ namespace Game{
 	MaterialSystem *ms = getMaterialSystem();
 
 	Entity sq = getEntity(s, "spinny quad");
-	Component::Camera *cam = s->getComponent<Component::Camera>(sq);
+	auto *cam = (Component::Camera*)getComponent(s, sq, getID<Component::Camera>());
 	cam->calculateViewMat();
 	
 	fillRenderBufferHeader(r, cam->projection * cam->view);
@@ -49,7 +49,7 @@ namespace Game{
     };
     EXPORT bool update(Event e, f64 dt){
 	Entity sq = getEntity(s, "spinny quad");
-	Component::Transform *s1T = s->getComponent<Component::Transform>(sq);
+	auto *s1T = (Component::Transform*)getComponent(s, sq, getID<Component::Transform>());
 	if(s1T == nullptr){return false;};
 	s1T->rotation.x += dt;
 	return false;

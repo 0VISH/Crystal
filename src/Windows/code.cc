@@ -3,15 +3,19 @@
     setupUtilPointer(print, Code::setGameFolder, editorSignal);		\
 									\
     auto setupPointers = (void(*)(materialRegisterEntityType mret, newMaterialType nmt, \
-				  componentPoolInitType cpit, componentPoolAddComponentType cpact, componentPoolRemoveComponentType cprct, componentPoolGetComponentType cpgct, \
-				  allocSceneType ast, freeSceneType fst, sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, getEntityType get, \
+				  componentPoolInitType cpit, componentPoolAddComponentType cpact, \
+				  allocSceneType ast, freeSceneType fst, \
+				  sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, getEntityType get, \
+				  removeComponentType rct, getComponentType gct, \
 				  setCurrentSceneType scst, getCurrentSceneType gcst, \
 				  createRigidBodyType crbt, createBoxColliderFixtureType cbcft, \
 				  getRendererType grt, getMaterialSystemType gmst, \
 				  isKeyDownType ikdt))GetProcAddress(HANDLE, "setupPointers"); \
     setupPointers(materialRegisterEntity,  newMaterial,			\
-		  componentPoolInit, componentPoolAddComponent, componentPoolRemoveComponent, componentPoolGetComponent, \
-		  allocScene, freeScene, sceneInit, sceneUninit, sceneNewEntity, getEntity, \
+		  componentPoolInit, componentPoolAddComponent,		\
+		  allocScene, freeScene,				\
+		  sceneInit, sceneUninit, sceneNewEntity, getEntity,	\
+		  removeComponent, getComponent,			\
 		  setCurrentScene, getCurrentScene,			\
 		  createRigidBody, createBoxColliderFixture,		\
 		  getRenderer,	getMaterialSystem,			\

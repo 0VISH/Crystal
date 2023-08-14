@@ -29,6 +29,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     engine->gameCode = Code::load("gameWin.dll");
     if(engine->gameCode == NULL){
 	editorCode = Code::load("bin/win/dbg/editor.dll");
+	ASSERT(editorCode);
 
 	Layer *editorLayer = engine->lm.newLayer();
 	editorLayer->onRender = (LayerFunc)GetProcAddress(editorCode, "render");
@@ -83,7 +84,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     mem::free(engine);
 
     dlog("CALLS: %d\nNOT_FREED: %lld\n", mem::calls, mem::notFreed);
-    if(logOutputFile == nullptr){uninitLogOutputFile();};
+    if(logOutputFile != nullptr){uninitLogOutputFile();};
     return EXIT_SUCCESS;
 }
 

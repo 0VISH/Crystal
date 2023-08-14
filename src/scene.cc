@@ -94,6 +94,17 @@ Entity getEntity(Scene *s, char *name){
     if(e == nullptr){return 0;};
     return *e;
 };
+void removeComponent(Scene *s, Entity e, u32 componentID){
+    u32 &mask = s->entityComponentMask[e];
+    if(!IS_BIT(mask, componentID)){return;};
+    CLEAR_BIT(mask, componentID);
+    componentPoolRemoveComponent(s->components[componentID], e);
+};
+void *getComponent(Scene *s, Entity e, u32 componentID){
+    u32 mask = s->entityComponentMask[e];
+    if(!IS_BIT(mask, componentID)){return nullptr;};
+    return componentPoolGetComponent(s->components[componentID], e);
+};
 Scene *allocScene(){
     return (Scene*)mem::alloc(sizeof(Scene));
 };

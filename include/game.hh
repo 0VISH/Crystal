@@ -29,8 +29,6 @@ newMaterialType newMaterial;
 
 componentPoolInitType         componentPoolInit;
 componentPoolAddComponentType componentPoolAddComponent;
-componentPoolRemoveComponentType componentPoolRemoveComponent;
-componentPoolGetComponentType componentPoolGetComponent;
 
 allocSceneType allocScene;
 freeSceneType  freeScene;
@@ -38,6 +36,8 @@ sceneInitType sceneInit;
 sceneUninitType sceneUninit;
 sceneNewEntityType sceneNewEntity;
 getEntityType getEntity;
+removeComponentType removeComponent;
+getComponentType getComponent;
 
 setCurrentSceneType setCurrentScene;
 getCurrentSceneType getCurrentScene;
@@ -51,8 +51,10 @@ getMaterialSystemType getMaterialSystem;
 isKeyDownType    isKeyDown;
 
 EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
-			  componentPoolInitType cpit, componentPoolAddComponentType cpact, componentPoolRemoveComponentType cprct, componentPoolGetComponentType cpgct,
-			  allocSceneType ast, freeSceneType fst, sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, getEntityType get,
+			  componentPoolInitType cpit, componentPoolAddComponentType cpact,
+			  allocSceneType ast, freeSceneType fst,
+			  sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, getEntityType get,
+			  removeComponentType rct, getComponentType gct,
 			  setCurrentSceneType scst, getCurrentSceneType gcst,
 			  createRigidBodyType crbt, createBoxColliderFixtureType cbcft,
 			  getRendererType grt, getMaterialSystemType gmst,
@@ -63,8 +65,6 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
 
     componentPoolInit         = cpit;
     componentPoolAddComponent = cpact;
-    componentPoolRemoveComponent = cprct;
-    componentPoolGetComponent = cpgct;
 
     allocScene = ast;
     freeScene = fst;
@@ -72,6 +72,8 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
     sceneUninit = sut;
     sceneNewEntity = snet;
     getEntity = get;
+    removeComponent = rct;
+    getComponent = gct;
 
     setCurrentScene = scst;
     getCurrentScene = gcst;

@@ -24,22 +24,6 @@ struct ComponentPool{
 };
 
 struct Scene{
-    template<typename T>
-    void removeComponent(Entity e){
-	u32 componentID = getID<T>();
-	u32 &mask = entityComponentMask[e];
-	if(!IS_BIT(mask, componentID)){return;};
-	CLEAR_BIT(mask, componentID);
-	componentPoolRemoveComponent(components[componentID], e);
-    };
-    template<typename T>
-    T *getComponent(Entity e){
-	u32 componentID = getID<T>();
-	u32 mask = entityComponentMask[e];
-	if(!IS_BIT(mask, componentID)){return nullptr;};
-	return (T*)componentPoolGetComponent(components[componentID], e);
-    };
-
     b2World *physicsWorld;
     map_int_t entityNameToID;
     ds::DynamicArray<u32> entityComponentMask;

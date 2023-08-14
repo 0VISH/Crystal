@@ -73,7 +73,7 @@ struct EntityPanel{
 
     template<typename T, typename Function>
     void drawComponent(char *name, Entity e, Scene *s, Function func){
-	T *t = s->getComponent<T>(e);
+	auto *t = (T*)getComponent(s, e, getID<T>());
 	if(t == nullptr){return;};
 	const ImGuiTreeNodeFlags f = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
 	ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
@@ -81,7 +81,7 @@ struct EntityPanel{
 	if(ImGui::TreeNodeEx(name, f)){
 	    ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
 	    if(ImGui::Button("-", ImVec2{ lineHeight, lineHeight })){
-	        s->removeComponent<T>(e);
+	        removeComponent(s, e, getID<T>());
 		ImGui::TreePop();
 		return;
 	    };

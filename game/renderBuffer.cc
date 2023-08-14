@@ -38,7 +38,7 @@ void fillRenderBufferWithGivenMat(Renderer *r, Material &m, Scene *s){
     u32 submittedQuads = 0;
     for(u32 x=0; x<m.registeredEntities.count; x+=1){
 	Entity e = m.registeredEntities[x];
-	Component::Transform *transform = s->getComponent<Component::Transform>(e);
+	auto *transform = (Component::Transform*)getComponent(s, e, getID<Component::Transform>());
 	if(transform == nullptr){continue;};
 	submitQuad(r, transform->genMatrix());
 	submittedQuads += 1;

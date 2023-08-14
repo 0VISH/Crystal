@@ -12,6 +12,7 @@ shouldBuildGLAD   = "glad"   in argv
 shouldBuildVENDOR = "vendor" in argv
 shouldBuildEditor = "editor" in argv
 shouldBuildBox2d  = "box2d"  in argv
+shouldBuildClean  = "clean"  in argv
 
 def goThroughArgsAndFindOutTheSwitch(switchName, default):
     switch = None
@@ -38,12 +39,15 @@ def genDefinesString(define):
     for i in defines:
         d += define + " " + i + "=" + str(defines[i]).lower() + " "
     return d
-    
+
+if(shouldBuildClean):
+    shouldBuildVENDOR = True
+    shouldBuildEditor = True
 if(shouldBuildVENDOR):
     shouldBuildIMGUI = True
     shouldBuildGLAD  = True
     shouldBuildBox2d = True
-
+    
 folder = "bin/"
 
 folder += plat + "/"
