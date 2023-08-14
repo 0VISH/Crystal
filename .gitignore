@@ -5,3 +5,4 @@ vendor/glad/
 **/imgui.ini
 **/*.log
 **/*.sln
+**/*.log

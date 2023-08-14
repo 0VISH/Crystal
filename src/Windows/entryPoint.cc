@@ -41,10 +41,21 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     }else{
 	initLogOutputFile("runtime.log");
 	print = _log;
-	//TODO: 
+
+	print("Loaded game code\n");
+	
+	engine->screenShader = engine->ss.newShaderProgram();
+	Shader::createShader("package/shader/displayVertex.glsl", "package/shader/displayFragment.glsl", engine->screenShader);
+
+	Layer *gameLayer = engine->lm.newLayer();
+	gameLayer->onRender = (LayerFunc)GetProcAddress(engine->gameCode, "render");
+	gameLayer->onUninit = (LayerFunc)GetProcAddress(engine->gameCode, "uninit");
+	gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(engine->gameCode, "update");
+	auto ginit = (void(*)(HWND window))GetProcAddress(engine->gameCode, "init");
+	ginit(window);
     };
     
-    print("Render context: %s", Draw::getRenderContextInfoString());
+    print("Render context: %s\n", Draw::getRenderContextInfoString());
     
     LARGE_INTEGER freq, start, end;
     f64 dt  = 0;
@@ -64,9 +75,21 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         Draw::beginFrame(engine->r, engine->fb);
 	Draw::draw(engine->r);
 	Draw::endFrame(engine->r, engine->fb);
-	
-	RenderContext::swapBuffers();
 
+	if(editorCode == nullptr){
+	    glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
+	    glClearColor(1.0f, 1.0f, 1.0f, 1.0f); 
+	    glClear(GL_COLOR_BUFFER_BIT);
+  
+	    Shader::useShader(engine->screenShader);
+	    glBindVertexArray(engine->r.qvao);
+	    glDisable(GL_DEPTH_TEST);
+	    glBindTexture(GL_TEXTURE_2D, engine->fb.texture);
+	    glDrawArrays(GL_TRIANGLES, 0, 6);
+	};
+
+	RenderContext::swapBuffers();
+	
 	QueryPerformanceCounter(&end);
 	dt = (end.QuadPart - start.QuadPart);
 	dt /= freq.QuadPart;
