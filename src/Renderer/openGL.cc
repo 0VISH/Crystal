@@ -80,6 +80,38 @@ namespace OpenGL{
 };
 
 namespace OpenGL{
+    ScreenQuad initScreenQuad(){
+	ScreenQuad sq;
+	glGenVertexArrays(1, &sq.vao);	
+	glBindVertexArray(sq.vao);
+	
+	f32 vertices[] = {
+	    1.0f,  1.0f,
+	    1.0f, -1.0f,
+	   -1.0f, -1.0f,
+	   -1.0f,  1.0f,
+	};
+	glGenBuffers(1, &sq.vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, sq.vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(f32), (const void*)0);
+	glEnableVertexAttribArray(0);
+	
+	u32 indices[] = {
+	    0, 1, 3,
+	    1, 2, 3
+	};
+	glGenBuffers(1, &sq.ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sq.ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	return sq;
+    };
+    void uninitScreenQuad(ScreenQuad &sq){
+	glDeleteBuffers(1, &sq.ibo);
+	glDeleteBuffers(1, &sq.vbo);
+	glDeleteVertexArrays(1, &sq.vao);
+    };
     void drawWireframe(){glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);};
     void drawFill(){glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);};
     void setMat4Uniform(glm::mat4 &mat, char *uniformName, u32 shaderProgram){

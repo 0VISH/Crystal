@@ -1,6 +1,7 @@
 namespace Shader{
     u32 compileShader(char *shaderSrc, GLenum type){
 	char *src = Package::readTextFile(shaderSrc);
+	ASSERT(src);
 	u32 shader = glCreateShader(type);
 	glShaderSource(shader, 1, &src, NULL);
 	glCompileShader(shader);

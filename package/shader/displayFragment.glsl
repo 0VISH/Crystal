@@ -7,5 +7,5 @@ layout (location = 0) out vec4 oCol;
 uniform sampler2D screenTexture;
 
 void main(){
-     oCol = texture(screenTexture, iTextCord);
+     oCol = vec4(4.0, 0.3, 0.3, 1.0);//texture(screenTexture, iTextCord);
 };

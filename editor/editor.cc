@@ -176,9 +176,6 @@ namespace Editor{
 	
 	if(ImGui::Begin("Scene")){
 	    ImGui::Text("Frame rate: %f\t\t\t\t\tDraw calls: %d", ImGui::GetIO().Framerate, r->drawCalls);
-	    if(ImGui::IsWindowHovered()){
-		
-	    };
 		
 	    float width = ImGui::GetContentRegionAvail().x;
 	    float height = ImGui::GetContentRegionAvail().y;

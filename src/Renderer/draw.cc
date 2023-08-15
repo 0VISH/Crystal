@@ -81,6 +81,16 @@ namespace Draw{
 	OpenGL::setVec4Uniform(vec, uniformName, shader);
 #endif
     };
+    ScreenQuad initScreenQuad(){
+#if(RCONTEXT_GL)
+	return OpenGL::initScreenQuad();
+#endif
+    };
+    void uninitScreenQuad(ScreenQuad &sq){
+#if(RCONTEXT_GL)
+	OpenGL::uninitScreenQuad(sq);
+#endif
+    };
     char *getRenderContextInfoString(){
 #if(RCONTEXT_GL)
 	return (char*)glGetString(GL_VERSION);

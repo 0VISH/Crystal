@@ -22,6 +22,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     engine->init();
 
+    ScreenQuad sq;
+    sq.ibo = 69;
     HMODULE editorCode = nullptr;
     engine->gameCode = Code::load("gameWin.dll");
     if(engine->gameCode == NULL){
@@ -43,7 +45,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	print = _log;
 
 	print("Loaded game code\n");
-	
+
+	sq = Draw::initScreenQuad();
 	engine->screenShader = engine->ss.newShaderProgram();
 	Shader::createShader("package/shader/displayVertex.glsl", "package/shader/displayFragment.glsl", engine->screenShader);
 
@@ -77,15 +80,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	Draw::endFrame(engine->r, engine->fb);
 
 	if(editorCode == nullptr){
-	    glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
-	    glClearColor(1.0f, 1.0f, 1.0f, 1.0f); 
+	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
 	    glClear(GL_COLOR_BUFFER_BIT);
   
 	    Shader::useShader(engine->screenShader);
-	    glBindVertexArray(engine->r.qvao);
+	    glBindVertexArray(sq.vao);
+	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sq.ibo);
 	    glDisable(GL_DEPTH_TEST);
 	    glBindTexture(GL_TEXTURE_2D, engine->fb.texture);
-	    glDrawArrays(GL_TRIANGLES, 0, 6);
+	    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	};
 
 	RenderContext::swapBuffers();
@@ -94,7 +98,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	dt = (end.QuadPart - start.QuadPart);
 	dt /= freq.QuadPart;
     }
-    
+
+    if(sq.ibo != 69){
+	Draw::uninitScreenQuad(sq);
+    };
     engine->uninit();
     Code::unload(engine->gameCode);
     Code::unload(editorCode);
