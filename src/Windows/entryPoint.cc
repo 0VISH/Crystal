@@ -23,7 +23,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     engine->init();
 
     ScreenQuad sq;
-    sq.ibo = 69;
+    sq.vao = 69;
     HMODULE editorCode = nullptr;
     engine->gameCode = Code::load("gameWin.dll");
     if(engine->gameCode == NULL){
@@ -86,10 +86,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
   
 	    Shader::useShader(engine->screenShader);
 	    glBindVertexArray(sq.vao);
-	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sq.ibo);
-	    glDisable(GL_DEPTH_TEST);
 	    glBindTexture(GL_TEXTURE_2D, engine->fb.texture);
-	    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	    glDrawArrays(GL_TRIANGLES, 0, 6);
 	};
 
 	RenderContext::swapBuffers();
@@ -99,7 +97,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	dt /= freq.QuadPart;
     }
 
-    if(sq.ibo != 69){
+    if(sq.vao != 69){
 	Draw::uninitScreenQuad(sq);
     };
     engine->uninit();

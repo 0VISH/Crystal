@@ -6,6 +6,6 @@ layout (location = 1) in vec2 iTextCord;
 layout (location = 0) out vec2 oTextCord;
 
 void main(){
-     gl_Position = vec4(iPos, 0.0, 1.0);
      oTextCord = iTextCord;
+     gl_Position = vec4(iPos, 0.0, 1.0);
 };

@@ -85,30 +85,27 @@ namespace OpenGL{
 	glGenVertexArrays(1, &sq.vao);	
 	glBindVertexArray(sq.vao);
 	
-	f32 vertices[] = {
-	    1.0f,  1.0f,
-	    1.0f, -1.0f,
-	   -1.0f, -1.0f,
-	   -1.0f,  1.0f,
+	f32 vertices[] = {  
+	   // positions   // texCoords
+	   -1.0f,  1.0f,  0.0f, 1.0f,
+	   -1.0f, -1.0f,  0.0f, 0.0f,
+	    1.0f, -1.0f,  1.0f, 0.0f,
+
+	   -1.0f,  1.0f,  0.0f, 1.0f,
+	    1.0f, -1.0f,  1.0f, 0.0f,
+	    1.0f,  1.0f,  1.0f, 1.0f
 	};
 	glGenBuffers(1, &sq.vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, sq.vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(f32), (const void*)0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(f32), (const void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(f32), (const void*)(2*sizeof(f32)));
+	glEnableVertexAttribArray(1);
 	
-	u32 indices[] = {
-	    0, 1, 3,
-	    1, 2, 3
-	};
-	glGenBuffers(1, &sq.ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sq.ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
 	return sq;
     };
     void uninitScreenQuad(ScreenQuad &sq){
-	glDeleteBuffers(1, &sq.ibo);
 	glDeleteBuffers(1, &sq.vbo);
 	glDeleteVertexArrays(1, &sq.vao);
     };
