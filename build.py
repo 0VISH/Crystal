@@ -7,12 +7,17 @@ def runCmd(cmd):
     if(run(cmd).returncode != 0): quit()
 
 shouldRun = "run" in argv
-shouldBuildIMGUI  = "imgui"  in argv
-shouldBuildGLAD   = "glad"   in argv
-shouldBuildVENDOR = "vendor" in argv
-shouldBuildEditor = "editor" in argv
-shouldBuildBox2d  = "box2d"  in argv
-shouldBuildClean  = "clean"  in argv
+shouldBuildIMGUI   = "imgui"   in argv
+shouldBuildGLAD    = "glad"    in argv
+shouldBuildVENDOR  = "vendor"  in argv
+shouldBuildEditor  = "editor"  in argv
+shouldBuildBox2d   = "box2d"   in argv
+shouldBuildClean   = "clean"   in argv
+
+if "package" in argv:
+    if not os.path.isdir("package/bin/"): os.makedirs("package/bin/")
+    runCmd("cl /nologo /EHsc /ZI /std:c++14 /I include/ /I game/ package/main.cc /Fd:package/bin/package.pdb /Fo:package/bin/package.obj /Fe:package/bin/package.exe")
+    quit()
 
 def goThroughArgsAndFindOutTheSwitch(switchName, default):
     switch = None

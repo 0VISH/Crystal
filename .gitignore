@@ -6,3 +6,4 @@ vendor/glad/
 **/*.log
 **/*.sln
 **/*.log
+**/*.pkg

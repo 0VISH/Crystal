@@ -80,6 +80,7 @@ void sceneUninit(Scene *s){
 	componentPoolUninit(cp);
     };
     s->components.uninit();
+    map_deinit(&s->entityNameToID);
     delete s->physicsWorld;
 };
 Entity sceneNewEntity(Scene *s, char *name){
