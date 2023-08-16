@@ -53,24 +53,59 @@ struct PackageBuilder{
 	};
 
 	FILE *f = fopen(packagePath, "wb");
-	std::unordered_map<char*, long> table;
+	long bytes = 0;
+	long tableSize = 0;
+
+	for(const auto &file : files){
+	    tableSize += sizeof(int) + strlen(file.name) + sizeof(long);
+	};
+	fwrite(&tableSize, sizeof(tableSize), 1, f);
 	
 	for(const auto &file : files){
-	    table[file.name] = ftell(f);
+	    int len = strlen(file.name);
+	    fwrite(&len, sizeof(len), 1, f);
+	    fwrite(file.name, len, 1, f);
+	    fwrite(&bytes, sizeof(bytes), 1, f);
+	    bytes += file.size;
+	};
+	
+	for(const auto &file : files){
 	    fwrite(file.content, file.size, 1, f);
 	};
 
-	long tableOff = ftell(f);
-	for(const auto &pair : table){
-	    int len = strlen(pair.first);
-	    fwrite(&len, sizeof(len), 1, f);
-	    fwrite(pair.first, len, 1, f);
-	    fwrite(&pair.second, sizeof(pair.second), 1, f);
-	};
-	
-	printf("-----Dumped to %s-----\n", packagePath);
+	printf("-----Dumped to %s with a table of size %d-----\n", packagePath, tableSize);
 	fclose(f);
     };
+};
+
+void loadPackage(char *packagePath){
+    FILE *packageFile = fopen(packagePath, "rb");
+    
+    fseek(packageFile, 0, SEEK_END);
+    long fsize = ftell(packageFile);
+    fseek(packageFile, 0, SEEK_SET);
+    
+    void *mem = (char*)malloc(fsize);
+    fread(mem, fsize, 1, packageFile);
+    fclose(packageFile);
+    
+    char *tableStart = (char*)mem;
+    long tableSize = *(long*)tableStart;
+    tableStart += sizeof(tableSize);
+    char *tableEnd = tableStart + tableSize;
+
+    while(tableStart != tableEnd){
+	int len = *(int*)tableStart;
+	tableStart += sizeof(int);
+	char *stringMem = tableStart;
+	tableStart += len;
+	int off = *(int*)tableStart;
+	tableStart += sizeof(int);
+
+	printf("%.*s: %d\n", len, stringMem, off);
+    };
+
+    free(mem);
 };
 
 int main(){
@@ -82,6 +117,9 @@ int main(){
     setup.addFile(displayFragmentShader);
 
     setup.createPackage("package/setup.pkg");
-    
+
+    loadPackage("package/setup.pkg");
+
+    printf("\nDONE :)\n");
     return EXIT_SUCCESS;
 };
