@@ -38,6 +38,8 @@ struct PackageBuilder{
 	void *mem = malloc(size);
 	fread(mem, size, 1, f);
 	fclose(f);
+	char *charMem = (char*)mem;
+	charMem[size] = 0;  //NOTE: we are padding all bin files with a null byte
 
 	file.name = filePath;
 	file.content = mem;
@@ -55,14 +57,19 @@ struct PackageBuilder{
 	FILE *f = fopen(packagePath, "wb");
 	long bytes = 0;
 	long tableSize = 0;
+	long fileCount = 0;
 
 	for(const auto &file : files){
-	    tableSize += sizeof(int) + strlen(file.name) + sizeof(long);
+	    //TODO: remove null byte
+	    tableSize += sizeof(int) + strlen(file.name)+1 + sizeof(long);
+	    fileCount += 1;
 	};
 	fwrite(&tableSize, sizeof(tableSize), 1, f);
+	fwrite(&fileCount, sizeof(fileCount), 1, f);
 	
 	for(const auto &file : files){
-	    int len = strlen(file.name);
+	    //TODO: remove null byte
+	    int len = strlen(file.name)+1;
 	    fwrite(&len, sizeof(len), 1, f);
 	    fwrite(file.name, len, 1, f);
 	    fwrite(&bytes, sizeof(bytes), 1, f);
@@ -70,42 +77,13 @@ struct PackageBuilder{
 	};
 	
 	for(const auto &file : files){
-	    fwrite(file.content, file.size, 1, f);
+	    //NOTE: +1 as all files are padded with a null byte
+	    fwrite(file.content, file.size+1, 1, f);
 	};
 
 	printf("-----Dumped to %s with a table of size %d-----\n", packagePath, tableSize);
 	fclose(f);
     };
-};
-
-void loadPackage(char *packagePath){
-    FILE *packageFile = fopen(packagePath, "rb");
-    
-    fseek(packageFile, 0, SEEK_END);
-    long fsize = ftell(packageFile);
-    fseek(packageFile, 0, SEEK_SET);
-    
-    void *mem = (char*)malloc(fsize);
-    fread(mem, fsize, 1, packageFile);
-    fclose(packageFile);
-    
-    char *tableStart = (char*)mem;
-    long tableSize = *(long*)tableStart;
-    tableStart += sizeof(tableSize);
-    char *tableEnd = tableStart + tableSize;
-
-    while(tableStart != tableEnd){
-	int len = *(int*)tableStart;
-	tableStart += sizeof(int);
-	char *stringMem = tableStart;
-	tableStart += len;
-	int off = *(int*)tableStart;
-	tableStart += sizeof(int);
-
-	printf("%.*s: %d\n", len, stringMem, off);
-    };
-
-    free(mem);
 };
 
 int main(){
@@ -117,8 +95,6 @@ int main(){
     setup.addFile(displayFragmentShader);
 
     setup.createPackage("package/setup.pkg");
-
-    loadPackage("package/setup.pkg");
 
     printf("\nDONE :)\n");
     return EXIT_SUCCESS;
