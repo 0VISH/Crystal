@@ -1,12 +1,10 @@
 namespace Shader{
     u32 compileShader(char *shaderSrc, GLenum type){
-	char *src = Package::readTextFile(shaderSrc);
+	char *src = Package::openFileFromPkgElseFile(shaderSrc);
 	ASSERT(src);
 	u32 shader = glCreateShader(type);
 	glShaderSource(shader, 1, &src, NULL);
 	glCompileShader(shader);
-	//TODO: Package should handle this
-	mem::free(src);
 	return shader;
     };
     void createShader(char *vertexShaderPath, char *fragmentShaderPath, u32 shaderProgram){

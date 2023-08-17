@@ -1,5 +1,13 @@
 #pragma once
 
 namespace Package{
-    char *readTextFile(char *filePath);
+     struct Pkg{
+	map_int_t fileToOff;
+	void *mem;
+	char *content;
+    };
+
+    void loadPkg(char *packagePath);
+    char *openFileFromPkgElseFile(char *fileName);
+    void unloadPkg();
 };

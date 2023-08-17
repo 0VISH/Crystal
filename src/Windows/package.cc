@@ -1,19 +1,19 @@
-//TODO: package all files under package
+#include "../package.hh"
 
 namespace Package{
-    struct Pkg{
-	map_int_t fileToOff;
-	void *mem;
-	char *content;
-    };
+    Pkg package;
     
-    Pkg loadPackage(char *packagePath){
+    void loadPkg(char *packagePath){
 	FILE *packageFile = fopen(packagePath, "rb");
+	if(packageFile == nullptr){
+	    package.mem = nullptr;
+	    return;
+	};
 	fseek(packageFile, 0, SEEK_END);
 	long fsize = ftell(packageFile);
 	fseek(packageFile, 0, SEEK_SET);
     
-	void *mem = (char*)malloc(fsize);
+	void *mem = (char*)mem::alloc(fsize);
 	fread(mem, fsize, 1, packageFile);
 	fclose(packageFile);
     
@@ -25,7 +25,6 @@ namespace Package{
 	tableStart += sizeof(fileCount);
 	char *tableEnd = tableStart + tableSize;
 
-	Pkg package;
 	package.mem = mem;
 	map_init(&package.fileToOff);
 	package.content = (char*)mem + sizeof(tableSize) + sizeof(fileCount) +tableSize;
@@ -35,31 +34,28 @@ namespace Package{
 	    int len = *(int*)tableStart;
 	    tableStart += sizeof(int);
 	    char *stringMem = tableStart;
-	    printf("%s\n", stringMem);
 	    tableStart += len;
 	    int off = *(int*)tableStart;
 	    tableStart += sizeof(int);
 
 	    map_set(&package.fileToOff, stringMem, off);
 	};
-
-	return package;
     };
-    char *openFileFromPkg(char *fileName, Pkg &pkg){
-	int *offPtr = map_get(&pkg.fileToOff, fileName);
-	if(offPtr == nullptr){return nullptr;};
-	return pkg.content + (*offPtr);
-    };
-    
-    char *readTextFile(char *filePath){
-	FILE *f = fopen(filePath, "r");
+    char *openFileFromPkgElseFile(char *fileName){
+	if(package.mem != nullptr){
+	    //pkg
+	    int *offPtr = map_get(&package.fileToOff, fileName);
+	    if(offPtr != nullptr){
+		return package.content + (*offPtr);
+	    };
+	};
 
-#if(DBG)
+	//file
+	FILE *f = fopen(fileName, "r");
 	if(f == nullptr){
-	    print("%s path does not exist", filePath);
+	    print("%s path does not exist", fileName);
 	    return nullptr;
 	};
-#endif
 	
 	fseek(f, 0, SEEK_END);
 	long fsize = ftell(f);
@@ -71,5 +67,10 @@ namespace Package{
 
 	mem[fsize] = 0;
 	return mem;
+    };
+    void unloadPkg(){
+	if(package.mem == nullptr){return;};
+	map_deinit(&package.fileToOff);
+	mem::free(package.mem);
     };
 };

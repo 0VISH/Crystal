@@ -73,7 +73,7 @@ struct PackageBuilder{
 	    fwrite(&len, sizeof(len), 1, f);
 	    fwrite(file.name, len, 1, f);
 	    fwrite(&bytes, sizeof(bytes), 1, f);
-	    bytes += file.size;
+	    bytes += file.size + 1;
 	};
 	
 	for(const auto &file : files){

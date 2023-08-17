@@ -34,6 +34,9 @@ struct Crystal{
 	materialSystemInit(&ms);
 	ss.init();
 	defaultShader = ss.newShaderProgram();
+
+	Package::loadPkg("package/setup.pkg");
+	
 	Shader::createShader("package/shader/vertex.glsl", "package/shader/fragment.glsl", defaultShader);
 	Shader::useShader(defaultShader);
 	fb.init(windowX, windowY);

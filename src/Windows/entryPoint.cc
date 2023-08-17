@@ -10,9 +10,6 @@ s32 main(){
 //no console
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow){
 #endif
-    Package::Pkg package = Package::loadPackage("package/setup.pkg");
-    char *file = openFileFromPkg("package/shader/vertex.glsl", package);
-    //free pkg
     mem::calls = 0;
     engine = (Crystal*)mem::alloc(sizeof(Crystal));
     
@@ -60,6 +57,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	auto ginit = (void(*)(HWND window))GetProcAddress(engine->gameCode, "init");
 	ginit(window);
     };
+    Package::unloadPkg();  //setup.pkg loaded by engine->init();
     
     print("Render context: %s\n", Draw::getRenderContextInfoString());
     
