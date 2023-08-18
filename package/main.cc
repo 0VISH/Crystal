@@ -3,6 +3,9 @@
 #include <vector>
 #include <unordered_map>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "../src/stb_image.hh"
+
 char *vertexShader   = "package/shader/vertex.glsl";
 char *fragmentShader = "package/shader/fragment.glsl";
 char *displayVertexShader   = "package/shader/displayVertex.glsl";
@@ -48,6 +51,32 @@ struct PackageBuilder{
 	
 	printf("%s\n", filePath);
     };
+    void addIMGFile(char *filePath){
+	int width, height, nrChannels;
+	unsigned char *data = stbi_load(filePath, &width, &height, &nrChannels, 0);
+	int bufferSize = width * height * nrChannels;
+
+	const int newFileSize = bufferSize + (sizeof(int)*3);
+	char *mem = (char*)malloc(newFileSize);
+	int *intMem = (int*)mem;
+	*intMem = width;
+	intMem += 1;
+	*intMem = height;
+	intMem += 1;
+	*intMem = nrChannels;
+	intMem += 1;
+
+	memcpy(intMem, data, bufferSize);
+	stbi_image_free(data);
+
+	File file;
+	file.name = filePath;
+	file.content = mem;
+	file.size = newFileSize;
+	files.push_back(file);
+
+	printf("IMG: %s\n", filePath);
+    };
     void createPackage(char *packagePath){
 	if(errorCount != 0){
 	    printf("\nerrorCount: %d\n", errorCount);
@@ -79,6 +108,7 @@ struct PackageBuilder{
 	for(const auto &file : files){
 	    //NOTE: +1 as all files are padded with a null byte
 	    fwrite(file.content, file.size+1, 1, f);
+	    free(file.content);
 	};
 
 	printf("-----Dumped to %s with a table of size %d-----\n", packagePath, tableSize);
@@ -93,6 +123,7 @@ int main(){
     setup.addFile(fragmentShader);
     setup.addFile(displayVertexShader);
     setup.addFile(displayFragmentShader);
+    
 
     setup.createPackage("package/setup.pkg");
 
