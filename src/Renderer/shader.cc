@@ -1,7 +1,7 @@
 namespace Shader{
     u32 compileShader(char *shaderSrc, GLenum type){
 	bool fromFile;
-	char *src = Package::openFileFromPkgElseFile(shaderSrc, fromFile, Package::curPkg);
+	char *src = Package::openNormalFileFromPkgElseFile(shaderSrc, fromFile, Package::curPkg);
 	ASSERT(src);
 	u32 shader = glCreateShader(type);
 	glShaderSource(shader, 1, &src, NULL);

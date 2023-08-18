@@ -8,7 +8,7 @@ namespace Package{
     };
 
     void loadPkg(char *packagePath, Pkg *package);
-    char *openFileFromPkgElseFile(char *fileName, bool &fromFile, Pkg *package);
+    char *openNormalFileFromPkgElseFile(char *fileName, bool &fromFile, Pkg *package);
     void unloadPkg(Pkg *package);
 
     Pkg *commonPkg;

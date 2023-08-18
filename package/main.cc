@@ -24,7 +24,7 @@ struct PackageBuilder{
     std::vector<File> files;
     int   errorCount = 0;
 
-    void addFile(char *filePath){
+    void addNormalFile(char *filePath){
 	FILE *f = fopen(filePath, "rb");
 	if(f == nullptr){
 	    printf("Invalid filepath: %s\n", filePath);
@@ -51,7 +51,7 @@ struct PackageBuilder{
 	
 	printf("%s\n", filePath);
     };
-    void addIMGFile(char *filePath){
+    void addImgFile(char *filePath){
 	int width, height, nrChannels;
 	unsigned char *data = stbi_load(filePath, &width, &height, &nrChannels, 0);
 	int bufferSize = width * height * nrChannels;
@@ -75,7 +75,10 @@ struct PackageBuilder{
 	file.size = newFileSize;
 	files.push_back(file);
 
-	printf("IMG: %s\n", filePath);
+	printf("%s\n", filePath);
+	printf("    width: %d\n", width);
+	printf("    height: %d\n", height);
+	printf("    nrChannels: %d\n", nrChannels);
     };
     void createPackage(char *packagePath){
 	if(errorCount != 0){
@@ -119,12 +122,13 @@ struct PackageBuilder{
 int main(){
     PackageBuilder setup;
     
-    setup.addFile(vertexShader);
-    setup.addFile(fragmentShader);
-    setup.addFile(displayVertexShader);
-    setup.addFile(displayFragmentShader);
+    setup.addNormalFile(vertexShader);
+    setup.addNormalFile(fragmentShader);
+    setup.addNormalFile(displayVertexShader);
+    setup.addNormalFile(displayFragmentShader);
     
-
+    setup.addImgFile("crystal.png");
+    
     setup.createPackage("package/setup.pkg");
 
     printf("\nDONE :)\n");

@@ -1,5 +1,8 @@
 #include "../package.hh"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "../stb_image.hh"
+
 namespace Package{
     void allocPackages(){
 	commonPkg = (Pkg*)mem::alloc(sizeof(Pkg));
@@ -48,7 +51,7 @@ namespace Package{
 	    map_set(&package->fileToOff, stringMem, off);
 	};
     };
-    char *openFileFromPkgElseFile(char *fileName, bool &fromFile, Pkg *package){
+    char *openNormalFileFromPkgElseFile(char *fileName, bool &fromFile, Pkg *package){
 	if(package->mem != nullptr){
 	    //pkg
 	    int *offPtr = map_get(&package->fileToOff, fileName);
@@ -76,6 +79,29 @@ namespace Package{
 	mem[fsize] = 0;
 	fromFile = true;
 	return mem;
+    };
+    char *openImgFileFromPkgElseFile(char *fileName, s32 &width, s32 &height, s32 &nrChannels, bool &fromFile, Pkg *package){
+	if(package->mem != nullptr){
+	    //pkg
+	    int *offPtr = map_get(&package->fileToOff, fileName);
+	    if(offPtr != nullptr){
+		fromFile = false;
+		s32 *mem = (s32*)(package->content + (*offPtr));
+		
+		width = *mem;
+		mem += 1;
+		height = *mem;
+		mem += 1;
+		nrChannels = *mem;
+		mem += 1;
+
+		return (char*)mem;
+	    };
+	};
+
+	unsigned char *data = stbi_load(fileName, &width, &height, &nrChannels, 0);
+	fromFile = true;
+	return (char*)data;
     };
     void unloadPkg(Pkg *package){
 	if(package->mem == nullptr){return;};
