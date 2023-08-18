@@ -7,7 +7,10 @@ namespace Package{
 	char *content;
     };
 
-    void loadPkg(char *packagePath);
-    char *openFileFromPkgElseFile(char *fileName);
-    void unloadPkg();
+    void loadPkg(char *packagePath, Pkg *package);
+    char *openFileFromPkgElseFile(char *fileName, bool &fromFile, Pkg *package);
+    void unloadPkg(Pkg *package);
+
+    Pkg *commonPkg;
+    Pkg *curPkg;
 };

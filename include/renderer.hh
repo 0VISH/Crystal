@@ -6,6 +6,7 @@ namespace Draw{
     struct Vertex{
 	glm::vec3 pos;
 	glm::vec4 col;
+	glm::vec2 textPos;
     };
 
     const u32 maxQuadCount   = 1000;

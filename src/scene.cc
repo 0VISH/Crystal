@@ -110,6 +110,5 @@ Scene *allocScene(){
     return (Scene*)mem::alloc(sizeof(Scene));
 };
 void freeScene(Scene *s){
-    map_deinit(&s->entityNameToID);
     mem::free(s);
 };

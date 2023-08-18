@@ -1,12 +1,19 @@
 #include "../package.hh"
 
 namespace Package{
-    Pkg package;
+    void allocPackages(){
+	commonPkg = (Pkg*)mem::alloc(sizeof(Pkg));
+	curPkg = (Pkg*)mem::alloc(sizeof(Pkg));
+    };
+    void freePackages(){
+	mem::free(commonPkg);
+	mem::free(curPkg);
+    };
     
-    void loadPkg(char *packagePath){
+    void loadPkg(char *packagePath, Pkg *package){
 	FILE *packageFile = fopen(packagePath, "rb");
 	if(packageFile == nullptr){
-	    package.mem = nullptr;
+	    package->mem = nullptr;
 	    return;
 	};
 	fseek(packageFile, 0, SEEK_END);
@@ -25,9 +32,9 @@ namespace Package{
 	tableStart += sizeof(fileCount);
 	char *tableEnd = tableStart + tableSize;
 
-	package.mem = mem;
-	map_init(&package.fileToOff);
-	package.content = (char*)mem + sizeof(tableSize) + sizeof(fileCount) +tableSize;
+	package->mem = mem;
+	map_init(&package->fileToOff);
+	package->content = (char*)mem + sizeof(tableSize) + sizeof(fileCount) +tableSize;
 	
 	while(tableStart != tableEnd){
 	    //TODO: remove null termination and use this
@@ -38,15 +45,16 @@ namespace Package{
 	    int off = *(int*)tableStart;
 	    tableStart += sizeof(int);
 
-	    map_set(&package.fileToOff, stringMem, off);
+	    map_set(&package->fileToOff, stringMem, off);
 	};
     };
-    char *openFileFromPkgElseFile(char *fileName){
-	if(package.mem != nullptr){
+    char *openFileFromPkgElseFile(char *fileName, bool &fromFile, Pkg *package){
+	if(package->mem != nullptr){
 	    //pkg
-	    int *offPtr = map_get(&package.fileToOff, fileName);
+	    int *offPtr = map_get(&package->fileToOff, fileName);
 	    if(offPtr != nullptr){
-		return package.content + (*offPtr);
+		fromFile = false;
+		return package->content + (*offPtr);
 	    };
 	};
 
@@ -66,11 +74,12 @@ namespace Package{
 	fclose(f);
 
 	mem[fsize] = 0;
+	fromFile = true;
 	return mem;
     };
-    void unloadPkg(){
-	if(package.mem == nullptr){return;};
-	map_deinit(&package.fileToOff);
-	mem::free(package.mem);
+    void unloadPkg(Pkg *package){
+	if(package->mem == nullptr){return;};
+	map_deinit(&package->fileToOff);
+	mem::free(package->mem);
     };
 };

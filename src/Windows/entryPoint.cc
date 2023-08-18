@@ -20,6 +20,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     ::ShowWindow(window, SW_SHOWDEFAULT);
     ::UpdateWindow(window);
 
+    Package::allocPackages();
     engine->init();
 
     ScreenQuad sq;
@@ -57,7 +58,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	auto ginit = (void(*)(HWND window))GetProcAddress(engine->gameCode, "init");
 	ginit(window);
     };
-    Package::unloadPkg();  //setup.pkg loaded by engine->init();
+    Package::unloadPkg(Package::curPkg);  //setup.pkg loaded by engine->init();
     
     print("Render context: %s\n", Draw::getRenderContextInfoString());
     
@@ -102,6 +103,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	Draw::uninitScreenQuad(sq);
     };
     engine->uninit();
+    Package::freePackages();
     Code::unload(engine->gameCode);
     Code::unload(editorCode);
     RenderContext::uninit(window);
