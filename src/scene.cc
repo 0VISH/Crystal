@@ -64,6 +64,99 @@ void *componentPoolGetComponent(ComponentPool &cp, Entity e){
 
 static u8 sceneID = 0;
 
+void dumpSceneToFile(Scene *s, char *fileName){
+    FILE *f = fopen(fileName, "wb");
+    const char *key;
+    map_iter_t iter = map_iter(&s->entityNameToID);
+    fwrite(&s->id, sizeof(s->id), 1, f);
+    fwrite(&s->entityCount, sizeof(s->entityCount), 1, f);
+    while(key = map_next(&s->entityNameToID, &iter)){
+	u32 len = strlen(key) + 1;  //+1 for null byte
+	fwrite(&len, sizeof(len), 1, f);
+	fwrite(key, len, 1, f);
+	Entity e = *map_get(&s->entityNameToID, key);
+	fwrite(&e, sizeof(e), 1, f);
+    };
+    fwrite(&s->entityComponentMask.count, sizeof(s->entityComponentMask.count), 1, f);
+    fwrite(s->entityComponentMask.mem, s->entityComponentMask.count * sizeof(u32), 1, f);
+    fwrite(&s->components.count, sizeof(s->components.count), 1, f);
+    for(u32 x=0; x<s->components.count; x+=1){
+	ComponentPool &cp = s->components[x];
+	fwrite(&cp.componentSize, sizeof(cp.componentSize), 1, f);
+	fwrite(&cp.count, sizeof(cp.count), 1, f);
+	fwrite(&cp.entityWatermark, sizeof(cp.entityWatermark), 1, f);
+	fwrite(cp.mem, cp.componentSize*cp.count, 1, f);
+	fwrite(cp.entityToComponentOff, sizeof(Entity)*cp.entityWatermark, 1, f);
+    };
+    fclose(f);
+};
+void loadSceneFromFile(Scene *s, char *fileName){
+    map_init(&s->entityNameToID);
+    
+    FILE *f = fopen(fileName, "rb");
+    fseek(f, 0, SEEK_END);
+    long size = ftell(f);
+    fseek(f, 0, SEEK_SET);
+
+    void *mem = malloc(size);
+    fread(mem, size, 1, f);
+    fclose(f);
+    char *charMem = (char*)mem;
+
+    u8 id = *(u8*)charMem;
+    charMem += sizeof(id);
+    s->entityCount = id;
+    Entity entityCount = *(Entity*)charMem;
+    charMem += sizeof(entityCount);
+    if(entityCount != 0){
+	s->entityCount = entityCount;
+	while(entityCount != 0){
+	    u32 len = *(u32*)charMem;
+	    charMem += sizeof(len);
+	    char *str = charMem;
+	    charMem += len;
+	    Entity e = *(Entity*)charMem;
+	    charMem += sizeof(e);
+	    map_set(&s->entityNameToID, str, e);
+	    entityCount -= 1;
+	};
+    };
+    u32 maskCount = *(u32*)charMem;
+    charMem += sizeof(maskCount);
+    u32 *maskMem = (u32*)charMem;
+    charMem += maskCount * sizeof(u32);
+    if(maskCount != 0){
+	s->entityComponentMask.init(maskCount);
+	for(u32 x=0; x<maskCount; x+=1){
+	    s->entityComponentMask.push(maskMem[x]);
+	};
+    };
+    u32 cpCount = *(u32*)charMem;
+    charMem += sizeof(cpCount);
+    if(cpCount == 0){s->components.init(5);}
+    else{
+	s->components.init(cpCount);
+	for(u32 x=0; x<cpCount; x+=1){
+	    ComponentPool &cp = s->components.newElem();
+	    cp.componentSize = *(u64*)charMem;
+	    charMem += sizeof(cp.componentSize);
+	    cp.count = *(u32*)charMem;
+	    cp.len = cp.count;
+	    charMem += sizeof(cp.count);
+	    cp.entityWatermark = *(Entity*)charMem;
+	    charMem += sizeof(cp.entityWatermark);
+	    u64 componentMemSize = cp.componentSize * cp.count;
+	    cp.mem = (char*)mem::alloc(componentMemSize);
+	    memcpy(cp.mem, charMem, componentMemSize);
+	    charMem += componentMemSize;
+	    u64 entityToComponentSize = cp.entityWatermark*sizeof(Entity);
+	    cp.entityToComponentOff = (Entity*)mem::alloc(entityToComponentSize);
+	    memcpy(cp.entityToComponentOff, charMem, entityToComponentSize);
+	    charMem += entityToComponentSize;
+	};
+    };
+    fclose(f);
+};
 void sceneInit(Scene *s, u32 begEntityCount){
     map_init(&s->entityNameToID);
     s->physicsWorld = new b2World({0.0, 9.8});
