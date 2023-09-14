@@ -7,7 +7,11 @@
 #include "game.hh"
 
 namespace Game{
+    Crystal *engine;
+    
+    EXPORT void reload(){engine = getEngine();};
     EXPORT void init(){
+	engine = getEngine();
 	allocAndSetCurrentScene();
 	initCurrentScene(5);
 	
