@@ -16,6 +16,8 @@
 #include "console.cc"
 #include "entityPanel.cc"
 
+char *gameFolderPath = nullptr;
+
 void openGameFolder(){
     CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 
@@ -35,12 +37,11 @@ void openGameFolder(){
 
                 // Convert the folderPath from wide character to multi-byte character
                 int bufferSize = WideCharToMultiByte(CP_UTF8, 0, folderPath, -1, NULL, 0, NULL, NULL);
-                char* folderPathUtf8 = (char*)mem::alloc(bufferSize);
-                WideCharToMultiByte(CP_UTF8, 0, folderPath, -1, folderPathUtf8, bufferSize, NULL, NULL);
+                gameFolderPath = (char*)mem::alloc(bufferSize);
+                WideCharToMultiByte(CP_UTF8, 0, folderPath, -1, gameFolderPath, bufferSize, NULL, NULL);
 
-                setGameFolder(folderPathUtf8);
+                setGameFolder(gameFolderPath);
 
-		mem::free(folderPathUtf8);
                 CoTaskMemFree(folderPath);
                 pItem->Release();
             }
@@ -58,6 +59,7 @@ namespace Editor{
     Console console;
     Renderer *r;
     u32 *gameTexture;
+    char *levelName = nullptr;
 
     EXPORT void setGameTextureAdd(u32 *tAdd){
 	gameTexture = tAdd;
@@ -115,6 +117,33 @@ namespace Editor{
 	print = addLog;
 	showDemo = false;
     };
+    void saveLevel(){
+	if(levelName != nullptr){
+	    //TODO:
+	    return;
+	};
+	OPENFILENAME ofn;
+	TCHAR szFile[260];
+	ZeroMemory(&ofn, sizeof(OPENFILENAME));
+	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.hwndOwner = NULL;
+	ofn.lpstrFile = szFile;
+	ofn.lpstrFile[0] = '\0';
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrDefExt = "scn";
+	ofn.lpstrFilter = TEXT("Scene File (*.scn)\0*.scn\0All Files (*.*)\0*.*\0");
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_EXTENSIONDIFFERENT;
+
+	if (GetSaveFileName(&ofn) == TRUE) {
+	    serializeCurrentScene(szFile);
+	} else {
+	    print("[error] User canceled the dialog or an error occurred");
+	}
+    };
     EXPORT bool update(Event e, f64 dt){
 	//FEEDING IMGUI EVENTS
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -162,6 +191,14 @@ namespace Editor{
 	    if(ImGui::BeginMenu("File")){
 		if (ImGui::MenuItem("Open")){
 		    openGameFolder();
+		};
+		if(ImGui::MenuItem("Save")){
+		    Scene *s = getCurrentScene();
+		    if(s == nullptr){
+			print("[error] No scene to save");
+		    }else{
+			saveLevel();
+		    };
 		};
 		ImGui::EndMenu();
 	    };
@@ -221,6 +258,8 @@ namespace Editor{
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+
+	if(gameFolderPath != nullptr){mem::free(gameFolderPath);};
     };
 };
 

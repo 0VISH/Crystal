@@ -8,6 +8,8 @@ typedef void* (*componentPoolAddComponentType)(ComponentPool &cp, Entity e);
 
 typedef void   (*allocAndSetCurrentSceneType)();
 typedef void   (*uninitAndFreeCurrentSceneType)();
+typedef void   (*serializeCurrentSceneType)(char *fileName);
+typedef void   (*deserializeToCurrentSceneType)(char *fileName);
 typedef void   (*initCurrentSceneType)(u32 begEntityCount);
 typedef Entity (*sceneNewEntityType)(char *name);
 typedef Entity (*getEntityType)(char *name);

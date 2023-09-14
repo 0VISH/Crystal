@@ -5,7 +5,7 @@
     auto setupPointers = (void(*)(materialRegisterEntityType mret, newMaterialType nmt, \
 				  componentPoolInitType cpit, componentPoolAddComponentType cpact, \
 				  allocAndSetCurrentSceneType ascst, uninitAndFreeCurrentSceneType ufcst, \
-				  initCurrentSceneType icst,		\
+				  initCurrentSceneType icst, serializeCurrentSceneType secst, deserializeToCurrentSceneType dcst,		\
 				  sceneNewEntityType snet, getEntityType get, \
 				  removeComponentType rct, getComponentType gct, \
 				  setCurrentSceneType scst, getCurrentSceneType gcst, \
@@ -15,7 +15,7 @@
     setupPointers(materialRegisterEntity,  newMaterial,			\
 		  componentPoolInit, componentPoolAddComponent,		\
 		  allocAndSetCurrentScene, uninitAndFreeCurrentScene,	\
-		  initCurrentScene,					\
+		  initCurrentScene, serializeCurrentScene, deserializeToCurrentScene, \
 		  sceneNewEntity, getEntity,				\
 		  removeComponent, getComponent,			\
 		  setCurrentScene, getCurrentScene,			\

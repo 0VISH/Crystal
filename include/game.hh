@@ -32,6 +32,8 @@ componentPoolAddComponentType componentPoolAddComponent;
 
 allocAndSetCurrentSceneType allocAndSetCurrentScene;
 uninitAndFreeCurrentSceneType uninitAndFreeCurrentScene;
+serializeCurrentSceneType serializeCurrentScene;
+deserializeToCurrentSceneType deserializeToCurrentScene;
 initCurrentSceneType initCurrentScene;
 sceneNewEntityType sceneNewEntity;
 getEntityType getEntity;
@@ -52,7 +54,7 @@ isKeyDownType    isKeyDown;
 EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
 			  componentPoolInitType cpit, componentPoolAddComponentType cpact,
 			  allocAndSetCurrentSceneType ascst, uninitAndFreeCurrentSceneType ufcst,
-			  initCurrentSceneType icst,
+			  initCurrentSceneType icst, serializeCurrentSceneType secst, deserializeToCurrentSceneType dcst,
 			  sceneNewEntityType snet, getEntityType get,
 			  removeComponentType rct, getComponentType gct,
 			  setCurrentSceneType scst, getCurrentSceneType gcst,
@@ -69,6 +71,8 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
     allocAndSetCurrentScene = ascst;
     uninitAndFreeCurrentScene = ufcst;
     initCurrentScene = icst;
+    serializeCurrentScene = secst;
+    deserializeToCurrentScene = dcst;
     sceneNewEntity = snet;
     getEntity = get;
     removeComponent = rct;

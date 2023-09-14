@@ -65,7 +65,8 @@ void *componentPoolGetComponent(ComponentPool &cp, Entity e){
 
 static u8 sceneID = 0;
 
-void dumpSceneToFile(Scene *s, char *fileName){
+void serializeCurrentScene(char *fileName){
+    Scene *s = engine->curScene;
     FILE *f = fopen(fileName, "wb");
     const char *key;
     map_iter_t iter = map_iter(&s->entityNameToID);
@@ -91,7 +92,8 @@ void dumpSceneToFile(Scene *s, char *fileName){
     };
     fclose(f);
 };
-void loadSceneFromFile(Scene *s, char *fileName){
+void deserializeToCurrentScene(char *fileName){
+    Scene *s = engine->curScene;
     map_init(&s->entityNameToID);
     
     FILE *f = fopen(fileName, "rb");
