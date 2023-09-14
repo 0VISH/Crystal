@@ -35,31 +35,28 @@ uninitAndFreeCurrentSceneType uninitAndFreeCurrentScene;
 serializeCurrentSceneType serializeCurrentScene;
 deserializeToCurrentSceneType deserializeToCurrentScene;
 initCurrentSceneType initCurrentScene;
+setActiveCameraToCurrentSceneType setActiveCameraToCurrentScene;
 sceneNewEntityType sceneNewEntity;
 getEntityType getEntity;
 removeComponentType removeComponent;
 getComponentType getComponent;
 
-setCurrentSceneType setCurrentScene;
-getCurrentSceneType getCurrentScene;
-
 createRigidBodyType createRigidBody;
 createBoxColliderFixtureType createBoxColliderFixture;
 
-getRendererType     getRenderer;
-getMaterialSystemType getMaterialSystem;
+getEngineType getEngine;
 
 isKeyDownType    isKeyDown;
 
 EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
 			  componentPoolInitType cpit, componentPoolAddComponentType cpact,
 			  allocAndSetCurrentSceneType ascst, uninitAndFreeCurrentSceneType ufcst,
-			  initCurrentSceneType icst, serializeCurrentSceneType secst, deserializeToCurrentSceneType dcst,
+			  initCurrentSceneType icst, setActiveCameraToCurrentSceneType sacct,
+			  serializeCurrentSceneType secst, deserializeToCurrentSceneType dcst,
 			  sceneNewEntityType snet, getEntityType get,
 			  removeComponentType rct, getComponentType gct,
-			  setCurrentSceneType scst, getCurrentSceneType gcst,
 			  createRigidBodyType crbt, createBoxColliderFixtureType cbcft,
-			  getRendererType grt, getMaterialSystemType gmst,
+			  getEngineType gent,
 			  isKeyDownType ikdt){
     
     materialRegisterEntity = mret;
@@ -70,22 +67,23 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
 
     allocAndSetCurrentScene = ascst;
     uninitAndFreeCurrentScene = ufcst;
+    
     initCurrentScene = icst;
+    setActiveCameraToCurrentScene = sacct;
+    
     serializeCurrentScene = secst;
     deserializeToCurrentScene = dcst;
+    
     sceneNewEntity = snet;
     getEntity = get;
+    
     removeComponent = rct;
     getComponent = gct;
 
-    setCurrentScene = scst;
-    getCurrentScene = gcst;
-
     createRigidBody = crbt;
     createBoxColliderFixture = cbcft;
-    
-    getRenderer = grt;
-    getMaterialSystem = gmst;
+
+    getEngine = gent;
     
     isKeyDown = ikdt;
 };

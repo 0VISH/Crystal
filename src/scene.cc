@@ -1,5 +1,6 @@
 #include "scene.hh"
 #include "crystal.hh"
+#include "components.hh"
 
 void componentPoolInit(ComponentPool &cp, u64 size, u32 begLen, u32 ew=1){
     cp.count = 0;

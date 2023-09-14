@@ -24,17 +24,18 @@ struct ComponentPool{
 };
 
 struct Scene{
-    b2World *physicsWorld;
     map_int_t entityNameToID;
     ds::DynamicArray<u32> entityComponentMask;
     ds::DynamicArray<ComponentPool> components;
+    b2World *physicsWorld;
+    void    *activeCam;
     Entity entityCount;
     u8 id;
 };
 
 template<typename T>
 T *addComponent(Entity e){
-    Scene *s = getCurrentScene();
+    Scene *s = getEngine()->curScene;
     u32 componentID = getID<T>();
     if(componentID >= s->components.count){
 	ComponentPool &cp = s->components.newElem();

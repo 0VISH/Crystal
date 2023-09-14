@@ -77,6 +77,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         engine->lm.updateLayers(e, dt);
         engine->lm.renderLayers();
 
+	fillRenderBufferUsingCurrentScene();
         Draw::beginFrame(engine->r, engine->fb);
 	Draw::draw(engine->r);
 	Draw::endFrame(engine->r, engine->fb);

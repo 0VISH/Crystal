@@ -19,27 +19,19 @@ namespace Game{
 	mat.col = glm::vec4(1.0, 0.5, 1.0, 1.0);
 	materialRegisterEntity(mat, sq);
 
-	Renderer *r = getRenderer();
-
 	Component::Camera *cam = addComponent<Component::Camera>(sq);
         cam->initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
     };
     EXPORT void render(){
-	Renderer *r = getRenderer();
-	MaterialSystem *ms = getMaterialSystem();
-
-	Entity sq = getEntity("spinny quad");
-	auto *cam = (Component::Camera*)getComponent(sq, getID<Component::Camera>());
-	cam->calculateViewMat();
 	
-	fillRenderBufferHeader(r, cam->projection * cam->view);
-	fillRenderBufferWithGivenMS(r, ms);
     };
     EXPORT void uninit(){
 	uninitAndFreeCurrentScene();
     };
     EXPORT bool update(Event e, f64 dt){
 	Entity sq = getEntity("spinny quad");
+	auto *cam = (Component::Camera*)getComponent(sq, getID<Component::Camera>());
+	setActiveCameraToCurrentScene(cam);
 	auto *s1T = (Component::Transform*)getComponent(sq, getID<Component::Transform>());
 	if(s1T == nullptr){return false;};
 	s1T->rotation.x += dt;

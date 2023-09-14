@@ -127,6 +127,17 @@ struct Event{
     ButtonCode buttonCode;
     f32 scroll;
 };
+struct EventDispatcher{
+    Event events[EVENT_COUNT];
+    u8 off;
+
+    void init();
+    void registerEvent(Event e);
+    Event getEvent();
+#if(DBG)
+    void dumpEvents();
+#endif
+};
 
 bool isMouseButtonEvent(Event e){
     return e.type == EventType::MOUSE_BUTTON_DOWN || e.type == EventType::MOUSE_BUTTON_UP;

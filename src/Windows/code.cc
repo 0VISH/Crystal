@@ -5,22 +5,22 @@
     auto setupPointers = (void(*)(materialRegisterEntityType mret, newMaterialType nmt, \
 				  componentPoolInitType cpit, componentPoolAddComponentType cpact, \
 				  allocAndSetCurrentSceneType ascst, uninitAndFreeCurrentSceneType ufcst, \
-				  initCurrentSceneType icst, serializeCurrentSceneType secst, deserializeToCurrentSceneType dcst,		\
+				  initCurrentSceneType icst, setActiveCameraToCurrentSceneType sacct, \
+				  serializeCurrentSceneType secst, deserializeToCurrentSceneType dcst, \
 				  sceneNewEntityType snet, getEntityType get, \
 				  removeComponentType rct, getComponentType gct, \
-				  setCurrentSceneType scst, getCurrentSceneType gcst, \
 				  createRigidBodyType crbt, createBoxColliderFixtureType cbcft, \
-				  getRendererType grt, getMaterialSystemType gmst, \
+				  getEngineType gent,			\
 				  isKeyDownType ikdt))GetProcAddress(HANDLE, "setupPointers"); \
     setupPointers(materialRegisterEntity,  newMaterial,			\
 		  componentPoolInit, componentPoolAddComponent,		\
 		  allocAndSetCurrentScene, uninitAndFreeCurrentScene,	\
-		  initCurrentScene, serializeCurrentScene, deserializeToCurrentScene, \
+		  initCurrentScene, setActiveCameraToCurrentScene,	\
+		  serializeCurrentScene, deserializeToCurrentScene,	\
 		  sceneNewEntity, getEntity,				\
 		  removeComponent, getComponent,			\
-		  setCurrentScene, getCurrentScene,			\
 		  createRigidBody, createBoxColliderFixture,		\
-		  getRenderer,	getMaterialSystem,			\
+		  getEngine,						\
 		  isKeyDown);						\
 
 namespace Code{

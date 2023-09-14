@@ -12,6 +12,8 @@
 #include "renderer.hh"
 #include "shader.hh"
 #include "framebuffer.hh"
+#include "event.hh"
+#include "layer.hh"
 
 struct Crystal{
     LayerManager      lm;

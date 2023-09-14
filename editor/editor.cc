@@ -76,7 +76,8 @@ namespace Editor{
     
     EXPORT void init(HWND window){
 	gameTexture = nullptr;
-	r = getRenderer();
+	auto *engine = getEngine();
+	r = &engine->r;
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -193,7 +194,7 @@ namespace Editor{
 		    openGameFolder();
 		};
 		if(ImGui::MenuItem("Save")){
-		    Scene *s = getCurrentScene();
+		    Scene *s = getEngine()->curScene;
 		    if(s == nullptr){
 			print("[error] No scene to save");
 		    }else{

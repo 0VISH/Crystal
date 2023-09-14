@@ -29,15 +29,10 @@ void Crystal::uninit(){
     fb.uninit();
 };
 
-void setCurrentScene(Scene *s){
-    engine->curScene = s;
+Crystal *getEngine(){
+    return engine;
 };
-Scene *getCurrentScene(){
-    return engine->curScene;
-};
-Renderer *getRenderer(){
-    return &engine->r;
-};
-MaterialSystem *getMaterialSystem(){
-    return &engine->ms;
+void setActiveCameraToCurrentScene(Component::Camera *cam){
+    Scene *s = engine->curScene;
+    s->activeCam = cam;
 };
