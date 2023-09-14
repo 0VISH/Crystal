@@ -1,4 +1,5 @@
 #include "material.hh"
+#include "crystal.hh"
 
 void materialInit(Material &m, u32 s){
     m.shader = s;
@@ -21,8 +22,8 @@ void materialSystemUninit(MaterialSystem *ms){
     };
     ms->materials.uninit();
 };
-Material &newMaterial(MaterialSystem *ms, u32 shader){
-    Material &mat =  ms->materials.newElem();
+Material &newMaterial(u32 shader){
+    Material &mat =  engine->ms.materials.newElem();
     materialInit(mat, shader);
     return mat;
 };

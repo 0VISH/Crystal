@@ -1,4 +1,5 @@
 #include "scene.hh"
+#include "crystal.hh"
 
 void componentPoolInit(ComponentPool &cp, u64 size, u32 begLen, u32 ew=1){
     cp.count = 0;
@@ -157,7 +158,39 @@ void loadSceneFromFile(Scene *s, char *fileName){
     };
     fclose(f);
 };
-void sceneInit(Scene *s, u32 begEntityCount){
+Entity sceneNewEntity(char *name){
+    Scene *s = engine->curScene;
+    Entity e = s->entityCount;
+    s->entityCount += 1;
+    s->entityComponentMask.push(0);
+    map_set(&s->entityNameToID, name, e);
+    return e;
+};
+Entity getEntity(char *name){
+    Scene *s = engine->curScene;
+    Entity *e = (Entity*)map_get(&s->entityNameToID, name);
+    if(e == nullptr){return 0;};
+    return *e;
+};
+void removeComponent(Entity e, u32 componentID){
+    Scene *s = engine->curScene;
+    u32 &mask = s->entityComponentMask[e];
+    if(!IS_BIT(mask, componentID)){return;};
+    CLEAR_BIT(mask, componentID);
+    componentPoolRemoveComponent(s->components[componentID], e);
+};
+void *getComponent(Entity e, u32 componentID){
+    Scene *s = engine->curScene;
+    u32 mask = s->entityComponentMask[e];
+    if(!IS_BIT(mask, componentID)){return nullptr;};
+    return componentPoolGetComponent(s->components[componentID], e);
+};
+void allocAndSetCurrentScene(){
+    Scene *s = (Scene*)mem::alloc(sizeof(Scene));
+    engine->curScene = s;
+};
+void initCurrentScene(u32 begEntityCount){
+    Scene *s = engine->curScene;
     map_init(&s->entityNameToID);
     s->physicsWorld = new b2World({0.0, 9.8});
     s->id = sceneID;
@@ -166,7 +199,8 @@ void sceneInit(Scene *s, u32 begEntityCount){
     s->entityComponentMask.init(begEntityCount);
     s->components.init();
 };
-void sceneUninit(Scene *s){
+void uninitAndFreeCurrentScene(){
+    Scene *s = engine->curScene;
     s->entityComponentMask.uninit();
     for(u32 x=0; x<s->components.count; x+=1){
 	ComponentPool &cp = s->components[x];
@@ -175,33 +209,5 @@ void sceneUninit(Scene *s){
     s->components.uninit();
     map_deinit(&s->entityNameToID);
     delete s->physicsWorld;
-};
-Entity sceneNewEntity(Scene *s, char *name){
-    Entity e = s->entityCount;
-    s->entityCount += 1;
-    s->entityComponentMask.push(0);
-    map_set(&s->entityNameToID, name, e);
-    return e;
-};
-Entity getEntity(Scene *s, char *name){
-    Entity *e = (Entity*)map_get(&s->entityNameToID, name);
-    if(e == nullptr){return 0;};
-    return *e;
-};
-void removeComponent(Scene *s, Entity e, u32 componentID){
-    u32 &mask = s->entityComponentMask[e];
-    if(!IS_BIT(mask, componentID)){return;};
-    CLEAR_BIT(mask, componentID);
-    componentPoolRemoveComponent(s->components[componentID], e);
-};
-void *getComponent(Scene *s, Entity e, u32 componentID){
-    u32 mask = s->entityComponentMask[e];
-    if(!IS_BIT(mask, componentID)){return nullptr;};
-    return componentPoolGetComponent(s->components[componentID], e);
-};
-Scene *allocScene(){
-    return (Scene*)mem::alloc(sizeof(Scene));
-};
-void freeScene(Scene *s){
     mem::free(s);
 };

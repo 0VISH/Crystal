@@ -4,8 +4,9 @@
 									\
     auto setupPointers = (void(*)(materialRegisterEntityType mret, newMaterialType nmt, \
 				  componentPoolInitType cpit, componentPoolAddComponentType cpact, \
-				  allocSceneType ast, freeSceneType fst, \
-				  sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, getEntityType get, \
+				  allocAndSetCurrentSceneType ascst, uninitAndFreeCurrentSceneType ufcst, \
+				  initCurrentSceneType icst,		\
+				  sceneNewEntityType snet, getEntityType get, \
 				  removeComponentType rct, getComponentType gct, \
 				  setCurrentSceneType scst, getCurrentSceneType gcst, \
 				  createRigidBodyType crbt, createBoxColliderFixtureType cbcft, \
@@ -13,8 +14,9 @@
 				  isKeyDownType ikdt))GetProcAddress(HANDLE, "setupPointers"); \
     setupPointers(materialRegisterEntity,  newMaterial,			\
 		  componentPoolInit, componentPoolAddComponent,		\
-		  allocScene, freeScene,				\
-		  sceneInit, sceneUninit, sceneNewEntity, getEntity,	\
+		  allocAndSetCurrentScene, uninitAndFreeCurrentScene,	\
+		  initCurrentScene,					\
+		  sceneNewEntity, getEntity,				\
 		  removeComponent, getComponent,			\
 		  setCurrentScene, getCurrentScene,			\
 		  createRigidBody, createBoxColliderFixture,		\

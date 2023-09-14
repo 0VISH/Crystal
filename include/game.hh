@@ -30,10 +30,9 @@ newMaterialType newMaterial;
 componentPoolInitType         componentPoolInit;
 componentPoolAddComponentType componentPoolAddComponent;
 
-allocSceneType allocScene;
-freeSceneType  freeScene;
-sceneInitType sceneInit;
-sceneUninitType sceneUninit;
+allocAndSetCurrentSceneType allocAndSetCurrentScene;
+uninitAndFreeCurrentSceneType uninitAndFreeCurrentScene;
+initCurrentSceneType initCurrentScene;
 sceneNewEntityType sceneNewEntity;
 getEntityType getEntity;
 removeComponentType removeComponent;
@@ -52,8 +51,9 @@ isKeyDownType    isKeyDown;
 
 EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
 			  componentPoolInitType cpit, componentPoolAddComponentType cpact,
-			  allocSceneType ast, freeSceneType fst,
-			  sceneInitType sit, sceneUninitType sut, sceneNewEntityType snet, getEntityType get,
+			  allocAndSetCurrentSceneType ascst, uninitAndFreeCurrentSceneType ufcst,
+			  initCurrentSceneType icst,
+			  sceneNewEntityType snet, getEntityType get,
 			  removeComponentType rct, getComponentType gct,
 			  setCurrentSceneType scst, getCurrentSceneType gcst,
 			  createRigidBodyType crbt, createBoxColliderFixtureType cbcft,
@@ -66,10 +66,9 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
     componentPoolInit         = cpit;
     componentPoolAddComponent = cpact;
 
-    allocScene = ast;
-    freeScene = fst;
-    sceneInit = sit;
-    sceneUninit = sut;
+    allocAndSetCurrentScene = ascst;
+    uninitAndFreeCurrentScene = ufcst;
+    initCurrentScene = icst;
     sceneNewEntity = snet;
     getEntity = get;
     removeComponent = rct;

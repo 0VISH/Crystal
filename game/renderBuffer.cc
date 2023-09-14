@@ -30,7 +30,7 @@ void submitQuad(Renderer *r, glm::mat4 &mat){
 	    
     r->indexCount += 6;
 };
-void fillRenderBufferWithGivenMat(Renderer *r, Material &m, Scene *s){
+void fillRenderBufferWithGivenMat(Renderer *r, Material &m){
     r->curMat = &m;
     Draw::Vertex *info = r->watermark;
     info->pos.x = m.shader;
@@ -38,7 +38,7 @@ void fillRenderBufferWithGivenMat(Renderer *r, Material &m, Scene *s){
     u32 submittedQuads = 0;
     for(u32 x=0; x<m.registeredEntities.count; x+=1){
 	Entity e = m.registeredEntities[x];
-	auto *transform = (Component::Transform*)getComponent(s, e, getID<Component::Transform>());
+	auto *transform = (Component::Transform*)getComponent(e, getID<Component::Transform>());
 	if(transform == nullptr){continue;};
 	submitQuad(r, transform->genMatrix());
 	submittedQuads += 1;
@@ -49,9 +49,9 @@ void fillRenderBufferWithGivenMat(Renderer *r, Material &m, Scene *s){
     };
     info->pos.y = submittedQuads;
 };
-void fillRenderBufferWithGivenMS(Renderer *r, MaterialSystem *ms, Scene *s){
+void fillRenderBufferWithGivenMS(Renderer *r, MaterialSystem *ms){
     for(u32 x=0; x<ms->materials.count; x+=1){
-	fillRenderBufferWithGivenMat(r, ms->materials[x], s);
+	fillRenderBufferWithGivenMat(r, ms->materials[x]);
     };
 };
 void fillRenderBufferHeader(Renderer *r, glm::mat4 &projectionView){

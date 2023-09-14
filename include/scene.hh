@@ -33,7 +33,8 @@ struct Scene{
 };
 
 template<typename T>
-T *addComponent(Scene *s, Entity e){
+T *addComponent(Entity e){
+    Scene *s = getCurrentScene();
     u32 componentID = getID<T>();
     if(componentID >= s->components.count){
 	ComponentPool &cp = s->components.newElem();

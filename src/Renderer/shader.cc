@@ -1,3 +1,5 @@
+#include "shader.hh"
+
 namespace Shader{
     u32 compileShader(char *shaderSrc, GLenum type){
 	bool fromFile;
@@ -38,27 +40,23 @@ namespace Shader{
     };
 };
 
-struct ShaderSystem{
-    ds::DynamicArray<u32> shaderPrograms;
-    
-    void init(){
-	shaderPrograms.init();
-    };
-    u32 newShaderProgram(){
-	u32 program;
+void ShaderSystem::init(){
+    shaderPrograms.init();
+};
+u32 ShaderSystem::newShaderProgram(){
+    u32 program;
 #if(RCONTEXT_GL)
-	program = glCreateProgram();
+    program = glCreateProgram();
 #endif
-	shaderPrograms.push(program);
-	return program;
+    shaderPrograms.push(program);
+    return program;
+};
+u32 ShaderSystem::getDefaultShader(){
+    return shaderPrograms[0];
+};
+void ShaderSystem::uninit(){
+    for(u32 x=0; x<shaderPrograms.count; x+=1){
+	Shader::destroyShader(shaderPrograms[x]);
     };
-    u32 getDefaultShader(){
-	return shaderPrograms[0];
-    };
-    void uninit(){
-	for(u32 x=0; x<shaderPrograms.count; x+=1){
-	    Shader::destroyShader(shaderPrograms[x]);
-	};
-	shaderPrograms.uninit();
-    };
+    shaderPrograms.uninit();
 };

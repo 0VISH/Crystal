@@ -51,7 +51,7 @@ namespace Component{
 	b2BodyDef bodyDef;
 	bodyDef.type = bodyType;
 	bodyDef.fixedRotation = fixedRotation;
-	auto *transform = (Component::Transform*)getComponent(s, e, getID<Component::Transform>());
+	auto *transform = (Component::Transform*)getComponent(e, getID<Component::Transform>());
 	if(transform == nullptr){
 	    bodyDef.position.Set(0.0f, 0.0f);
 	}else{
@@ -66,13 +66,13 @@ namespace Component{
 	friction = 1.3;
 	density = 1;
 
-	auto *rigidBody = (Component::RigidBody*)getComponent(s, e, getID<Component::RigidBody>());
+	auto *rigidBody = (Component::RigidBody*)getComponent(e, getID<Component::RigidBody>());
 	if(rigidBody == nullptr){
-	    rigidBody = addComponent<Component::RigidBody>(s, e);
+	    rigidBody = addComponent<Component::RigidBody>(e);
 	};
 	b2Body *body = rigidBody->runtimeBody;
 	
-	auto *transform = (Component::Transform*)getComponent(s, e, getID<Component::Transform>());
+	auto *transform = (Component::Transform*)getComponent(e, getID<Component::Transform>());
 	if(transform == nullptr){
 	    runtimeFixture = createBoxColliderFixture(0.0f, 0.0f, density, friction, body);
 	}else{

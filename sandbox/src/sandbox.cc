@@ -7,49 +7,40 @@
 #include "game.hh"
 
 namespace Game{
-    Scene *s;
-
-    EXPORT void reload(){
-	s = getCurrentScene();
-    };
-    
     EXPORT void init(){
-	s = allocScene();
-	sceneInit(s, 5);
-	setCurrentScene(s);
-		
-	Entity sq = sceneNewEntity(s, "spinny quad");
-	addComponent<Component::Transform>(s, sq);
+	allocAndSetCurrentScene();
+	initCurrentScene(5);
+	
+	Entity sq = sceneNewEntity("spinny quad");
+	addComponent<Component::Transform>(sq);
 
-	MaterialSystem *ms = getMaterialSystem();
-	Material &mat = newMaterial(ms, 1);
+	Material &mat = newMaterial(1);
 	
 	mat.col = glm::vec4(1.0, 0.5, 1.0, 1.0);
 	materialRegisterEntity(mat, sq);
 
 	Renderer *r = getRenderer();
 
-	Component::Camera *cam = addComponent<Component::Camera>(s, sq);
+	Component::Camera *cam = addComponent<Component::Camera>(sq);
         cam->initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
     };
     EXPORT void render(){
 	Renderer *r = getRenderer();
 	MaterialSystem *ms = getMaterialSystem();
 
-	Entity sq = getEntity(s, "spinny quad");
-	auto *cam = (Component::Camera*)getComponent(s, sq, getID<Component::Camera>());
+	Entity sq = getEntity("spinny quad");
+	auto *cam = (Component::Camera*)getComponent(sq, getID<Component::Camera>());
 	cam->calculateViewMat();
 	
 	fillRenderBufferHeader(r, cam->projection * cam->view);
-	fillRenderBufferWithGivenMS(r, ms, s);
+	fillRenderBufferWithGivenMS(r, ms);
     };
     EXPORT void uninit(){
-	sceneUninit(s);
-	freeScene(s);
+	uninitAndFreeCurrentScene();
     };
     EXPORT bool update(Event e, f64 dt){
-	Entity sq = getEntity(s, "spinny quad");
-	auto *s1T = (Component::Transform*)getComponent(s, sq, getID<Component::Transform>());
+	Entity sq = getEntity("spinny quad");
+	auto *s1T = (Component::Transform*)getComponent(sq, getID<Component::Transform>());
 	if(s1T == nullptr){return false;};
 	s1T->rotation.x += dt;
 	return false;
