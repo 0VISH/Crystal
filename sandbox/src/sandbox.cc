@@ -16,14 +16,14 @@ namespace Game{
 	initCurrentScene(5);
 	
 	Entity sq = sceneNewEntity("spinny quad");
-	addComponent<Component::Transform>(sq);
+	addComponent<Component::Transform>(sq, ComponentID::TRANSFORM);
 
 	Material &mat = newMaterial(1);
 	
 	mat.col = glm::vec4(1.0, 0.5, 1.0, 1.0);
 	materialRegisterEntity(mat, sq);
 
-	Component::Camera *cam = addComponent<Component::Camera>(sq);
+	Component::Camera *cam = addComponent<Component::Camera>(sq, ComponentID::CAMERA);
         cam->initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
     };
     EXPORT void render(){
@@ -34,9 +34,9 @@ namespace Game{
     };
     EXPORT bool update(Event e, f64 dt){
 	Entity sq = getEntity("spinny quad");
-	auto *cam = (Component::Camera*)getComponent(sq, getID<Component::Camera>());
+	auto *cam = (Component::Camera*)getComponent(sq, (u32)ComponentID::CAMERA);
 	setActiveCameraToCurrentScene(cam);
-	auto *s1T = (Component::Transform*)getComponent(sq, getID<Component::Transform>());
+	auto *s1T = (Component::Transform*)getComponent(sq, (u32)ComponentID::TRANSFORM);
 	if(s1T == nullptr){return false;};
 	s1T->rotation.x += dt;
 	return false;

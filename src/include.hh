@@ -20,3 +20,6 @@
 #include "Renderer/include.hh"
 #include "crystal.cc"
 #include "enginePointers.hh"
+
+#include "../game/components.cc"
+#include "../game/addComponent.cc"

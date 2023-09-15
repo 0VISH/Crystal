@@ -24,6 +24,8 @@ EXPORT void setupUtilPointers(logType l, setGameFolderType sgft, editorSignalTyp
 #include "renderer.hh"
 
 #include "enginePointers.hh"
+
+
 materialRegisterEntityType materialRegisterEntity;
 newMaterialType newMaterial;
 

@@ -2,7 +2,6 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #include "renderer.hh"
-#include "../../game/components.cc"
 
 #include <math.h>
 

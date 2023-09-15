@@ -1,6 +1,7 @@
 #include <math.h>
 #include "renderer.hh"
 #include "crystal.hh"
+#include "componentID.hh"
 
 void submitQuad(Renderer &r, glm::mat4 &mat){
     float quadVertices[] = {
@@ -39,7 +40,7 @@ void fillRenderBufferWithGivenMat(Renderer &r, Material &m){
     u32 submittedQuads = 0;
     for(u32 x=0; x<m.registeredEntities.count; x+=1){
 	Entity e = m.registeredEntities[x];
-	auto *transform = (Component::Transform*)getComponent(e, getID<Component::Transform>());
+	auto *transform = (Component::Transform*)getComponent(e, (u32)ComponentID::TRANSFORM);
 	if(transform == nullptr){continue;};
 	submitQuad(r, transform->genMatrix());
 	submittedQuads += 1;

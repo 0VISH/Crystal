@@ -4,6 +4,7 @@
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "components.hh"
+#include "componentID.hh"
 
 namespace Component{
     void Camera::init(Scene *s, Entity e){
@@ -51,7 +52,7 @@ namespace Component{
 	b2BodyDef bodyDef;
 	bodyDef.type = bodyType;
 	bodyDef.fixedRotation = fixedRotation;
-	auto *transform = (Component::Transform*)getComponent(e, getID<Component::Transform>());
+	auto *transform = (Component::Transform*)getComponent(e, (u32)ComponentID::TRANSFORM);
 	if(transform == nullptr){
 	    bodyDef.position.Set(0.0f, 0.0f);
 	}else{
@@ -61,18 +62,21 @@ namespace Component{
     };
 };
 
+template<typename T>
+T *addComponent(Entity e, ComponentID id);
+
 namespace Component{
     void BoxCollider::init(Scene *s, Entity e){
 	friction = 1.3;
 	density = 1;
 
-	auto *rigidBody = (Component::RigidBody*)getComponent(e, getID<Component::RigidBody>());
+	auto *rigidBody = (Component::RigidBody*)getComponent(e, (u32)ComponentID::RIGIDBODY);
 	if(rigidBody == nullptr){
-	    rigidBody = addComponent<Component::RigidBody>(e);
+	    rigidBody = addComponent<Component::RigidBody>(e, ComponentID::RIGIDBODY);
 	};
 	b2Body *body = rigidBody->runtimeBody;
 	
-	auto *transform = (Component::Transform*)getComponent(e, getID<Component::Transform>());
+	auto *transform = (Component::Transform*)getComponent(e, (u32)ComponentID::RIGIDBODY);
 	if(transform == nullptr){
 	    runtimeFixture = createBoxColliderFixture(0.0f, 0.0f, density, friction, body);
 	}else{
@@ -80,3 +84,4 @@ namespace Component{
 	};
     };
 };
+
