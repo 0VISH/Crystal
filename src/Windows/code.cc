@@ -50,14 +50,6 @@ namespace Code{
 	print("Temp game code: %s", dllTemp);
 	
 	engine->gameCode = cpySrcAndLoadTemp();
-	/*
-	  Layer *gameLayer = engine->lm.newLayer();
-	  gameLayer->onRender = (LayerFunc)GetProcAddress(engine->gameCode, "render");
-	  gameLayer->onUninit = (LayerFunc)GetProcAddress(engine->gameCode, "uninit");
-	  gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(engine->gameCode, "update");
-	  auto ginit = (void(*)())GetProcAddress(engine->gameCode, "init");
-	  ginit();
-	*/
     };
     HMODULE load(char *path){
 	HMODULE code = LoadLibraryA(path);
@@ -69,6 +61,8 @@ namespace Code{
 	BOOL b = CopyFile(dll, dllTemp, 0);
 	if(!b){
 	    print("[error] Copying src to temp dll file failed: %d\n", GetLastError());
+	    print("[error] src: %s", dll);
+	    print("[error] dst: %s", dllTemp);
 	    return nullptr;
 	};
 	return load(dllTemp);

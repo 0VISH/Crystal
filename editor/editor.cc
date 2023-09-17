@@ -16,6 +16,10 @@
 #include "console.cc"
 #include "entityPanel.cc"
 
+char *gameCodePath = nullptr;
+char *curScenePath = nullptr;
+char *materialSystemPath = nullptr;
+
 bool openFileDialog(char *filter, char *buffer){
     OPENFILENAME ofn;
 
@@ -28,25 +32,75 @@ bool openFileDialog(char *filter, char *buffer){
     ofn.nMaxFile = MAX_PATH;
     ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
 
-    if(GetOpenFileName(&ofn)){return true;};
+    if(GetOpenFileName(&ofn)){print("buffer: %s", buffer);return true;};
     return false;
 };
-void openGameCode(){
-    char gameCodePath[MAX_PATH] = "";
-
-    if(openFileDialog("Dynamic Link Libraries (*.dll)\0*.dll\0All Files (*.*)\0*.*\0", gameCodePath)){
-	setGameCode(gameCodePath);
-    }else{
-	print("[warning] Game code not selected");
-    }
+void eatEmptySpaces(char *buff, u32 &x){
+    u32 y = x;
+    while(true){
+	switch(buff[y]){
+	case ' ':
+	case '\t':
+	case '\n':
+	    y += 1;
+	    break;
+	default:
+	    x = y;
+	    return;
+	};
+    };
 };
-void openScene(){
-    char scenePath[MAX_PATH] = "";
+char *getName(char *charMem, u32 &x){
+    eatEmptySpaces(charMem,x);
+    u32 start = x;
+    while(charMem[x] != '\n'){x+=1;};
+    x += 1;
+    u32 len = x - start - 1;
+    char *str = (char*)mem::alloc(len);
+    memcpy(str, charMem+start, len-1);
+    str[len-1] = '\0';
+    printf("STR: %s%d\n", str, len);
+    return str;
+};
+void openCryFile(){
+    char path[MAX_PATH] = "";
 
-    if(openFileDialog("Scene File (*.scn)\0*.scn\0All Files (*.*)\0*.*\0", scenePath)){
-	setScene(scenePath);
+    if(openFileDialog("Crystal Project File (*.cry)\0*.cry\0All Files (*.*)\0*.*\0", path)){
+	FILE *f = fopen(path, "rb");
+	fseek(f, 0, SEEK_END);
+	long size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+
+	void *mem = mem::calloc(size);
+	fread(mem, size, 1, f);
+	fclose(f);
+	char *charMem = (char*)mem;
+
+	u32 x = 0;
+	while(true){
+	    eatEmptySpaces(charMem, x);
+	    u32 start = x;
+	    while(charMem[x] != ':'){x += 1;};
+	    x += 1;
+	    if(memcmp("game code", charMem+start, x-start-1) == 0){
+		gameCodePath = getName(charMem, x);
+		setGameCode(gameCodePath);
+	    }else if(memcmp("material system", charMem+start, x-start-1) == 0){
+		materialSystemPath = getName(charMem, x);
+	    }else if(memcmp("scene", charMem+start, x-start-1) == 0){
+		curScenePath = getName(charMem, x);
+		setScene(curScenePath);
+	    }else if(memcmp("END", charMem+start, x-start-1)){
+		break;
+	    }else{
+		print("[error] Unkown %.*s", x-start-1, charMem+start);
+	    };
+	    eatEmptySpaces(charMem, x);
+	};
+
+	mem::free(mem);
     }else{
-	print("[warning] Scene not selected");
+	print("[warning] Project file not selected");
     }
 };
 
@@ -188,11 +242,8 @@ namespace Editor{
 
 	if(ImGui::BeginMenuBar()){
 	    if(ImGui::BeginMenu("File")){
-		if(ImGui::MenuItem("Open Scene")){
-		    openScene();
-		};
-		if (ImGui::MenuItem("Open Game Code")){
-		    openGameCode();
+		if(ImGui::MenuItem("Open Cry File")){
+		    openCryFile();
 		};
 		if(ImGui::MenuItem("Save")){
 		    Scene *s = getEngine()->curScene;
@@ -232,8 +283,6 @@ namespace Editor{
 	    ImGui::End();
 	}
 
-	
-	
 	//DOCKING
 	ImGui::End();
 
@@ -260,6 +309,10 @@ namespace Editor{
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+	
+	if(gameCodePath != nullptr){mem::free(gameCodePath);};
+	if(materialSystemPath != nullptr){mem::free(materialSystemPath);};
+	if(curScenePath != nullptr){mem::free(curScenePath);};
     };
 };
 

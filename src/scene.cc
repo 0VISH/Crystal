@@ -99,6 +99,12 @@ void deserializeToCurrentScene(char *fileName){
     map_init(&s->entityNameToID);
     
     FILE *f = fopen(fileName, "rb");
+    if(f == nullptr){
+	print("[error] Could not open scene file: %s", fileName);
+	mem::free(s);
+	engine->curScene = nullptr;
+	return;
+    };
     fseek(f, 0, SEEK_END);
     long size = ftell(f);
     fseek(f, 0, SEEK_SET);
