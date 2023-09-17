@@ -6,12 +6,14 @@
 
 #include "utils.hh"
 logType print;
-setGameFolderType setGameFolder;
+setGameCodeType  setGameCode;
+setSceneType     setScene;
 editorSignalType editorSignal;
 
-EXPORT void setupUtilPointers(logType l, setGameFolderType sgft, editorSignalType est){
+EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct, editorSignalType est){
     print = l;
-    setGameFolder = sgft;
+    setGameCode = sgct;
+    setScene = sct;
 
     editorSignal = est;
 };

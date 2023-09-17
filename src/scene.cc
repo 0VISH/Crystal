@@ -91,6 +91,7 @@ void serializeCurrentScene(char *fileName){
 	fwrite(cp.mem, cp.componentSize*cp.count, 1, f);
 	fwrite(cp.entityToComponentOff, sizeof(Entity)*cp.entityWatermark, 1, f);
     };
+    fwrite(&s->activeCam, sizeof(s->activeCam), 1, f);
     fclose(f);
 };
 void deserializeToCurrentScene(char *fileName){
@@ -102,7 +103,7 @@ void deserializeToCurrentScene(char *fileName){
     long size = ftell(f);
     fseek(f, 0, SEEK_SET);
 
-    void *mem = malloc(size);
+    void *mem = mem::alloc(size);
     fread(mem, size, 1, f);
     fclose(f);
     char *charMem = (char*)mem;
@@ -159,6 +160,8 @@ void deserializeToCurrentScene(char *fileName){
 	    charMem += entityToComponentSize;
 	};
     };
+    s->activeCam = *(Entity*)charMem;
+    mem::free(mem);
     fclose(f);
 };
 Entity sceneNewEntity(char *name){

@@ -8,6 +8,6 @@
 #include "context.cc"
 #include "package.cc"
 
-void editorSignal();
+#include "utilsWin.hh"
 #include "code.cc"
 #include "utils.cc"

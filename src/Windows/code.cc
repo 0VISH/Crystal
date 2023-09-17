@@ -1,6 +1,8 @@
 #define SETUP_POINTERS(HANDLE)						\
-    auto setupUtilPointer = (void(*)(logType l, setGameFolderType sgft, editorSignalType est))GetProcAddress(HANDLE, "setupUtilPointers"); \
-    setupUtilPointer(print, Code::setGameFolder, editorSignal);		\
+    auto setupUtilPointer = (void(*)(logType l,				\
+				     setGameCodeType sgct, setSceneType sct, \
+				     editorSignalType est))GetProcAddress(HANDLE, "setupUtilPointers"); \
+    setupUtilPointer(print, Code::setGameCode, setScene, editorSignal);	\
 									\
     auto setupPointers = (void(*)(materialRegisterEntityType mret, newMaterialType nmt, \
 				  componentPoolInitType cpit, componentPoolAddComponentType cpact, \
@@ -24,40 +26,38 @@
 		  isKeyDown);						\
 
 namespace Code{
-    char dllTemp[100];
-    char dll[100];
-    char main[100];
+    char dllTemp[300];
+    char dll[300];
 
     void unload(HMODULE code){
 	if(code != NULL){FreeLibrary(code);};
     };
     HMODULE cpySrcAndLoadTemp();
-    void setGameFolder(char *path){
-	u32 off = strlen(path);
-	memcpy(dllTemp, path, off);
-	memcpy(dll, path, off);
-	memcpy(main, path, off);
-	char *dllTempPath = "\\bin\\gameWin_temp.dll";
-	memcpy(dllTemp+off, dllTempPath, strlen(dllTempPath));
-	char *dllPath = "\\bin\\gameWin.dll";
-	memcpy(dll+off, dllPath, strlen(dllPath));
-	char *mainPath = "\\src\\main.cc";
-	memcpy(main+off, mainPath, strlen(mainPath));
+    void setGameCode(char *path){
+	u32 len = strlen(path)+1;
+	memcpy(dll, path, len);
+	memcpy(dllTemp, path, len);
+	u32 off = len;
+	while(dllTemp[off] != '.'){off -= 1;};
+	char *temp = "_temp";
+	u32 tempLen = (u32)strlen(temp);
+	memcpy(dllTemp+off, temp, tempLen);
+	char *dotDll = ".dll";
+	u32 dotDllLen = (u32)strlen(dotDll);
+	memcpy(dllTemp+off+tempLen, dotDll, dotDllLen+1); //+1 for null byte
 
+	print("Game code: %s", dll);
+	print("Temp game code: %s", dllTemp);
+	
 	engine->gameCode = cpySrcAndLoadTemp();
-	if(engine->gameCode == NULL){
-	    print("Game code not found");
-	    return;
-	};
-
-	Layer *gameLayer = engine->lm.newLayer();
-	gameLayer->onRender = (LayerFunc)GetProcAddress(engine->gameCode, "render");
-	gameLayer->onUninit = (LayerFunc)GetProcAddress(engine->gameCode, "uninit");
-	gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(engine->gameCode, "update");
-	auto ginit = (void(*)())GetProcAddress(engine->gameCode, "init");
-	ginit();
-
-	print("@LOADED GAME FOLDER: %s", dll);
+	/*
+	  Layer *gameLayer = engine->lm.newLayer();
+	  gameLayer->onRender = (LayerFunc)GetProcAddress(engine->gameCode, "render");
+	  gameLayer->onUninit = (LayerFunc)GetProcAddress(engine->gameCode, "uninit");
+	  gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(engine->gameCode, "update");
+	  auto ginit = (void(*)())GetProcAddress(engine->gameCode, "init");
+	  ginit();
+	*/
     };
     HMODULE load(char *path){
 	HMODULE code = LoadLibraryA(path);
@@ -68,7 +68,8 @@ namespace Code{
     HMODULE cpySrcAndLoadTemp(){
 	BOOL b = CopyFile(dll, dllTemp, 0);
 	if(!b){
-	    printf("\ncopying src to temp dll file failed: %d\n", GetLastError());
+	    print("[error] Copying src to temp dll file failed: %d\n", GetLastError());
+	    return nullptr;
 	};
 	return load(dllTemp);
     };

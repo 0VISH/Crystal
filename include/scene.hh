@@ -16,11 +16,11 @@ struct ComponentPool{
 };
 
 struct Scene{
-    map_int_t entityNameToID;
+    map_int_t             entityNameToID;
     ds::DynamicArray<u32> entityComponentMask;
     ds::DynamicArray<ComponentPool> components;
     b2World *physicsWorld;
-    void    *activeCam;
-    Entity entityCount;
-    u8 id;
+    Entity   activeCam;
+    Entity   entityCount;
+    u8       id;
 };

@@ -16,40 +16,38 @@
 #include "console.cc"
 #include "entityPanel.cc"
 
-char *gameFolderPath = nullptr;
+bool openFileDialog(char *filter, char *buffer){
+    OPENFILENAME ofn;
 
-void openGameFolder(){
-    CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    ZeroMemory(&ofn, sizeof(OPENFILENAME));
 
-    IFileOpenDialog* pFileOpen;
-    HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pFileOpen));
+    ofn.lStructSize = sizeof(OPENFILENAME);
+    ofn.hwndOwner = NULL;
+    ofn.lpstrFilter = filter;
+    ofn.lpstrFile = buffer;
+    ofn.nMaxFile = MAX_PATH;
+    ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
 
-    if (SUCCEEDED(hr)) {
-        DWORD dwOptions;
-        pFileOpen->GetOptions(&dwOptions);
-        pFileOpen->SetOptions(dwOptions | FOS_PICKFOLDERS); // Set the folder selection option
+    if(GetOpenFileName(&ofn)){return true;};
+    return false;
+};
+void openGameCode(){
+    char gameCodePath[MAX_PATH] = "";
 
-        if (pFileOpen->Show(NULL) == S_OK) {
-            IShellItem* pItem;
-            if (pFileOpen->GetResult(&pItem) == S_OK) {
-                PWSTR folderPath;
-                pItem->GetDisplayName(SIGDN_FILESYSPATH, &folderPath);
-
-                // Convert the folderPath from wide character to multi-byte character
-                int bufferSize = WideCharToMultiByte(CP_UTF8, 0, folderPath, -1, NULL, 0, NULL, NULL);
-                gameFolderPath = (char*)mem::alloc(bufferSize);
-                WideCharToMultiByte(CP_UTF8, 0, folderPath, -1, gameFolderPath, bufferSize, NULL, NULL);
-
-                setGameFolder(gameFolderPath);
-
-                CoTaskMemFree(folderPath);
-                pItem->Release();
-            }
-        }
-        pFileOpen->Release();
+    if(openFileDialog("Dynamic Link Libraries (*.dll)\0*.dll\0All Files (*.*)\0*.*\0", gameCodePath)){
+	setGameCode(gameCodePath);
+    }else{
+	print("[warning] Game code not selected");
     }
+};
+void openScene(){
+    char scenePath[MAX_PATH] = "";
 
-    CoUninitialize();
+    if(openFileDialog("Scene File (*.scn)\0*.scn\0All Files (*.*)\0*.*\0", scenePath)){
+	setScene(scenePath);
+    }else{
+	print("[warning] Scene not selected");
+    }
 };
 
 namespace Editor{ 
@@ -190,8 +188,11 @@ namespace Editor{
 
 	if(ImGui::BeginMenuBar()){
 	    if(ImGui::BeginMenu("File")){
-		if (ImGui::MenuItem("Open")){
-		    openGameFolder();
+		if(ImGui::MenuItem("Open Scene")){
+		    openScene();
+		};
+		if (ImGui::MenuItem("Open Game Code")){
+		    openGameCode();
 		};
 		if(ImGui::MenuItem("Save")){
 		    Scene *s = getEngine()->curScene;
@@ -259,8 +260,6 @@ namespace Editor{
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
-
-	if(gameFolderPath != nullptr){mem::free(gameFolderPath);};
     };
 };
 

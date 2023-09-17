@@ -8,7 +8,7 @@ void Crystal::init(){
     curScene = nullptr;
     lm.init(3);
     Draw::init(r);
-    materialSystemInit(&ms);
+    materialSystemInit();
     ss.init();
     defaultShader = ss.newShaderProgram();
 
@@ -24,7 +24,7 @@ void Crystal::uninit(){
 	lm.uninit();
     };
     Draw::uninit(r);
-    materialSystemUninit(&ms);
+    materialSystemUninit();
     ss.uninit();
     fb.uninit();
 };
@@ -32,7 +32,7 @@ void Crystal::uninit(){
 Crystal *getEngine(){
     return engine;
 };
-void setActiveCameraToCurrentScene(Component::Camera *cam){
+void setActiveCameraToCurrentScene(Entity e){
     Scene *s = engine->curScene;
-    s->activeCam = cam;
+    s->activeCam = e;
 };

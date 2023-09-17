@@ -7,11 +7,8 @@
 #include "game.hh"
 
 namespace Game{
-    Crystal *engine;
-    
-    EXPORT void reload(){engine = getEngine();};
     EXPORT void init(){
-	engine = getEngine();
+	Crystal *engine = getEngine();
 	allocAndSetCurrentScene();
 	initCurrentScene(5);
 	
@@ -26,16 +23,13 @@ namespace Game{
 	Component::Camera *cam = addComponent<Component::Camera>(sq, ComponentID::CAMERA);
         cam->initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
     };
-    EXPORT void render(){
-	
-    };
     EXPORT void uninit(){
 	uninitAndFreeCurrentScene();
     };
     EXPORT bool update(Event e, f64 dt){
 	Entity sq = getEntity("spinny quad");
 	auto *cam = (Component::Camera*)getComponent(sq, (u32)ComponentID::CAMERA);
-	setActiveCameraToCurrentScene(cam);
+	setActiveCameraToCurrentScene(sq);
 	auto *s1T = (Component::Transform*)getComponent(sq, (u32)ComponentID::TRANSFORM);
 	if(s1T == nullptr){return false;};
 	s1T->rotation.x += dt;
