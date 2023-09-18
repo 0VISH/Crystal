@@ -15,6 +15,9 @@
 #include "game.hh"
 #include "console.cc"
 #include "entityPanel.cc"
+#include "materialPanel.cc"
+
+Crystal *engine;
 
 char *gameCodePath = nullptr;
 char *curScenePath = nullptr;
@@ -105,6 +108,7 @@ void openCryFile(){
 
 namespace Editor{ 
     EntityPanel ep;
+    MaterialPanel mp;
     bool showDemo;
     u32 *drawCalls;
     Console console;
@@ -127,7 +131,7 @@ namespace Editor{
     
     EXPORT void init(HWND window){
 	gameTexture = nullptr;
-	auto *engine = getEngine();
+	engine = getEngine();
 	r = &engine->r;
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -165,6 +169,7 @@ namespace Editor{
 	colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 
 	ep.init();
+	mp.init();
 	console.init();
 	print = addLog;
 	showDemo = false;
@@ -245,7 +250,7 @@ namespace Editor{
 		    openCryFile();
 		};
 		if(ImGui::MenuItem("Save")){
-		    Scene *s = getEngine()->curScene;
+		    Scene *s = engine->curScene;
 		    if(s == nullptr){
 			print("[error] No scene to save");
 		    }else{
@@ -256,7 +261,7 @@ namespace Editor{
 	    };
 	    if(ImGui::BeginMenu("Engine")){
 		if(ImGui::MenuItem("New Scene")){
-		    Scene *s = getEngine()->curScene;
+		    Scene *s = engine->curScene;
 		    if(s != nullptr){
 			uninitAndFreeCurrentScene();
 		    };
@@ -307,6 +312,8 @@ namespace Editor{
     EXPORT void render(){
 	ep.renderEntities();
 	ep.renderComponents();
+	mp.showMatNames();
+	mp.showSelectedMatInfo();
 	console.Draw("Console");
 	if(showDemo){ImGui::ShowDemoWindow(&showDemo);};
 

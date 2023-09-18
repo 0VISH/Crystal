@@ -68,7 +68,7 @@ void fillRenderBufferUsingCurrentScene(){
     Scene *s = engine->curScene;
     if(s == nullptr){return;};
     Entity e = s->activeCam;
-    if(e == 0){return;};
+    if(e < 0){return;};
     auto *cam = (Component::Camera*)getComponent(e, (u32)ComponentID::CAMERA);
     cam->calculateViewMat();
 

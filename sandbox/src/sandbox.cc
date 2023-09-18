@@ -15,7 +15,7 @@ namespace Game{
 	Entity sq = sceneNewEntity("spinny quad");
 	addComponent<Component::Transform>(sq, ComponentID::TRANSFORM);
 
-	Material &mat = newMaterial(1);
+	Material &mat = newMaterial("spinny mat", 1);
 	
 	mat.col = glm::vec4(1.0, 0.5, 1.0, 1.0);
 	materialRegisterEntity(mat, sq);

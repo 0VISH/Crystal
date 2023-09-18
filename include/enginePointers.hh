@@ -4,7 +4,7 @@
 #include "components.hh"
 
 typedef void      (*materialRegisterEntityType)(Material &m, Entity e);
-typedef Material& (*newMaterialType)(u32 shader);
+typedef Material& (*newMaterialType)(char *name, u32 shader);
 
 typedef void  (*componentPoolInitType)(ComponentPool &cp, u64 size, u32 begLen, u32 ew);
 typedef void* (*componentPoolAddComponentType)(ComponentPool &cp, Entity e);

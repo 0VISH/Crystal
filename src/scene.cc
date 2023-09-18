@@ -185,7 +185,7 @@ Entity getEntity(char *name){
     return *e;
 };
 void removeComponent(Entity e, u32 componentID){
-    ASSERT(e != 0);
+    ASSERT(e > -1);
     Scene *s = engine->curScene;
     u32 &mask = s->entityComponentMask[e];
     if(!IS_BIT(mask, componentID)){return;};
@@ -193,7 +193,7 @@ void removeComponent(Entity e, u32 componentID){
     componentPoolRemoveComponent(s->components[componentID], e);
 };
 void *getComponent(Entity e, u32 componentID){
-    ASSERT(e != 0);
+    ASSERT(e > -1);
     Scene *s = engine->curScene;
     u32 mask = s->entityComponentMask[e];
     if(!IS_BIT(mask, componentID)){return nullptr;};
@@ -208,9 +208,9 @@ void initCurrentScene(u32 begEntityCount){
     map_init(&s->entityNameToID);
     s->physicsWorld = new b2World({0.0, 9.8});
     s->id = sceneID;
-    s->activeCam = 0;
+    s->activeCam = -1;
     sceneID += 1;
-    s->entityCount = 1;     //0 is invalid enity ID
+    s->entityCount = 0;
     s->entityComponentMask.init(begEntityCount);
     s->components.init();
 };

@@ -2,7 +2,7 @@
 
 #include "box2d/box2d.h"
 
-typedef u32 Entity;
+typedef s32 Entity;
 
 //TODO: write a custom hashmap
 

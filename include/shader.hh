@@ -2,6 +2,7 @@
 
 struct ShaderSystem{
     ds::DynamicArray<u32> shaderPrograms;
+    //TODO: hash-map shader name to id
     
     void init();
     void uninit();
