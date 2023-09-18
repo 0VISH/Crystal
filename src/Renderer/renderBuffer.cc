@@ -51,9 +51,9 @@ void fillRenderBufferWithGivenMat(Renderer &r, Material &m){
     };
     info->pos.y = submittedQuads;
 };
-void fillRenderBufferWithGivenMS(Renderer &r, MaterialSystem &ms){
-    for(u32 x=0; x<ms.materials.count; x+=1){
-	fillRenderBufferWithGivenMat(r, ms.materials[x]);
+void fillRenderBufferWithGivenMS(Renderer &r, MaterialSystem *ms){
+    for(u32 x=0; x<ms->materials.count; x+=1){
+	fillRenderBufferWithGivenMat(r, ms->materials[x]);
     };
 };
 void fillRenderBufferHeader(Renderer &r, glm::mat4 &projectionView){
@@ -68,11 +68,8 @@ void fillRenderBufferUsingCurrentScene(){
     Scene *s = engine->curScene;
     if(s == nullptr){return;};
     Entity e = s->activeCam;
+    if(e == 0){return;};
     auto *cam = (Component::Camera*)getComponent(e, (u32)ComponentID::CAMERA);
-    if(cam == nullptr){
-	print("Scene doesnt have an active camera");
-	return;
-    };
     cam->calculateViewMat();
 
     fillRenderBufferHeader(engine->r, cam->projection * cam->view);

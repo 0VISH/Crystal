@@ -12,29 +12,33 @@ void materialRegisterEntity(Material &m, Entity e){
     m.registeredEntities.push(e);
 };
 
-void materialSystemInit(u32 materialCount = 5){
-    engine->ms.materials.init(materialCount);
+void allocMaterialSystem(){
+    engine->ms = (MaterialSystem*)mem::alloc(sizeof(MaterialSystem));
 };
-void materialSystemUninit(){
-    MaterialSystem &ms = engine->ms;
-    for(u32 x=0; x<ms.materials.count; x+=1){
-	Material &mat = ms.materials[x];
+void materialSystemInit(u32 materialCount = 5){
+    engine->ms->materials.init(materialCount);
+};
+void uninitAndFreeMaterialSystem(){
+    MaterialSystem *ms = engine->ms;
+    for(u32 x=0; x<ms->materials.count; x+=1){
+	Material &mat = ms->materials[x];
 	materialUninit(mat);
     };
-    ms.materials.uninit();
+    ms->materials.uninit();
+    mem::free(ms);
 };
 Material &newMaterial(u32 shader){
-    Material &mat =  engine->ms.materials.newElem();
+    Material &mat =  engine->ms->materials.newElem();
     materialInit(mat, shader);
     return mat;
 };
 
 void serializeMaterialSystem(char *filePath){
-    MaterialSystem &ms = engine->ms;
+    MaterialSystem *ms = engine->ms;
     FILE *f = fopen(filePath, "wb");
-    fwrite(&ms.materials.count, sizeof(ms.materials.count), 1, f);
-    for(u32 x=0; x<ms.materials.count; x+=1){
-	Material &mat = ms.materials[x];
+    fwrite(&ms->materials.count, sizeof(ms->materials.count), 1, f);
+    for(u32 x=0; x<ms->materials.count; x+=1){
+	Material &mat = ms->materials[x];
 	fwrite(&mat.registeredEntities.count, sizeof(mat.registeredEntities.count), 1, f);
 	fwrite(mat.registeredEntities.mem, sizeof(Entity) * mat.registeredEntities.count, 1, f);
 	fwrite(&mat.col, sizeof(mat.col), 1, f);
@@ -43,7 +47,7 @@ void serializeMaterialSystem(char *filePath){
     fclose(f);
 };
 void deserializeMaterialSystem(char *filePath){
-    MaterialSystem &ms = engine->ms;
+    MaterialSystem *ms = engine->ms;
     
     FILE *f = fopen(filePath, "rb");
     fseek(f, 0, SEEK_END);
@@ -56,7 +60,7 @@ void deserializeMaterialSystem(char *filePath){
     char *charMem = (char*)mem;
 
     u32 count = *(u32*)charMem;
-    ms.materials.init(count);
+    ms->materials.init(count);
     charMem += sizeof(count);
 
     for(u32 x=0; x<count; x+=1){
@@ -78,7 +82,7 @@ void deserializeMaterialSystem(char *filePath){
 	mat.shader = *(u32*)charMem;
 	charMem += sizeof(mat.shader);
 
-	ms.materials.push(mat);
+	ms->materials.push(mat);
     };
     
     mem::free(mem);

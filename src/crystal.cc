@@ -8,6 +8,7 @@ void Crystal::init(){
     curScene = nullptr;
     lm.init(3);
     Draw::init(r);
+    allocMaterialSystem();
     materialSystemInit();
     ss.init();
     defaultShader = ss.newShaderProgram();
@@ -24,7 +25,7 @@ void Crystal::uninit(){
 	lm.uninit();
     };
     Draw::uninit(r);
-    materialSystemUninit();
+    uninitAndFreeMaterialSystem();
     ss.uninit();
     fb.uninit();
 };

@@ -18,10 +18,10 @@
 struct Crystal{
     LayerManager      lm;
     EventDispatcher   ed;
-    MaterialSystem    ms;
     ShaderSystem      ss;
     FrameBuffer       fb;
     Renderer          r;
+    MaterialSystem   *ms;
     Scene            *curScene;
     u32               windowX;
     u32               windowY;

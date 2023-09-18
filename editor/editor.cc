@@ -32,7 +32,7 @@ bool openFileDialog(char *filter, char *buffer){
     ofn.nMaxFile = MAX_PATH;
     ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
 
-    if(GetOpenFileName(&ofn)){print("buffer: %s", buffer);return true;};
+    if(GetOpenFileName(&ofn)){return true;};
     return false;
 };
 void eatEmptySpaces(char *buff, u32 &x){
@@ -59,7 +59,6 @@ char *getName(char *charMem, u32 &x){
     char *str = (char*)mem::alloc(len);
     memcpy(str, charMem+start, len-1);
     str[len-1] = '\0';
-    printf("STR: %s%d\n", str, len);
     return str;
 };
 void openCryFile(){
@@ -172,7 +171,7 @@ namespace Editor{
     };
     void saveLevel(){
 	if(levelName != nullptr){
-	    //TODO:
+	    serializeCurrentScene(levelName);
 	    return;
 	};
 	OPENFILENAME ofn;
@@ -252,6 +251,17 @@ namespace Editor{
 		    }else{
 			saveLevel();
 		    };
+		};
+		ImGui::EndMenu();
+	    };
+	    if(ImGui::BeginMenu("Engine")){
+		if(ImGui::MenuItem("New Scene")){
+		    Scene *s = getEngine()->curScene;
+		    if(s != nullptr){
+			uninitAndFreeCurrentScene();
+		    };
+		    allocAndSetCurrentScene();
+		    initCurrentScene(5);
 		};
 		ImGui::EndMenu();
 	    };
