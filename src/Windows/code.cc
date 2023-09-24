@@ -1,24 +1,27 @@
 #define SETUP_POINTERS(HANDLE)						\
     auto setupUtilPointer = (void(*)(logType l,				\
 				     setGameCodeType sgct, setSceneType sct, \
+				     setMaterialSystemType smst,	\
 				     editorSignalType est))GetProcAddress(HANDLE, "setupUtilPointers"); \
-    setupUtilPointer(print, Code::setGameCode, setScene, editorSignal);	\
+    setupUtilPointer(print, Code::setGameCode, setScene, setMaterialSystem, editorSignal); \
 									\
     auto setupPointers = (void(*)(materialRegisterEntityType mret, newMaterialType nmt, \
+				  serializeMaterialSystemType smst, deserializeMaterialSystemType dmst,	\
 				  componentPoolInitType cpit, componentPoolAddComponentType cpact, \
 				  allocAndSetCurrentSceneType ascst, uninitAndFreeCurrentSceneType ufcst, \
 				  initCurrentSceneType icst, setActiveCameraToCurrentSceneType sacct, \
-				  serializeCurrentSceneType secst, deserializeToCurrentSceneType dcst, \
+				  serializeCurrentSceneType secst,	\
 				  sceneNewEntityType snet, getEntityType get, \
 				  removeComponentType rct, getComponentType gct, \
 				  createRigidBodyType crbt, createBoxColliderFixtureType cbcft, \
 				  getEngineType gent,			\
 				  isKeyDownType ikdt))GetProcAddress(HANDLE, "setupPointers"); \
     setupPointers(materialRegisterEntity,  newMaterial,			\
+		  serializeMaterialSystem, deserializeMaterialSystem,	\
 		  componentPoolInit, componentPoolAddComponent,		\
 		  allocAndSetCurrentScene, uninitAndFreeCurrentScene,	\
 		  initCurrentScene, setActiveCameraToCurrentScene,	\
-		  serializeCurrentScene, deserializeToCurrentScene,	\
+		  serializeCurrentScene,				\
 		  sceneNewEntity, getEntity,				\
 		  removeComponent, getComponent,			\
 		  createRigidBody, createBoxColliderFixture,		\

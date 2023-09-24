@@ -86,7 +86,7 @@ struct EntityPanel{
 		return;
 	    };
 
-	    func(t);
+	    func(t, s, e);
 
 	    ImGui::TreePop();
 	};
@@ -139,14 +139,26 @@ struct EntityPanel{
 		    addComponent<Component::Transform>(e, ComponentID::TRANSFORM);
 		    ImGui::CloseCurrentPopup();
 		};
+		if(ImGui::MenuItem("Camera")){
+		    addComponent<Component::Camera>(e, ComponentID::CAMERA);
+		    ImGui::CloseCurrentPopup();
+		};
 		ImGui::EndPopup();
 	    };
-	    drawComponent<Component::Transform>("Transform", e, s, ComponentID::TRANSFORM, [](auto *c){
+	    drawComponent<Component::Transform>("Transform", e, s, ComponentID::TRANSFORM, [](auto *c, Scene *s, Entity e){
 		DrawVec3Control("position", c->position);
 		DrawVec3Control("rotation", c->rotation);
 		DrawVec3Control("scale", c->scale);
 	    });
-	    
+	    drawComponent<Component::Camera>("Camera", e, s, ComponentID::CAMERA, [](auto *c, Scene *s, Entity e){
+		DrawVec3Control("position", c->pos);
+		ImGui::DragFloat("zoomLevel", &c->zoomLevel);
+		ImGui::DragFloat("aspectRatio", &c->aspectRatio);
+		ImGui::DragFloat("fieldOfView", &c->fieldOfView);
+		if(ImGui::Button("Set Active")){
+		    s->activeCam = e;
+		};
+	    });
 	    ImGui::End();
 	};
     };

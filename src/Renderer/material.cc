@@ -42,6 +42,7 @@ Material &newMaterial(char *name, u32 shader){
 void serializeMaterialSystem(char *filePath){
     MaterialSystem *ms = engine->ms;
     FILE *f = fopen(filePath, "wb");
+    ASSERT(f);
     fwrite(&ms->materials.count, sizeof(ms->materials.count), 1, f);
     for(u32 x=0; x<ms->materials.count; x+=1){
 	Material &mat = ms->materials[x];
@@ -60,6 +61,7 @@ void deserializeMaterialSystem(char *filePath){
     MaterialSystem *ms = engine->ms;
     
     FILE *f = fopen(filePath, "rb");
+    ASSERT(f);
     fseek(f, 0, SEEK_END);
     long size = ftell(f);
     fseek(f, 0, SEEK_SET);
@@ -92,6 +94,7 @@ void deserializeMaterialSystem(char *filePath){
 	char *name = (char*)mem::alloc(nameLen);
 	memcpy(name, charMem, nameLen);
 	charMem += nameLen;
+	mat.name = name;
 	
 	mat.col = *(glm::vec4*)charMem;
 	charMem += sizeof(mat.col);

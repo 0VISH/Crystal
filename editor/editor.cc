@@ -89,6 +89,7 @@ void openCryFile(){
 		setGameCode(gameCodePath);
 	    }else if(memcmp("material system", charMem+start, x-start-1) == 0){
 		materialSystemPath = getName(charMem, x);
+		setMaterialSystem(materialSystemPath);
 	    }else if(memcmp("scene", charMem+start, x-start-1) == 0){
 		curScenePath = getName(charMem, x);
 		setScene(curScenePath);
@@ -174,6 +175,29 @@ namespace Editor{
 	print = addLog;
 	showDemo = false;
     };
+    void saveMS(){
+	OPENFILENAME ofn;
+	TCHAR szFile[260];
+	ZeroMemory(&ofn, sizeof(OPENFILENAME));
+	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.hwndOwner = NULL;
+	ofn.lpstrFile = szFile;
+	ofn.lpstrFile[0] = '\0';
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrDefExt = "scn";
+	ofn.lpstrFilter = TEXT("Material System (*.ms)\0*.ms\0All Files (*.*)\0*.*\0");
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_EXTENSIONDIFFERENT;
+
+	if (GetSaveFileName(&ofn) == TRUE) {
+	    serializeMaterialSystem(szFile);
+	} else {
+	    print("[error] User canceled the dialog or an error occurred");
+	}
+    };
     void saveLevel(){
 	if(levelName != nullptr){
 	    serializeCurrentScene(levelName);
@@ -249,13 +273,16 @@ namespace Editor{
 		if(ImGui::MenuItem("Open Cry File")){
 		    openCryFile();
 		};
-		if(ImGui::MenuItem("Save")){
+		if(ImGui::MenuItem("Save Scene")){
 		    Scene *s = engine->curScene;
 		    if(s == nullptr){
 			print("[error] No scene to save");
 		    }else{
 			saveLevel();
 		    };
+		};
+		if(ImGui::MenuItem("Save Material System")){
+		    saveMS();
 		};
 		ImGui::EndMenu();
 	    };

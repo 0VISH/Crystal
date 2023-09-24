@@ -66,6 +66,75 @@ void *componentPoolGetComponent(ComponentPool &cp, Entity e){
 
 static u8 sceneID = 0;
 
+typedef u64 (*SerializeComponent)(FILE *f, void *mem, u32 count);
+typedef void* (*DeserializeComponent)(char *mem, u32 count);
+
+const u64 camSize = sizeof(Component::Camera::pos) + sizeof(Component::Camera::zoomLevel) + sizeof(Component::Camera::aspectRatio) + sizeof(Component::Camera::fieldOfView);
+const u64 transSize = sizeof(Component::Transform::position) + sizeof(Component::Transform::rotation) + sizeof(Component::Transform::scale);
+
+u64 serializeCamera(FILE *f, void *mem, u32 count){
+    Component::Camera *cmem = (Component::Camera*)mem;
+    for(u32 x=0; x<count; x+=1){
+	Component::Camera &cc = cmem[x];
+	fwrite(&cc.pos, sizeof(cc.pos), 1, f);
+	fwrite(&cc.zoomLevel, sizeof(cc.zoomLevel), 1, f);
+	fwrite(&cc.aspectRatio, sizeof(cc.aspectRatio), 1, f);
+	fwrite(&cc.fieldOfView, sizeof(cc.fieldOfView), 1, f);
+    };
+    return camSize;
+};
+void *deserializeCamera(char *mem, u32 count){
+    Component::Camera *cmem = (Component::Camera*)mem::alloc(count * sizeof(Component::Camera));
+    for(u32 x=0; x<count; x+=1){
+	Component::Camera &cam = cmem[x];
+	cam.pos = *(glm::vec3*)mem;
+	mem += sizeof(cam.pos);
+	cam.zoomLevel = *(f32*)mem;
+	mem += sizeof(cam.zoomLevel);
+	cam.aspectRatio = *(f32*)mem;
+	mem += sizeof(cam.aspectRatio);
+	cam.fieldOfView = *(f32*)mem;
+	mem += sizeof(cam.fieldOfView);
+    };
+    return cmem;
+};
+u64 serializeTransform(FILE *f, void *mem, u32 count){
+    Component::Transform *tmem = (Component::Transform*)mem;
+    for(u32 x=0; x<count; x+=1){
+	Component::Transform &ct = tmem[x];
+	fwrite(&ct.position, sizeof(ct.position), 1, f);
+	fwrite(&ct.rotation, sizeof(ct.rotation), 1, f);
+	fwrite(&ct.scale,    sizeof(ct.scale), 1, f);
+    };
+    return transSize;
+};
+void *deserializeTransform(char *mem, u32 count){
+    Component::Transform *tmem = (Component::Transform*)mem::alloc(count * sizeof(Component::Transform));
+    for(u32 x=0; x<count; x+=1){
+	Component::Transform &tra = tmem[x];
+	tra.position = *(glm::vec3*)mem;
+	mem += sizeof(tra.position);
+	tra.rotation = *(glm::vec3*)mem;
+	mem += sizeof(tra.rotation);
+	tra.scale = *(glm::vec3*)mem;
+	mem += sizeof(tra.scale);
+    };
+    return tmem;
+};
+
+SerializeComponent serializeComponent[] = {
+    serializeCamera,
+    serializeTransform,
+};
+DeserializeComponent deserializeComponent[] = {
+    deserializeCamera,
+    deserializeTransform,
+};
+u64 serializedComponentSize[] = {
+    camSize,
+    transSize,
+};
+
 void serializeCurrentScene(char *fileName){
     Scene *s = engine->curScene;
     FILE *f = fopen(fileName, "wb");
@@ -85,11 +154,12 @@ void serializeCurrentScene(char *fileName){
     fwrite(&s->components.count, sizeof(s->components.count), 1, f);
     for(u32 x=0; x<s->components.count; x+=1){
 	ComponentPool &cp = s->components[x];
-	fwrite(&cp.componentSize, sizeof(cp.componentSize), 1, f);
 	fwrite(&cp.count, sizeof(cp.count), 1, f);
+	fwrite(&cp.componentSize, sizeof(cp.componentSize), 1, f);
+	if(cp.count == 0){continue;};
 	fwrite(&cp.entityWatermark, sizeof(cp.entityWatermark), 1, f);
-	fwrite(cp.mem, cp.componentSize*cp.count, 1, f);
 	fwrite(cp.entityToComponentOff, sizeof(Entity)*cp.entityWatermark, 1, f);
+	serializeComponent[x](f, cp.mem, cp.count);
     };
     fwrite(&s->activeCam, sizeof(s->activeCam), 1, f);
     fclose(f);
@@ -149,21 +219,23 @@ void deserializeToCurrentScene(char *fileName){
 	s->components.init(cpCount);
 	for(u32 x=0; x<cpCount; x+=1){
 	    ComponentPool &cp = s->components.newElem();
+	    cp.count = *(u32*)charMem;
+	    charMem += sizeof(cp.count);
 	    cp.componentSize = *(u64*)charMem;
 	    charMem += sizeof(cp.componentSize);
-	    cp.count = *(u32*)charMem;
-	    cp.len = cp.count;
-	    charMem += sizeof(cp.count);
+	    if(cp.count == 0){
+		componentPoolInit(cp, cp.componentSize, 5);
+		continue;
+	    };
+	    cp.len = cp.count;	    
 	    cp.entityWatermark = *(Entity*)charMem;
 	    charMem += sizeof(cp.entityWatermark);
-	    u64 componentMemSize = cp.componentSize * cp.count;
-	    cp.mem = (char*)mem::alloc(componentMemSize);
-	    memcpy(cp.mem, charMem, componentMemSize);
-	    charMem += componentMemSize;
 	    u64 entityToComponentSize = cp.entityWatermark*sizeof(Entity);
 	    cp.entityToComponentOff = (Entity*)mem::alloc(entityToComponentSize);
 	    memcpy(cp.entityToComponentOff, charMem, entityToComponentSize);
 	    charMem += entityToComponentSize;
+	    cp.mem = (char*)deserializeComponent[x](charMem, cp.count);
+	    charMem += serializedComponentSize[x]*cp.count;
 	};
     };
     s->activeCam = *(Entity*)charMem;
@@ -181,7 +253,7 @@ Entity sceneNewEntity(char *name){
 Entity getEntity(char *name){
     Scene *s = engine->curScene;
     Entity *e = (Entity*)map_get(&s->entityNameToID, name);
-    if(e == nullptr){return 0;};
+    if(e == nullptr){return -1;};
     return *e;
 };
 void removeComponent(Entity e, u32 componentID){

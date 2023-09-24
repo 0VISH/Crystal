@@ -7,10 +7,10 @@ namespace Component{
 	void calculateViewMat();
 	void updateZoomLevel(f32 zLevel);
 	void initPerspective(f32 fov, f32 aRatio, const glm::vec3 &cameraStartPos);
-    
-	glm::vec3 pos;
-	glm::mat4 view;
+
 	glm::mat4 projection;
+	glm::mat4 view;
+	glm::vec3 pos;
 	f32 zoomLevel;
 	f32 aspectRatio;
 	f32 fieldOfView;

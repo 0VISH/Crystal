@@ -3,8 +3,17 @@ void setScene(char *scenePath){
     if(engine->curScene != nullptr){
 	uninitAndFreeCurrentScene();
     };
+    print("Scene: %s", scenePath);
     allocAndSetCurrentScene();
     deserializeToCurrentScene(scenePath);
+};
+void setMaterialSystem(char *filePath){
+    if(engine->ms != nullptr){
+	uninitAndFreeMaterialSystem();
+    };
+    print("Material System: %s", filePath);
+    allocMaterialSystem();
+    deserializeMaterialSystem(filePath);
 };
 void editorSignal(){
     if(engine->gameCode){

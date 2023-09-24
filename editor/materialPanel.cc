@@ -48,7 +48,23 @@ struct MaterialPanel{
 	    ImGui::Text("%s: %d", mat.name, mat.id);
 	    ImGui::ColorEdit4("Colour", (float*)&mat.col, ImGuiColorEditFlags_AlphaPreview);
 	    ImGui::Text("Shader ID: %d", mat.shader);
+
+	    if(ImGui::TreeNodeEx("Show Entities")){
+		for(u32 x=0; x<mat.registeredEntities.count; x+=1){
+		    ImGui::Text("%d", mat.registeredEntities[x]);
+		};
+		ImGui::TreePop();
+	    };
+	    const u32 MAX_NAME = 50;
+	    char entityName[MAX_NAME] = "TODO: REMOVE ME";
+	    ImGui::InputText("Register Entity", entityName, MAX_NAME);
 	    
+	    if(ImGui::Button("Add Entity")){
+		Entity e = getEntity(entityName);
+		if(e != -1){
+		    materialRegisterEntity(mat, e);
+		}else{print("[error] Invalid entity name");};
+	    };
 	    ImGui::End();
 	};
     };

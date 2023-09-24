@@ -8,12 +8,14 @@
 logType print;
 setGameCodeType  setGameCode;
 setSceneType     setScene;
+setMaterialSystemType setMaterialSystem;
 editorSignalType editorSignal;
 
-EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct, editorSignalType est){
+EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct, setMaterialSystemType smst, editorSignalType est){
     print = l;
     setGameCode = sgct;
     setScene = sct;
+    setMaterialSystem = smst;
 
     editorSignal = est;
 };
@@ -27,9 +29,10 @@ EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct,
 
 #include "enginePointers.hh"
 
-
 materialRegisterEntityType materialRegisterEntity;
 newMaterialType newMaterial;
+serializeMaterialSystemType serializeMaterialSystem;
+deserializeMaterialSystemType deserializeMaterialSystem;
 
 componentPoolInitType         componentPoolInit;
 componentPoolAddComponentType componentPoolAddComponent;
@@ -37,7 +40,6 @@ componentPoolAddComponentType componentPoolAddComponent;
 allocAndSetCurrentSceneType allocAndSetCurrentScene;
 uninitAndFreeCurrentSceneType uninitAndFreeCurrentScene;
 serializeCurrentSceneType serializeCurrentScene;
-deserializeToCurrentSceneType deserializeToCurrentScene;
 initCurrentSceneType initCurrentScene;
 setActiveCameraToCurrentSceneType setActiveCameraToCurrentScene;
 sceneNewEntityType sceneNewEntity;
@@ -52,11 +54,11 @@ getEngineType getEngine;
 
 isKeyDownType    isKeyDown;
 
-EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
+EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt, serializeMaterialSystemType smst, deserializeMaterialSystemType dmst,
 			  componentPoolInitType cpit, componentPoolAddComponentType cpact,
 			  allocAndSetCurrentSceneType ascst, uninitAndFreeCurrentSceneType ufcst,
 			  initCurrentSceneType icst, setActiveCameraToCurrentSceneType sacct,
-			  serializeCurrentSceneType secst, deserializeToCurrentSceneType dcst,
+			  serializeCurrentSceneType secst,
 			  sceneNewEntityType snet, getEntityType get,
 			  removeComponentType rct, getComponentType gct,
 			  createRigidBodyType crbt, createBoxColliderFixtureType cbcft,
@@ -65,6 +67,8 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
     
     materialRegisterEntity = mret;
     newMaterial = nmt;
+    serializeMaterialSystem = smst;
+    deserializeMaterialSystem = dmst;
 
     componentPoolInit         = cpit;
     componentPoolAddComponent = cpact;
@@ -76,7 +80,6 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt,
     setActiveCameraToCurrentScene = sacct;
     
     serializeCurrentScene = secst;
-    deserializeToCurrentScene = dcst;
     
     sceneNewEntity = snet;
     getEntity = get;

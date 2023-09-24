@@ -21,7 +21,6 @@ namespace OpenGL{
 	    case GL_DEBUG_SOURCE_APPLICATION:     print("Source: Application"); break;
 	    case GL_DEBUG_SOURCE_OTHER:           print("Source: Other"); break;
 	    };
-	print("\n");
 	switch (type)
 	    {
 	    case GL_DEBUG_TYPE_ERROR:               print("Type: Error"); break;
@@ -34,7 +33,6 @@ namespace OpenGL{
 	    case GL_DEBUG_TYPE_POP_GROUP:           print("Type: Pop Group"); break;
 	    case GL_DEBUG_TYPE_OTHER:               print("Type: Other"); break;
 	    };
-	print("\n");
 	switch (severity)
 	    {
 	    case GL_DEBUG_SEVERITY_HIGH:         print("Severity: high"); break;
@@ -42,7 +40,6 @@ namespace OpenGL{
 	    case GL_DEBUG_SEVERITY_LOW:          print("Severity: low"); break;
 	    case GL_DEBUG_SEVERITY_NOTIFICATION: print("Severity: notification"); break;
 	    };
-	print("\n");
     }
 
     void vertexCheckErr(u32 shader){
