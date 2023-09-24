@@ -9,3 +9,4 @@ vendor/glad/
 **/*.pkg
 **/*.scn
 **/*.cry
+**/*.ms

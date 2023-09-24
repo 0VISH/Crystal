@@ -1,9 +1,4 @@
-2) Textures.
-
-3) Packaging assets.
-
-4) Package frees memory when package is unloaded.
-
-5) Port to linux
-
-6) Port to android.
+:: Cleanup
+:: Textures
+:: Port to linux
+:: Port to android
