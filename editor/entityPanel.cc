@@ -139,8 +139,8 @@ struct EntityPanel{
 		    addComponent<Component::Transform>(e, ComponentID::TRANSFORM);
 		    ImGui::CloseCurrentPopup();
 		};
-		if(ImGui::MenuItem("Camera")){
-		    addComponent<Component::Camera>(e, ComponentID::CAMERA);
+		if(ImGui::MenuItem("PCamera")){
+		    addComponent<Component::PCamera>(e, ComponentID::CAMERA);
 		    ImGui::CloseCurrentPopup();
 		};
 		ImGui::EndPopup();
@@ -150,7 +150,7 @@ struct EntityPanel{
 		DrawVec3Control("rotation", c->rotation);
 		DrawVec3Control("scale", c->scale);
 	    });
-	    drawComponent<Component::Camera>("Camera", e, s, ComponentID::CAMERA, [](auto *c, Scene *s, Entity e){
+	    drawComponent<Component::PCamera>("PCamera", e, s, ComponentID::CAMERA, [](auto *c, Scene *s, Entity e){
 		DrawVec3Control("position", c->pos);
 		ImGui::DragFloat("zoomLevel", &c->zoomLevel);
 		ImGui::DragFloat("aspectRatio", &c->aspectRatio);

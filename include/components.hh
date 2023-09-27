@@ -2,7 +2,7 @@
 
 //NOTE: all components need to have function 'init'
 namespace Component{
-    struct Camera{
+    struct PCamera{
 	void init(Scene *s, Entity e);
 	void calculateViewMat();
 	void updateZoomLevel(f32 zLevel);

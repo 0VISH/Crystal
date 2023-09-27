@@ -20,7 +20,7 @@ namespace Game{
 	mat.col = glm::vec4(1.0, 0.5, 1.0, 1.0);
 	materialRegisterEntity(mat, sq);
 
-	Component::Camera *cam = addComponent<Component::Camera>(sq, ComponentID::CAMERA);
+	Component::PCamera *cam = addComponent<Component::PCamera>(sq, ComponentID::CAMERA);
         cam->initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
     };
     EXPORT void uninit(){
@@ -28,7 +28,7 @@ namespace Game{
     };
     EXPORT bool update(Event e, f64 dt){
 	Entity sq = getEntity("spinny quad");
-	auto *cam = (Component::Camera*)getComponent(sq, (u32)ComponentID::CAMERA);
+	auto *cam = (Component::PCamera*)getComponent(sq, (u32)ComponentID::CAMERA);
 	setActiveCameraToCurrentScene(sq);
 	auto *s1T = (Component::Transform*)getComponent(sq, (u32)ComponentID::TRANSFORM);
 	if(s1T == nullptr){return false;};

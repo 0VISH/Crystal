@@ -7,22 +7,22 @@
 #include "componentID.hh"
 
 namespace Component{
-    void Camera::initPerspective(f32 fov, f32 aRatio, const glm::vec3 &cameraStartPos){
+    void PCamera::initPerspective(f32 fov, f32 aRatio, const glm::vec3 &cameraStartPos){
 	aspectRatio = aRatio;
 	fieldOfView = fov;
 	pos = cameraStartPos;
 	projection = glm::mat4(1.0);
 	projection = glm::perspective(glm::radians(fieldOfView+(zoomLevel*-5)), aspectRatio, 0.1f, 100.0f);
     };
-    void Camera::init(Scene *s, Entity e){
+    void PCamera::init(Scene *s, Entity e){
 	zoomLevel = 1;
 	initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
     };
-    void Camera::calculateViewMat(){
+    void PCamera::calculateViewMat(){
 	glm::mat4 t = glm::translate(glm::mat4(1.0f), pos);
 	view = glm::inverse(t);
     };
-    void Camera::updateZoomLevel(f32 zLevel){
+    void PCamera::updateZoomLevel(f32 zLevel){
 	zoomLevel += zLevel;
 	projection = glm::perspective(glm::radians(fieldOfView+(zoomLevel*-5)), aspectRatio, 0.1f, 100.0f);
     };

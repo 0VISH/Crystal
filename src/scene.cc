@@ -69,13 +69,13 @@ static u8 sceneID = 0;
 typedef u64 (*SerializeComponent)(FILE *f, void *mem, u32 count);
 typedef void* (*DeserializeComponent)(char *mem, u32 count);
 
-const u64 camSize = sizeof(Component::Camera::pos) + sizeof(Component::Camera::zoomLevel) + sizeof(Component::Camera::aspectRatio) + sizeof(Component::Camera::fieldOfView);
+const u64 camSize = sizeof(Component::PCamera::pos) + sizeof(Component::PCamera::zoomLevel) + sizeof(Component::PCamera::aspectRatio) + sizeof(Component::PCamera::fieldOfView);
 const u64 transSize = sizeof(Component::Transform::position) + sizeof(Component::Transform::rotation) + sizeof(Component::Transform::scale);
 
 u64 serializeCamera(FILE *f, void *mem, u32 count){
-    Component::Camera *cmem = (Component::Camera*)mem;
+    Component::PCamera *cmem = (Component::PCamera*)mem;
     for(u32 x=0; x<count; x+=1){
-	Component::Camera &cc = cmem[x];
+	Component::PCamera &cc = cmem[x];
 	fwrite(&cc.pos, sizeof(cc.pos), 1, f);
 	fwrite(&cc.zoomLevel, sizeof(cc.zoomLevel), 1, f);
 	fwrite(&cc.aspectRatio, sizeof(cc.aspectRatio), 1, f);
@@ -84,9 +84,9 @@ u64 serializeCamera(FILE *f, void *mem, u32 count){
     return camSize;
 };
 void *deserializeCamera(char *mem, u32 count){
-    Component::Camera *cmem = (Component::Camera*)mem::alloc(count * sizeof(Component::Camera));
+    Component::PCamera *cmem = (Component::PCamera*)mem::alloc(count * sizeof(Component::PCamera));
     for(u32 x=0; x<count; x+=1){
-	Component::Camera &cam = cmem[x];
+	Component::PCamera &cam = cmem[x];
 	cam.pos = *(glm::vec3*)mem;
 	mem += sizeof(cam.pos);
 	cam.zoomLevel = *(f32*)mem;
@@ -95,6 +95,7 @@ void *deserializeCamera(char *mem, u32 count){
 	mem += sizeof(cam.aspectRatio);
 	cam.fieldOfView = *(f32*)mem;
 	mem += sizeof(cam.fieldOfView);
+	cam.initPerspective(cam.fieldOfView, cam.aspectRatio, cam.pos);
     };
     return cmem;
 };
