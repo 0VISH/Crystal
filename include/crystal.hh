@@ -1,6 +1,6 @@
 #pragma once
 
-#if(PLAT_WINDOWS)
+#if(WIN)
 
 #pragma warning(disable: 4005) //glad.h redifines APIENTRY
 #include <windows.h>
@@ -29,7 +29,7 @@ struct Crystal{
     u32               screenShader;
     bool              shouldClose;
 
-#if(PLAT_WINDOWS) 
+#if(WIN) 
     HMODULE           gameCode;
 #endif
 
