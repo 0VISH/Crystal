@@ -122,6 +122,9 @@ namespace Editor{
     Renderer *r;
     u32 *gameTexture;
     char *levelName = nullptr;
+    bool isPlaying;
+    Scene *curScene;
+    u8 curFlags;
 
     EXPORT void setGameTextureAdd(u32 *tAdd){
 	gameTexture = tAdd;
@@ -137,6 +140,7 @@ namespace Editor{
     };
     
     EXPORT void init(HWND window){
+	isPlaying = false;
 	gameTexture = nullptr;
 	engine = getEngine();
 	r = &engine->r;
@@ -233,6 +237,43 @@ namespace Editor{
 	    print("[error] User canceled the dialog or an error occurred");
 	}
     };
+    Scene *deepCopyCurScene(){
+	Scene *cpy = (Scene*)mem::alloc(sizeof(Scene));
+	Scene *cur = engine->curScene;
+	cpy->activeCam = cur->activeCam;
+	cpy->entityCount = cur->entityCount;
+	cpy->id = cur->id;
+	cpy->components.init(cur->components.count);
+	for(u32 x=0; x<cur->components.count; x+=1){
+	    ComponentPool &curcp = cur->components[x];
+	    ComponentPool  cpycp;
+	    cpycp.componentSize = curcp.componentSize;
+	    cpycp.count = curcp.count;
+	    cpycp.len = curcp.len;
+	    cpycp.entityWatermark = curcp.entityWatermark;
+	    u32 memLen = curcp.componentSize * curcp.count;
+	    u32 entLen = sizeof(Entity) * curcp.entityWatermark;
+	    char *cpyMem = (char*)mem::alloc(memLen);
+	    Entity *cpyEntity = (Entity*)mem::alloc(entLen);
+	    memcpy(cpyMem, curcp.mem, memLen);
+	    memcpy(cpyEntity, curcp.entityToComponentOff, entLen);
+	    cpycp.mem = cpyMem;
+	    cpycp.entityToComponentOff = cpyEntity;
+	    cpy->components.push(cpycp);
+	};
+	cpy->entityComponentMask.init(cur->entityComponentMask.count);
+	for(u32 x=0; x<cur->entityComponentMask.count; x+=1){
+	    cpy->entityComponentMask.push(cur->entityComponentMask[x]);
+	};
+	map_init(&cpy->entityNameToID);
+	const char *key;
+	map_iter_t iter = map_iter(&cur->entityNameToID);
+	while(key = map_next(&cur->entityNameToID, &iter)){
+	    Entity e = *map_get(&cur->entityNameToID, key);
+	    map_set(&cpy->entityNameToID, key, e);
+	};
+	return cpy;
+    };
     EXPORT bool update(Event e, f64 dt){
 	//FEEDING IMGUI EVENTS
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -316,10 +357,39 @@ namespace Editor{
 	
 	if(ImGui::Begin("Scene")){
 	    ImGui::Text("Frame rate: %f\t\t\t\t\tDraw calls: %d", ImGui::GetIO().Framerate, r->drawCalls);
-	    ImGui::Text("-");
-	    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5);
-	    ImGui::Button("PLAY");
-		
+	    if(engine->curScene != nullptr){
+		ImGui::Text("-");
+		ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5);
+
+		if(isPlaying){
+		    if(ImGui::Button("PAUSE")){
+			isPlaying = false;
+
+			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
+			gameLayer->flags = curFlags;
+		    };
+		    ImGui::SameLine();
+		    if(ImGui::Button("STOP")){
+			isPlaying = false;
+
+			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
+			gameLayer->flags = curFlags;
+			uninitAndFreeCurrentScene();
+			engine->curScene = curScene;
+		    };
+		}else{
+		    if(ImGui::Button("PLAY")){
+			isPlaying = true;
+			
+			curScene = engine->curScene;
+			engine->curScene = deepCopyCurScene();
+
+			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
+			curFlags = gameLayer->flags;
+			CLEAR_BIT(gameLayer->flags, LayerFlag::UPDATE);
+		    };
+		};
+	    };
 	    float width = ImGui::GetContentRegionAvail().x;
 	    float height = ImGui::GetContentRegionAvail().y;
 

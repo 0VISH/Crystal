@@ -33,6 +33,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	ASSERT(editorCode);
 
 	Layer *editorLayer = engine->lm.newLayer();
+	editorLayer->flags = 0;
 	editorLayer->onRender = (LayerFunc)GetProcAddress(editorCode, "render");
 	editorLayer->onUninit = (LayerFunc)GetProcAddress(editorCode, "uninit");
 	editorLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(editorCode, "update");
@@ -53,12 +54,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	Shader::createShader("package/shader/displayVertex.glsl", "package/shader/displayFragment.glsl", screenShader);
 
 	engine->gameLayerOff = engine->lm.layerCount;
-	Layer *gameLayer = engine->lm.newLayer();
-	gameLayer->onRender = (LayerFunc)GetProcAddress(engine->gameCode, "render");
-	gameLayer->onUninit = (LayerFunc)GetProcAddress(engine->gameCode, "uninit");
-	gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(engine->gameCode, "update");
-	auto ginit = (void(*)(HWND window))GetProcAddress(engine->gameCode, "init");
-	ginit(window);
+	auto ginit = (LayerFunc)GetProcAddress(engine->gameCode, "init");
+	ginit();
     };
     Package::unloadPkg(Package::curPkg);  //setup.pkg loaded by engine->init();
     

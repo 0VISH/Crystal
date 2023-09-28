@@ -22,6 +22,8 @@ LayerFunc setScene(char *scenePath){
     }else{
 	gameLayer = &engine->lm.layers[engine->gameLayerOff];
     };
+    SET_BIT(gameLayer->flags, LayerFlag::UPDATE);
+    SET_BIT(gameLayer->flags, LayerFlag::RENDER);
     memcpy(buffer+len, "Init", strlen("Init")+1);
     //TODO: save this somewhere?
     auto ginit = (LayerFunc)GetProcAddress(engine->gameCode, buffer);

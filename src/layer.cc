@@ -30,7 +30,7 @@ void LayerManager::uninitLayers(){
 void LayerManager::updateLayers(Event event, f64 dt){
     for(u8 x=0; x<layerCount; x+=1){
 	Layer& layer = layers[x];
-	if(layer.onUpdate == nullptr){continue;};
+	if(layer.onUpdate == nullptr || IS_BIT(layer.flags, LayerFlag::UPDATE)){continue;};
 	if(layer.onUpdate(event, dt)){
 	    event.type = EventType::NONE;
 	};
@@ -40,7 +40,7 @@ void LayerManager::renderLayers(){
     for(u8 x=layerCount; x>0;){
 	x -= 1;
 	Layer& layer = layers[x];
-	if(layer.onRender == nullptr){continue;};
+	if(layer.onRender == nullptr || IS_BIT(layer.flags, LayerFlag::RENDER)){continue;};
 	layer.onRender();
     };
 };
