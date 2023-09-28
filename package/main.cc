@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "../src/stb_image.hh"
+#include "stb_image.hh"
 
 char *vertexShader   = "package/shader/vertex.glsl";
 char *fragmentShader = "package/shader/fragment.glsl";

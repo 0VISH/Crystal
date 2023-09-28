@@ -143,7 +143,7 @@ namespace Editor{
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_InitForOpenGL(window);
 	ImGui_ImplOpenGL3_Init();
-	io.Fonts->AddFontFromFileTTF("resources/Roboto-Regular.ttf", 17.0f);
+	io.Fonts->AddFontFromFileTTF("editor/assets/Roboto-Regular.ttf", 17.0f);
 	auto& colors = ImGui::GetStyle().Colors;
 	colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
 	// Headers

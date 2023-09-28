@@ -1,7 +1,7 @@
 #include "../package.hh"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "../stb_image.hh"
+#include "stb_image.hh"
 
 namespace Package{
     void allocPackages(){
