@@ -7,12 +7,14 @@
 #include "componentID.hh"
 
 namespace Component{
+    void PCamera::calculateProjectionMat(){
+	projection = glm::perspective(glm::radians(fieldOfView+(zoomLevel*-5)), aspectRatio, 0.1f, 100.0f);
+    };
     void PCamera::initPerspective(f32 fov, f32 aRatio, const glm::vec3 &cameraStartPos){
 	aspectRatio = aRatio;
 	fieldOfView = fov;
 	pos = cameraStartPos;
-	projection = glm::mat4(1.0);
-	projection = glm::perspective(glm::radians(fieldOfView+(zoomLevel*-5)), aspectRatio, 0.1f, 100.0f);
+	calculateProjectionMat();
     };
     void PCamera::init(Scene *s, Entity e){
 	zoomLevel = 1;
@@ -22,9 +24,17 @@ namespace Component{
 	glm::mat4 t = glm::translate(glm::mat4(1.0f), pos);
 	view = glm::inverse(t);
     };
-    void PCamera::updateZoomLevel(f32 zLevel){
-	zoomLevel += zLevel;
-	projection = glm::perspective(glm::radians(fieldOfView+(zoomLevel*-5)), aspectRatio, 0.1f, 100.0f);
+    void PCamera::changeZoomLevel(f32 zLevel){
+	zoomLevel = zLevel;
+	calculateProjectionMat();
+    };
+    void PCamera::changeFOV(f32 fov){
+	fieldOfView = fov;
+	calculateProjectionMat();
+    };
+    void PCamera::changeARatio(f32 aRatio){
+	aspectRatio = aRatio;
+	calculateProjectionMat();
     };
 };
 namespace Component{

@@ -7,11 +7,8 @@
 #include "game.hh"
 
 namespace Game{
-    EXPORT void uninit(){
-	uninitAndFreeCurrentScene();
-    };
-    EXPORT bool update(Event e, f64 dt){
-	Entity sq = getEntity("spinny quad");
+    EXPORT bool trialUpdate(Event e, f64 dt){
+	Entity sq = getEntity("TODO: REMOVE ME");
 	auto *cam = (Component::PCamera*)getComponent(sq, (u32)ComponentID::CAMERA);
 	setActiveCameraToCurrentScene(sq);
 	auto *s1T = (Component::Transform*)getComponent(sq, (u32)ComponentID::TRANSFORM);

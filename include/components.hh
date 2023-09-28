@@ -4,8 +4,11 @@
 namespace Component{
     struct PCamera{
 	void init(Scene *s, Entity e);
+	void calculateProjectionMat();
 	void calculateViewMat();
-	void updateZoomLevel(f32 zLevel);
+	void changeZoomLevel(f32 zLevel);
+	void changeFOV(f32 fov);
+	void changeARatio(f32 aRatio);
 	void initPerspective(f32 fov, f32 aRatio, const glm::vec3 &cameraStartPos);
 
 	glm::mat4 projection;

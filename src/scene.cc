@@ -259,6 +259,10 @@ Entity getEntity(char *name){
 };
 void removeComponent(Entity e, u32 componentID){
     ASSERT(e > -1);
+    if(e < 0){
+	print("Invalid Entity ID: %d", e);
+	return;
+    };
     Scene *s = engine->curScene;
     u32 &mask = s->entityComponentMask[e];
     if(!IS_BIT(mask, componentID)){return;};
@@ -267,6 +271,10 @@ void removeComponent(Entity e, u32 componentID){
 };
 void *getComponent(Entity e, u32 componentID){
     ASSERT(e > -1);
+    if(e < 0){
+	print("Invalid Entity ID: %d", e);
+	return nullptr;
+    };
     Scene *s = engine->curScene;
     u32 mask = s->entityComponentMask[e];
     if(!IS_BIT(mask, componentID)){return nullptr;};

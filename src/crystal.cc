@@ -35,6 +35,11 @@ Crystal *getEngine(){
     return engine;
 };
 void setActiveCameraToCurrentScene(Entity e){
+    ASSERT(e > -1);
+    if(e < 0){
+	print("Invalid Entity ID: %d", e);
+	return;
+    };
     Scene *s = engine->curScene;
     s->activeCam = e;
 };
