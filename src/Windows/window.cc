@@ -234,7 +234,7 @@ namespace window{
 	case WM_DESTROY:
 	case WM_QUIT:
 	case WM_CLOSE:{
-	    engine->shouldClose = true;
+	    engine->windowX = 0;
 	}break;
 	case WM_SIZE:{
 	    engine->windowX = LOWORD(lParam);
@@ -242,7 +242,7 @@ namespace window{
 	};
 	case WM_KEYDOWN:{
 	    if(wParam == VK_ESCAPE){
-		engine->shouldClose = true;
+		engine->windowX = 0;
 		break;
 	    };
 	    e.type = EventType::KEY_DOWN;
@@ -283,7 +283,6 @@ namespace window{
 	engine->windowX = windowX;
 	engine->windowY = windowY;
 	engine->ed.init();
-	engine->shouldClose = false;
 
 	WNDCLASSEXW wc = { sizeof(wc), CS_OWNDC, WindowProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, (LPCWSTR)className, NULL };
         ::RegisterClassExW(&wc);
@@ -301,7 +300,8 @@ namespace window{
 	    TranslateMessage(&msg);
 	    DispatchMessage(&msg);
 	    switch(msg.message){
-	    case WM_QUIT: engine->shouldClose = true;
+	    case WM_QUIT:
+		engine->windowX = 0;
 	    };
 	};
     };

@@ -1,9 +1,15 @@
 void setScene(char *scenePath){
-    //TODO: parse and get scene name
     if(engine->curScene != nullptr){
 	uninitAndFreeCurrentScene();
     };
-    print("Scene: %s", scenePath);
+    u32 len = strlen(scenePath);
+    char *sceneName = scenePath + len - 1;
+    while(*sceneName != '/'){sceneName -= 1;};
+    sceneName += 1;
+    if(engine->gameLayerOff == -1){
+	
+    };
+    print("Scene: %s\n", scenePath);
     allocAndSetCurrentScene();
     deserializeToCurrentScene(scenePath);
 };
@@ -11,7 +17,7 @@ void setMaterialSystem(char *filePath){
     if(engine->ms != nullptr){
 	uninitAndFreeMaterialSystem();
     };
-    print("Material System: %s", filePath);
+    print("Material System: %s\n", filePath);
     allocMaterialSystem();
     deserializeMaterialSystem(filePath);
 };

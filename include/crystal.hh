@@ -23,11 +23,9 @@ struct Crystal{
     Renderer          r;
     MaterialSystem   *ms;
     Scene            *curScene;
-    u32               windowX;
+    s32               gameLayerOff;
+    u32               windowX; //if set to 0, engine exits
     u32               windowY;
-    u32               defaultShader;
-    u32               screenShader;
-    bool              shouldClose;
 
 #if(WIN) 
     HMODULE           gameCode;

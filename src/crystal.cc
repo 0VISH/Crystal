@@ -6,12 +6,13 @@ static Crystal *engine;
 void Crystal::init(){
     gameCode = nullptr;
     curScene = nullptr;
+    gameLayerOff = -1;
     lm.init(3);
     Draw::init(r);
     allocMaterialSystem();
     materialSystemInit();
     ss.init();
-    defaultShader = ss.newShaderProgram();
+    u32 defaultShader = ss.newShaderProgram();
 
     Package::loadPkg("package/setup.pkg", Package::curPkg);
 	

@@ -27,6 +27,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     sq.vao = 69;
     HMODULE editorCode = nullptr;
     engine->gameCode = Code::load("gameWin.dll");
+    u32 screenShader;
     if(engine->gameCode == NULL){
 	editorCode = Code::load("bin/win/dbg/editor.dll");
 	ASSERT(editorCode);
@@ -48,9 +49,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	print("Loaded game code\n");
 
 	sq = Draw::initScreenQuad();
-	engine->screenShader = engine->ss.newShaderProgram();
-	Shader::createShader("package/shader/displayVertex.glsl", "package/shader/displayFragment.glsl", engine->screenShader);
+	screenShader = engine->ss.newShaderProgram();
+	Shader::createShader("package/shader/displayVertex.glsl", "package/shader/displayFragment.glsl", screenShader);
 
+	engine->gameLayerOff = engine->lm.layerCount;
 	Layer *gameLayer = engine->lm.newLayer();
 	gameLayer->onRender = (LayerFunc)GetProcAddress(engine->gameCode, "render");
 	gameLayer->onUninit = (LayerFunc)GetProcAddress(engine->gameCode, "uninit");
@@ -70,7 +72,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	QueryPerformanceCounter(&start);
 	
 	window::pollEvents();
-	if(engine->shouldClose){break;};
+	if(engine->windowX == 0){break;};
 
 	Event e = engine->ed.getEvent();
 	
@@ -87,7 +89,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
 	    glClear(GL_COLOR_BUFFER_BIT);
   
-	    Shader::useShader(engine->screenShader);
+	    Shader::useShader(screenShader);
 	    glBindVertexArray(sq.vao);
 	    glBindTexture(GL_TEXTURE_2D, engine->fb.texture);
 	    glDrawArrays(GL_TRIANGLES, 0, 6);
