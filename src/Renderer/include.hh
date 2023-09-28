@@ -1,7 +1,7 @@
 #pragma once
 
 #include "screenQuad.hh"
-#if(RCONTEXT_GL)
+#if(GL)
 #include "openGL.cc"
 #endif
 #include "shader.cc"

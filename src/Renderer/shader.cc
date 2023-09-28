@@ -45,7 +45,7 @@ void ShaderSystem::init(){
 };
 u32 ShaderSystem::newShaderProgram(){
     u32 program;
-#if(RCONTEXT_GL)
+#if(GL)
     program = glCreateProgram();
 #endif
     shaderPrograms.push(program);

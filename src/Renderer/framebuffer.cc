@@ -1,7 +1,7 @@
 #include "framebuffer.hh"
 
 void FrameBuffer::init(u32 x, u32 y){
-#if(RCONTEXT_GL)
+#if(GL)
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -23,19 +23,19 @@ void FrameBuffer::init(u32 x, u32 y){
 #endif
 };
 void FrameBuffer::uninit(){
-#if(RCONTEXT_GL)
+#if(GL)
     glDeleteFramebuffers(1, &fbo);
     glDeleteTextures(1, &texture);
     glDeleteRenderbuffers(1, &rbo);
 #endif
 };
 void FrameBuffer::bind(){
-#if(RCONTEXT_GL)
+#if(GL)
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 #endif
 };
 void FrameBuffer::unbind(){
-#if(RCONTEXT_GL)
+#if(GL)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif
 };

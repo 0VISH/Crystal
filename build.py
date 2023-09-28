@@ -13,6 +13,7 @@ dbg = not("rls" in argv)
 plat = "win"
 if "lin" in argv: plat = "lin"
 renderingAPI = "gl"
+renderingAPI = renderingAPI.upper()
 
 Omen.setBuildDir(plat, dbg)
 folder = Omen.getBuildDir()
@@ -32,7 +33,7 @@ if(shouldBuildVENDOR):
     shouldBuildBox2d = True
 
 if(plat == "win"):
-    Omen.build("src/Windows/entryPoint.cc", "crystal", "cl", extraSwitches="/I include/ /I vendor/imgui/ /I vendor/glad/include/ /I vendor/glm/ /I vendor/box2d/include/", intermediateOnly=True, defines=["RCONTEXT_GL"])
+    Omen.build("src/Windows/entryPoint.cc", "crystal", "cl", extraSwitches="/I include/ /I vendor/imgui/ /I vendor/glad/include/ /I vendor/glm/ /I vendor/box2d/include/", intermediateOnly=True, defines=[renderingAPI])
     imguiPath  = folder + "imgui.obj"
     gladPath   = folder + "glad.obj"
     enginePath = folder + "crystal.obj"
@@ -44,13 +45,13 @@ if(plat == "win"):
     if not os.path.isfile(editorPath): shouldBuildEditor = True
     if not os.path.isfile(box2dPath): shouldBuildBox2d = True
     if(shouldBuildIMGUI):
-        Omen.build("src/Windows/imgui.cc", "imgui", "cl", intermediateOnly=True, extraSwitches="/I include/ /I vendor/imgui/", defines=["RCONTEXT_GL"])
+        Omen.build("src/Windows/imgui.cc", "imgui", "cl", intermediateOnly=True, extraSwitches="/I include/ /I vendor/imgui/")
     if(shouldBuildGLAD):
         Omen.build("vendor/glad/src/glad.c", "glad", "cl", intermediateOnly=True, extraSwitches="/I vendor/glad/include/")
     if(shouldBuildEditor):
-        Omen.build("editor/editor.cc", "editor", "cl", intermediateOnly=True, extraSwitches="/I vendor/imgui/ /I vendor/glm/ /I vendor/box2d/include/ /I include/", defines=["RCONTEXT_GL"])
-        Omen.runCmd("link /NOLOGO /DEBUG /DLL /PDB:" + folder + "editor.pdb " + editorPath + " " + imguiPath + " /OUT:" + folder + "editor.dll")
+        Omen.build("editor/editor.cc", "editor", "cl", intermediateOnly=True, defines=[renderingAPI], includes=["vendor/imgui/", "vendor/glm/", "vendor/box2d/include/", "vendor/glad/include/", "include/"])
+        Omen.runCmd("link /NOLOGO /DEBUG /DLL /PDB:" + folder + "editor.pdb " + editorPath + " " + imguiPath + " " + gladPath + " /OUT:" + folder + "editor.dll")
     if(shouldBuildBox2d):
-        Omen.build("src/box2dInclude.cc", "box2d", "cl", intermediateOnly=True, extraSwitches="/I vendor/box2d/include/ /I vendor/box2d/src/", defines=["RCONTEXT_GL"])
+        Omen.build("src/box2dInclude.cc", "box2d", "cl", intermediateOnly=True, extraSwitches="/I vendor/box2d/include/ /I vendor/box2d/src/", defines=["GL"])
     Omen.runCmd("link /NOLOGO /DEBUG /PDB:" + folder + "crystal.pdb " + folder + "crystal.obj " + gladPath + " " + box2dPath + " /OUT:" + folder + "crystal.exe")
     Omen.runCmd(folder + "crystal.exe")

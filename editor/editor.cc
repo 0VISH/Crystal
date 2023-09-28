@@ -10,18 +10,24 @@
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "imgui.h"
+#if(GL)
 #include "backends/imgui_impl_opengl3.h"
+#endif
 #include "backends/imgui_impl_win32.h"
 #include "game.hh"
 #include "console.cc"
 #include "entityPanel.cc"
 #include "materialPanel.cc"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.hh"
+
 Crystal *engine;
 
 char *gameCodePath = nullptr;
 char *curScenePath = nullptr;
 char *materialSystemPath = nullptr;
+LayerFunc ginit;
 
 bool openFileDialog(char *filter, char *buffer){
     OPENFILENAME ofn;
@@ -92,7 +98,7 @@ void openCryFile(){
 		setMaterialSystem(materialSystemPath);
 	    }else if(memcmp("scene", charMem+start, x-start-1) == 0){
 		curScenePath = getName(charMem, x);
-		setScene(curScenePath);
+		ginit = setScene(curScenePath);
 	    }else if(memcmp("END", charMem+start, x-start-1)){
 		break;
 	    }else{
@@ -141,8 +147,10 @@ namespace Editor{
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	ImGui::StyleColorsDark();
+#if(GL)
 	ImGui_ImplWin32_InitForOpenGL(window);
 	ImGui_ImplOpenGL3_Init();
+#endif
 	io.Fonts->AddFontFromFileTTF("editor/assets/Roboto-Regular.ttf", 17.0f);
 	auto& colors = ImGui::GetStyle().Colors;
 	colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
@@ -308,6 +316,9 @@ namespace Editor{
 	
 	if(ImGui::Begin("Scene")){
 	    ImGui::Text("Frame rate: %f\t\t\t\t\tDraw calls: %d", ImGui::GetIO().Framerate, r->drawCalls);
+	    ImGui::Text("-");
+	    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5);
+	    ImGui::Button("PLAY");
 		
 	    float width = ImGui::GetContentRegionAvail().x;
 	    float height = ImGui::GetContentRegionAvail().y;
@@ -349,9 +360,11 @@ namespace Editor{
     };
     EXPORT void uninit(){
 	console.uninit();
-	
+
+#if(GL)
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplWin32_Shutdown();
+#endif
 	ImGui::DestroyContext();
 	
 	if(gameCodePath != nullptr){mem::free(gameCodePath);};

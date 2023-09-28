@@ -1,4 +1,4 @@
-void setScene(char *scenePath){
+LayerFunc setScene(char *scenePath){
     if(engine->curScene != nullptr){
 	uninitAndFreeCurrentScene();
     };
@@ -24,7 +24,7 @@ void setScene(char *scenePath){
     };
     memcpy(buffer+len, "Init", strlen("Init")+1);
     //TODO: save this somewhere?
-    auto ginit = (void(*)(HWND window))GetProcAddress(engine->gameCode, buffer);
+    auto ginit = (LayerFunc)GetProcAddress(engine->gameCode, buffer);
     memcpy(buffer+len, "Update", strlen("Update")+1);
     gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(engine->gameCode, buffer);
     memcpy(buffer+len, "Draw", strlen("Draw")+1);
@@ -34,6 +34,7 @@ void setScene(char *scenePath){
     print("Scene: %s\n", scenePath);
     allocAndSetCurrentScene();
     deserializeToCurrentScene(scenePath);
+    return ginit;
 };
 void setMaterialSystem(char *filePath){
     if(engine->ms != nullptr){

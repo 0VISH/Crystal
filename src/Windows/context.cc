@@ -1,4 +1,4 @@
-#if(RCONTEXT_GL)
+#if(GL)
 namespace ContextGL{
     HDC windowHandleToDeviceContext;
     HGLRC openGLRenderingContext;
@@ -30,17 +30,17 @@ namespace ContextGL{
 
 namespace RenderContext{
     void init(window::Window window){
-#if(RCONTEXT_GL)
+#if(GL)
 	ContextGL::init(window);
 #endif
     };
     void swapBuffers(){
-#if(RCONTEXT_GL)
+#if(GL)
 	ContextGL::swapBuffers();
 #endif
     };
     void uninit(window::Window window){
-#if(RCONTEXT_GL)
+#if(GL)
 	ContextGL::uninit(window);
 #endif
     };

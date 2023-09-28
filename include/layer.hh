@@ -1,6 +1,5 @@
 #pragma once
 
-typedef void (*LayerFunc)();
 typedef bool (*LayerUpdateFunc)(Event e, f64 dt);   //returns true if event handled
 
 struct Layer{

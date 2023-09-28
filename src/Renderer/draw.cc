@@ -11,7 +11,7 @@ namespace Draw{
 	r.watermark = r.renderBuffer;
 	r.bufferEmpty = true;
 	r.drawCalls = 0;
-#if(RCONTEXT_GL)
+#if(GL)
 	OpenGL::init(r);
 #if(DBG)
 	OpenGL::enableDebugMode();
@@ -21,7 +21,7 @@ namespace Draw{
     };
     void uninit(Renderer &r){
 	mem::free(r.renderBuffer);
-#if(RCONTEXT_GL)
+#if(GL)
 	OpenGL::uninit(r);
 #endif
     };
@@ -38,7 +38,7 @@ namespace Draw{
 	    };
 	    x += 1;
 	    u32 quadVerticesCount = (u32)info->pos.y * 4;
-#if(RCONTEXT_GL)
+#if(GL)
 	    OpenGL::setMat4Uniform(*(glm::mat4*)r.renderBuffer, "uProjectionView", curShader);
 	    OpenGL::batchAndDraw(r, x, x + quadVerticesCount);
 #endif
@@ -46,7 +46,7 @@ namespace Draw{
 	};
     };
     void clearColourBuffer(){
-#if(RCONTEXT_GL)
+#if(GL)
 	OpenGL::clearColourBuffer();
 #endif
     };
@@ -61,37 +61,37 @@ namespace Draw{
 	r.watermark = r.renderBuffer;
     };
     void drawWireframe(){
-#if(RCONTEXT_GL)
+#if(GL)
 	OpenGL::drawWireframe();
 #endif
     };
     void drawFill(){
-#if(RCONTEXT_GL)
+#if(GL)
 	OpenGL::drawFill();
 #endif
     };
     void setMat4Uniform(glm::mat4 &mat, char *uniformName, u32 shader){
-#if(RCONTEXT_GL)
+#if(GL)
 	OpenGL::setMat4Uniform(mat, uniformName, shader);
 #endif
     };
     void setVec4Uniform(glm::vec4 &vec, char *uniformName, u32 shader){
-#if(RCONTEXT_GL)
+#if(GL)
 	OpenGL::setVec4Uniform(vec, uniformName, shader);
 #endif
     };
     ScreenQuad initScreenQuad(){
-#if(RCONTEXT_GL)
+#if(GL)
 	return OpenGL::initScreenQuad();
 #endif
     };
     void uninitScreenQuad(ScreenQuad &sq){
-#if(RCONTEXT_GL)
+#if(GL)
 	OpenGL::uninitScreenQuad(sq);
 #endif
     };
     char *getRenderContextInfoString(){
-#if(RCONTEXT_GL)
+#if(GL)
 	return (char*)glGetString(GL_VERSION);
 #endif
 	return nullptr;
