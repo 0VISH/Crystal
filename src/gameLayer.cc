@@ -4,7 +4,31 @@ namespace GameLayer{
 	if(s == nullptr || s->state != SceneState::PLAYING){return false;};
 	bool res;
 	if(s->onUpdate != nullptr){res=s->onUpdate(e, dt);};
-	//TODO: update physics
+        const u32 hertz = 60;
+	const f32 timeStamp = 1/hertz;
+	s32 velocityIterations = 6;
+	s32 positionIterations = 2;
+	for(u32 x=0; x<hertz; x+=1){
+	    s->physicsWorld->Step(timeStamp, velocityIterations, positionIterations);
+	};
+	if(s->components.count <= (u32)ComponentID::RIGIDBODY){
+	    return res;
+	};
+	ComponentPool &cp = s->components[(u32)ComponentID::RIGIDBODY];
+	for(u32 x=0; x<cp.entityWatermark; x+=1){
+	    if(cp.entityToComponentOff[x] == -1){
+		continue;
+	    };
+	    auto *trans = (Component::Transform*)getComponent(x, (u32)ComponentID::TRANSFORM);
+	    if(trans == nullptr){continue;};
+	    auto *rb = (Component::RigidBody*)getComponent(x, (u32)ComponentID::RIGIDBODY);
+	    auto *body = rb->runtimeBody;
+	    auto pos = body->GetPosition();
+	    trans->position.x = pos.x;
+	    trans->position.y = pos.y;
+	    auto angle = body->GetAngle();
+	    trans->rotation.x = angle;
+	};
 	return res;
     };
     void onRender(){
@@ -21,6 +45,7 @@ namespace GameLayer{
     };
     void onUninit(){
 	Scene *s = engine->curScene;
+	if(s == nullptr){return;};
 	if(s->onUninit){
 	    s->onUninit();
 	};

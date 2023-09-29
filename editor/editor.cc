@@ -274,6 +274,7 @@ namespace Editor{
 	    Entity e = *map_get(&cur->entityNameToID, key);
 	    map_set(&cpy->entityNameToID, key, e);
 	};
+	cpy->physicsWorld = new b2World({0.0, 9.8});
 	return cpy;
     };
     void destroyDeepCpyScene(Scene *s){
@@ -285,6 +286,7 @@ namespace Editor{
 	};
 	s->components.uninit();
 	map_deinit(&s->entityNameToID);
+	delete s->physicsWorld;
 	mem::free(s);
     };
     EXPORT bool update(Event e, f64 dt){

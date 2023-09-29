@@ -9,6 +9,7 @@ void componentPoolInit(ComponentPool &cp, u64 size, u32 begLen, u32 ew=1){
     cp.len = begLen;
     cp.mem = (char*)mem::calloc(cp.componentSize * cp.len);
     cp.entityToComponentOff = (Entity*)mem::alloc(cp.entityWatermark);
+    memset(cp.entityToComponentOff, -1, cp.entityWatermark);
 };
 void componentPoolUninit(ComponentPool &cp){
     mem::free(cp.mem);
@@ -27,6 +28,7 @@ void componentPoolUninit(ComponentPool &cp){
 void *componentPoolAddComponent(ComponentPool &cp, Entity e){
     if(e > cp.entityWatermark){
 	void *newMem = mem::alloc(sizeof(Entity) * e);
+	memset(newMem, -1, sizeof(Entity)*e);
 	memcpy(newMem, cp.entityToComponentOff, sizeof(Entity)*cp.entityWatermark);
 	mem::free(cp.mem);
 	cp.entityToComponentOff = (Entity*)newMem;
@@ -241,7 +243,7 @@ void deserializeToCurrentScene(char *fileName){
 	};
     };
     s->activeCam = *(Entity*)charMem;
-    s->physicsWorld = new b2World({0.0, 9.8});;
+    s->physicsWorld = new b2World({0.0, 9.8});
     mem::free(mem);
     fclose(f);
 };
