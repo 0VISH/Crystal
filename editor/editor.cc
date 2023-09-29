@@ -112,6 +112,12 @@ void openCryFile(){
 	print("[warning] Project file not selected");
     }
 };
+ 
+enum class SceneState{
+    NONE,
+    PLAYING,
+    PAUSED,
+};
 
 namespace Editor{ 
     EntityPanel ep;
@@ -122,9 +128,9 @@ namespace Editor{
     Renderer *r;
     u32 *gameTexture;
     char *levelName = nullptr;
-    bool isPlaying;
     Scene *curScene;
     u8 curFlags;
+    SceneState sceneState;
 
     EXPORT void setGameTextureAdd(u32 *tAdd){
 	gameTexture = tAdd;
@@ -140,7 +146,7 @@ namespace Editor{
     };
     
     EXPORT void init(HWND window){
-	isPlaying = false;
+	sceneState = SceneState::NONE;
 	gameTexture = nullptr;
 	engine = getEngine();
 	r = &engine->r;
@@ -249,9 +255,9 @@ namespace Editor{
 	    ComponentPool  cpycp;
 	    cpycp.componentSize = curcp.componentSize;
 	    cpycp.count = curcp.count;
-	    cpycp.len = curcp.len;
+	    cpycp.len = curcp.count;
 	    cpycp.entityWatermark = curcp.entityWatermark;
-	    u32 memLen = curcp.componentSize * curcp.count;
+	    u64 memLen = curcp.componentSize * curcp.count;
 	    u32 entLen = sizeof(Entity) * curcp.entityWatermark;
 	    char *cpyMem = (char*)mem::alloc(memLen);
 	    Entity *cpyEntity = (Entity*)mem::alloc(entLen);
@@ -273,6 +279,17 @@ namespace Editor{
 	    map_set(&cpy->entityNameToID, key, e);
 	};
 	return cpy;
+    };
+    void destroyDeepCpyScene(Scene *s){
+	s->entityComponentMask.uninit();
+	for(u32 x=0; x<s->components.count; x+=1){
+	    ComponentPool &cp = s->components[x];
+	    mem::free(cp.mem);
+	    mem::free(cp.entityToComponentOff);
+	};
+	s->components.uninit();
+	map_deinit(&s->entityNameToID);
+	mem::free(s);
     };
     EXPORT bool update(Event e, f64 dt){
 	//FEEDING IMGUI EVENTS
@@ -361,32 +378,47 @@ namespace Editor{
 		ImGui::Text("-");
 		ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5);
 
-		if(isPlaying){
-		    if(ImGui::Button("PAUSE")){
-			isPlaying = false;
-
-			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
-			gameLayer->flags = curFlags;
-		    };
-		    ImGui::SameLine();
-		    if(ImGui::Button("STOP")){
-			isPlaying = false;
-
-			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
-			gameLayer->flags = curFlags;
-			uninitAndFreeCurrentScene();
-			engine->curScene = curScene;
-		    };
-		}else{
+		if(sceneState == SceneState::NONE){
 		    if(ImGui::Button("PLAY")){
-			isPlaying = true;
+			sceneState = SceneState::PLAYING;
 			
 			curScene = engine->curScene;
 			engine->curScene = deepCopyCurScene();
 
 			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
-			curFlags = gameLayer->flags;
-			CLEAR_BIT(gameLayer->flags, LayerFlag::UPDATE);
+			gameLayer->shouldCallFuncs = true;
+		    };
+		}else if(sceneState == SceneState::PLAYING){
+		    if(ImGui::Button("PAUSE")){
+			sceneState = SceneState::PAUSED;
+			
+			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
+			gameLayer->shouldCallFuncs = false;
+		    };
+		    ImGui::SameLine();
+		    if(ImGui::Button("STOP")){
+			sceneState = SceneState::NONE;
+
+			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
+			gameLayer->shouldCallFuncs = false;
+			destroyDeepCpyScene(engine->curScene);
+			engine->curScene = curScene;
+		    };
+		}else if(sceneState == SceneState::PAUSED){
+		    if(ImGui::Button("PLAY")){
+			sceneState = SceneState::PLAYING;
+			
+			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
+			gameLayer->shouldCallFuncs = true;
+		    };
+		    ImGui::SameLine();
+		    if(ImGui::Button("STOP")){
+			sceneState = SceneState::NONE;
+
+			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
+			gameLayer->shouldCallFuncs = false;
+			destroyDeepCpyScene(engine->curScene);
+			engine->curScene = curScene;
 		    };
 		};
 	    };

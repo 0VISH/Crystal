@@ -33,7 +33,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	ASSERT(editorCode);
 
 	Layer *editorLayer = engine->lm.newLayer();
-	editorLayer->flags = 0;
+	editorLayer->shouldCallFuncs = true;
 	editorLayer->onRender = (LayerFunc)GetProcAddress(editorCode, "render");
 	editorLayer->onUninit = (LayerFunc)GetProcAddress(editorCode, "uninit");
 	editorLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(editorCode, "update");

@@ -2,16 +2,11 @@
 
 typedef bool (*LayerUpdateFunc)(Event e, f64 dt);   //returns true if event handled
 
-enum class LayerFlag{
-    RENDER = 1,
-    UPDATE = 2,
-};
-
 struct Layer{
     LayerFunc onUninit;
     LayerFunc onRender;
     LayerUpdateFunc onUpdate;
-    u8 flags;  //if flags == 0, then onUpdate and onRender will be called.
+    bool shouldCallFuncs;
     u8 layerID;
 };
 
