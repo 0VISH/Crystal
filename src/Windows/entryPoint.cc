@@ -33,7 +33,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	ASSERT(editorCode);
 
 	Layer *editorLayer = engine->lm.newLayer();
-	editorLayer->shouldCallFuncs = true;
 	editorLayer->onRender = (LayerFunc)GetProcAddress(editorCode, "render");
 	editorLayer->onUninit = (LayerFunc)GetProcAddress(editorCode, "uninit");
 	editorLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(editorCode, "update");
@@ -52,11 +51,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	sq = Draw::initScreenQuad();
 	screenShader = engine->ss.newShaderProgram();
 	Shader::createShader("package/shader/displayVertex.glsl", "package/shader/displayFragment.glsl", screenShader);
-
-	engine->gameLayerOff = engine->lm.layerCount;
-	auto ginit = (LayerFunc)GetProcAddress(engine->gameCode, "init");
-	ginit();
     };
+    engine->gameLayerOff = engine->lm.layerCount;
+    engine->lm.newLayer();
+    Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
+    gameLayer->onUpdate = GameLayer::onUpdate;
+    gameLayer->onRender = GameLayer::onRender;
+    gameLayer->onUninit = GameLayer::onUninit;
+    
     Package::unloadPkg(Package::curPkg);  //setup.pkg loaded by engine->init();
     
     print("Render context: %s\n", Draw::getRenderContextInfoString());
@@ -76,7 +78,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         engine->lm.updateLayers(e, dt);
         engine->lm.renderLayers();
 
-	fillRenderBufferUsingCurrentScene();
         Draw::beginFrame(engine->r, engine->fb);
 	Draw::draw(engine->r);
 	Draw::endFrame(engine->r, engine->fb);

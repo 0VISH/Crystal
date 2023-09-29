@@ -30,10 +30,9 @@ void LayerManager::uninitLayers(){
 void LayerManager::updateLayers(Event event, f64 dt){
     for(u8 x=0; x<layerCount; x+=1){
 	Layer& layer = layers[x];
-	if(layer.onUpdate && layer.shouldCallFuncs){
-	    if(layer.onUpdate(event, dt)){
-		event.type = EventType::NONE;
-	    };
+	if(layer.onUpdate == nullptr){continue;};
+	if(layer.onUpdate(event, dt)){
+	    event.type = EventType::NONE;
 	};
     };
 };
@@ -41,7 +40,7 @@ void LayerManager::renderLayers(){
     for(u8 x=layerCount; x>0;){
 	x -= 1;
 	Layer& layer = layers[x];
-	if(layer.onRender && layer.shouldCallFuncs){
+	if(layer.onRender){
 	    layer.onRender();
 	};
     };

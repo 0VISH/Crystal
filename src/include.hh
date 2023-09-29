@@ -23,3 +23,4 @@
 
 #include "../game/components.cc"
 #include "../game/addComponent.cc"
+#include "gameLayer.cc"

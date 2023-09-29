@@ -1,7 +1,10 @@
-LayerFunc setScene(char *scenePath){
+void setScene(char *scenePath){
     if(engine->curScene != nullptr){
 	uninitAndFreeCurrentScene();
     };
+    allocAndSetCurrentScene();
+    deserializeToCurrentScene(scenePath);
+    
     u32 len = strlen(scenePath);
     u32 dotOffFromBack;
     u32 x = 0;
@@ -11,31 +14,20 @@ LayerFunc setScene(char *scenePath){
 	sceneName -= 1;
 	x += 1;
     };
+    Scene *s = engine->curScene;
     sceneName += 1;
     char buffer[1024];
     len = x-dotOffFromBack-1;
     memcpy(buffer, sceneName, len);
-    Layer *gameLayer;
-    if(engine->gameLayerOff == -1){
-	engine->gameLayerOff = engine->lm.layerCount;
-	gameLayer = engine->lm.newLayer();
-    }else{
-	gameLayer = &engine->lm.layers[engine->gameLayerOff];
-    };
-    gameLayer->shouldCallFuncs = false;
     memcpy(buffer+len, "Init", strlen("Init")+1);
-    //TODO: save this somewhere?
-    auto ginit = (LayerFunc)GetProcAddress(engine->gameCode, buffer);
+    s->onInit = (LayerFunc)GetProcAddress(engine->gameCode, buffer);
     memcpy(buffer+len, "Update", strlen("Update")+1);
-    gameLayer->onUpdate = (LayerUpdateFunc)GetProcAddress(engine->gameCode, buffer);
+    s->onUpdate = (LayerUpdateFunc)GetProcAddress(engine->gameCode, buffer);
     memcpy(buffer+len, "Draw", strlen("Draw")+1);
-    gameLayer->onRender = (LayerFunc)GetProcAddress(engine->gameCode, buffer);
+    s->onRender = (LayerFunc)GetProcAddress(engine->gameCode, buffer);
     memcpy(buffer+len, "Uninit", strlen("Uninit")+1);
-    gameLayer->onUninit = (LayerFunc)GetProcAddress(engine->gameCode, buffer);
+    s->onUninit = (LayerFunc)GetProcAddress(engine->gameCode, buffer);
     print("Scene: %s\n", scenePath);
-    allocAndSetCurrentScene();
-    deserializeToCurrentScene(scenePath);
-    return ginit;
 };
 void setMaterialSystem(char *filePath){
     if(engine->ms != nullptr){

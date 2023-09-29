@@ -6,6 +6,12 @@ typedef s32 Entity;
 
 //TODO: write a custom hashmap
 
+enum class SceneState{
+    NONE,
+    PLAYING,
+    PAUSED,
+};
+
 struct ComponentPool{
     u64 componentSize;
     char *mem;
@@ -20,7 +26,12 @@ struct Scene{
     ds::DynamicArray<u32> entityComponentMask;
     ds::DynamicArray<ComponentPool> components;
     b2World *physicsWorld;
+    LayerFunc onInit;
+    LayerFunc onUninit;
+    LayerFunc onRender;
+    LayerUpdateFunc onUpdate;
     Entity   activeCam;
     Entity   entityCount;
+    SceneState state;
     u8       id;
 };

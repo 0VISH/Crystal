@@ -167,6 +167,7 @@ void serializeCurrentScene(char *fileName){
 };
 void deserializeToCurrentScene(char *fileName){
     Scene *s = engine->curScene;
+    s->state = SceneState::PLAYING;
     map_init(&s->entityNameToID);
     
     FILE *f = fopen(fileName, "rb");
@@ -240,6 +241,7 @@ void deserializeToCurrentScene(char *fileName){
 	};
     };
     s->activeCam = *(Entity*)charMem;
+    s->physicsWorld = new b2World({0.0, 9.8});;
     mem::free(mem);
     fclose(f);
 };
@@ -258,7 +260,6 @@ Entity getEntity(char *name){
     return *e;
 };
 void removeComponent(Entity e, u32 componentID){
-    ASSERT(e > -1);
     if(e < 0){
 	print("Invalid Entity ID: %d", e);
 	return;
@@ -270,7 +271,6 @@ void removeComponent(Entity e, u32 componentID){
     componentPoolRemoveComponent(s->components[componentID], e);
 };
 void *getComponent(Entity e, u32 componentID){
-    ASSERT(e > -1);
     if(e < 0){
 	print("Invalid Entity ID: %d", e);
 	return nullptr;
@@ -287,6 +287,7 @@ void allocAndSetCurrentScene(){
 void initCurrentScene(u32 begEntityCount){
     Scene *s = engine->curScene;
     map_init(&s->entityNameToID);
+    s->state = SceneState::PLAYING;
     s->physicsWorld = new b2World({0.0, 9.8});
     s->id = sceneID;
     s->activeCam = -1;

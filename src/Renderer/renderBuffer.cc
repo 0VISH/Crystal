@@ -64,15 +64,3 @@ void fillRenderBufferHeader(Renderer &r, glm::mat4 &projectionView){
     *mat = projectionView;
     r.watermark += (u32)ceil((f64)sizeof(glm::mat4)/(f64)sizeof(Draw::Vertex));
 };
-void fillRenderBufferUsingCurrentScene(){
-    Scene *s = engine->curScene;
-    if(s == nullptr){return;};
-    Entity e = s->activeCam;
-    if(e < 0){return;};
-    auto *cam = (Component::PCamera*)getComponent(e, (u32)ComponentID::CAMERA);
-    cam->calculateViewMat();
-
-    fillRenderBufferHeader(engine->r, cam->projection * cam->view);
-    fillRenderBufferWithGivenMS(engine->r, engine->ms);
-};
-

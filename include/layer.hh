@@ -6,7 +6,6 @@ struct Layer{
     LayerFunc onUninit;
     LayerFunc onRender;
     LayerUpdateFunc onUpdate;
-    bool shouldCallFuncs;
     u8 layerID;
 };
 

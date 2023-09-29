@@ -22,6 +22,8 @@ EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct,
 
 #include "map.hh"
 #include "ds.hh"
+#include "event.hh"
+#include "layer.hh"
 #include "scene.hh"
 #include "material.hh"
 #include "event.hh"

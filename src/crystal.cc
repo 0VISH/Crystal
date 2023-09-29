@@ -29,6 +29,7 @@ void Crystal::uninit(){
     uninitAndFreeMaterialSystem();
     ss.uninit();
     fb.uninit();
+    uninitAndFreeCurrentScene();
 };
 
 Crystal *getEngine(){
