@@ -4,16 +4,15 @@ namespace GameLayer{
 	if(s == nullptr || s->state != SceneState::PLAYING){return false;};
 	bool res;
 	if(s->onUpdate != nullptr){res=s->onUpdate(e, dt);};
+	if(s->components.count <= (u32)ComponentID::RIGIDBODY){
+	    return res;
+	};
+	//TODO: set physics to const rate?
         const u32 hertz = 60;
 	const f32 timeStamp = 1/hertz;
 	s32 velocityIterations = 6;
 	s32 positionIterations = 2;
-	for(u32 x=0; x<hertz; x+=1){
-	    s->physicsWorld->Step(timeStamp, velocityIterations, positionIterations);
-	};
-	if(s->components.count <= (u32)ComponentID::RIGIDBODY){
-	    return res;
-	};
+	s->physicsWorld->Step(1.0f/60.0f, velocityIterations, positionIterations);
 	ComponentPool &cp = s->components[(u32)ComponentID::RIGIDBODY];
 	for(u32 x=0; x<cp.entityWatermark; x+=1){
 	    if(cp.entityToComponentOff[x] == -1){
@@ -27,10 +26,8 @@ namespace GameLayer{
 	    auto pos = body->GetPosition();
 	    trans->position.x = pos.x;
 	    trans->position.y = pos.y;
-	    print("%f %f", pos.x, pos.y);
 	    auto angle = body->GetAngle();
-	    print("%f", angle);
-	    trans->rotation.x = angle;
+	    trans->rotation.z = angle;
 	};
 	return res;
     };

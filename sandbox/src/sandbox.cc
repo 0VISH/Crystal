@@ -9,7 +9,7 @@
 namespace Game{
     EXPORT bool trialUpdate(Event e, f64 dt){
 	Entity sq = getEntity("TODO: REMOVE ME");
-	auto *cam = (Component::PCamera*)getComponent(sq, (u32)ComponentID::CAMERA);
+	auto *cam = (Component::PCamera*)getComponent(sq, (u32)ComponentID::PCAMERA);
 	setActiveCameraToCurrentScene(sq);
 	auto *s1T = (Component::Transform*)getComponent(sq, (u32)ComponentID::TRANSFORM);
 	if(s1T == nullptr){return false;};

@@ -1,5 +1,8 @@
-:: Cleanup
+:: Low hanging fruits in editor
+:: Full fledged box2d support
+:: OpenGL error sometimes
 :: Handle close event
-:: Textures
-:: Port to linux
-:: Port to android
+:: Phy update at const cycles
+:: Add orth cam
+:: Remove component mask
+:: Pass diff allocator to loaded code

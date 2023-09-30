@@ -235,9 +235,10 @@ namespace Editor{
 	    print("[error] User canceled the dialog or an error occurred");
 	}
     };
-    Scene *deepCopyCurScene(){
+    Scene *deepCopyCurSceneAndSetCurScene(){
 	Scene *cpy = (Scene*)mem::alloc(sizeof(Scene));
 	Scene *cur = engine->curScene;
+	engine->curScene = cpy;
 	cpy->onInit   = cur->onInit;
 	cpy->onUpdate = cur->onUpdate;
 	cpy->onRender = cur->onRender;
@@ -274,10 +275,24 @@ namespace Editor{
 	    Entity e = *map_get(&cur->entityNameToID, key);
 	    map_set(&cpy->entityNameToID, key, e);
 	};
-	cpy->physicsWorld = new b2World({0.0, 9.8});
+	cpy->physicsWorld = new b2World({0.0, -9.8});
+	if(cpy->components.count <= (u32)ComponentID::RIGIDBODY){return cpy;};
+	ComponentPool &rbp = cpy->components[(u32)ComponentID::RIGIDBODY];
+	for(u32 x=0; x<rbp.entityWatermark; x+=1){
+	    if(rbp.entityToComponentOff[x] == -1){continue;};
+	    auto *rb = (Component::RigidBody*)getComponent(x, (u32)ComponentID::RIGIDBODY);
+	    rb->initMore(cpy, x);
+	};
+	if(cpy->components.count <= (u32)ComponentID::BOXCOLLIDER){return cpy;};
+	ComponentPool &bcp = cpy->components[(u32)ComponentID::BOXCOLLIDER];
+	for(u32 x=0; x<bcp.entityWatermark; x+=1){
+	    if(bcp.entityToComponentOff[x] == -1){continue;};
+	    auto *bc = (Component::BoxCollider*)getComponent(x, (u32)ComponentID::BOXCOLLIDER);
+	    bc->initMore(cpy, x);
+	};
 	return cpy;
     };
-    void destroyDeepCpyScene(Scene *s){
+    void destroyDeepCpyCurScene(Scene *s){
 	s->entityComponentMask.uninit();
 	for(u32 x=0; x<s->components.count; x+=1){
 	    ComponentPool &cp = s->components[x];
@@ -381,7 +396,7 @@ namespace Editor{
 		if(sceneState == SceneState::NONE){
 		    if(ImGui::Button("PLAY")){
 			curScene = engine->curScene;
-			engine->curScene = deepCopyCurScene();
+			deepCopyCurSceneAndSetCurScene();
 			engine->curScene->state = SceneState::PLAYING;
 			if(engine->curScene->onInit){
 			    engine->curScene->onInit();
@@ -395,7 +410,7 @@ namespace Editor{
 		    ImGui::SameLine();
 		    if(ImGui::Button("STOP")){
 			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
-			destroyDeepCpyScene(engine->curScene);
+			destroyDeepCpyCurScene(engine->curScene);
 			engine->curScene = curScene;
 		    };
 		}else if(sceneState == SceneState::PAUSED){
@@ -406,7 +421,7 @@ namespace Editor{
 		    ImGui::SameLine();
 		    if(ImGui::Button("STOP")){
 			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
-			destroyDeepCpyScene(engine->curScene);
+			destroyDeepCpyCurScene(engine->curScene);
 			engine->curScene = curScene;
 		    };
 		};

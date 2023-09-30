@@ -56,10 +56,7 @@ namespace Component{
 };
 
 namespace Component{
-    void RigidBody::init(Scene *s, Entity e){
-	bodyType = b2_dynamicBody;
-	fixedRotation = false;
-
+    void RigidBody::initMore(Scene *s, Entity e){
 	b2BodyDef bodyDef;
 	bodyDef.type = bodyType;
 	bodyDef.fixedRotation = fixedRotation;
@@ -71,22 +68,23 @@ namespace Component{
 	};
 	runtimeBody = createRigidBody(&bodyDef, s->physicsWorld);
     };
+    void RigidBody::init(Scene *s, Entity e){
+	bodyType = b2_dynamicBody;
+	fixedRotation = false;
+	initMore(s, e);
+    };
 };
 
 template<typename T>
 T *addComponent(Entity e, ComponentID id);
 
 namespace Component{
-    void BoxCollider::init(Scene *s, Entity e){
-	friction = 1.3;
-	density = 1;
-
+    void BoxCollider::initMore(Scene *s, Entity e){
 	auto *rigidBody = (Component::RigidBody*)getComponent(e, (u32)ComponentID::RIGIDBODY);
 	if(rigidBody == nullptr){
 	    rigidBody = addComponent<Component::RigidBody>(e, ComponentID::RIGIDBODY);
 	};
 	b2Body *body = rigidBody->runtimeBody;
-	
 	auto *transform = (Component::Transform*)getComponent(e, (u32)ComponentID::RIGIDBODY);
 	//TODO: change x,y
 	if(transform == nullptr){
@@ -94,6 +92,11 @@ namespace Component{
 	}else{
 	    runtimeFixture = createBoxColliderFixture(5, 5, density, friction, body);
 	};
+    };
+    void BoxCollider::init(Scene *s, Entity e){
+	friction = 0.3f;
+	density = 1.0f;
+	initMore(s, e);
     };
 };
 

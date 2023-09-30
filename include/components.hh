@@ -29,6 +29,7 @@ namespace Component{
     };
 
     struct RigidBody{
+	void initMore(Scene *s, Entity e);
 	void init(Scene *s, Entity e);
 
 	b2Body *runtimeBody;
@@ -37,6 +38,7 @@ namespace Component{
     };
 
     struct BoxCollider{
+	void initMore(Scene *s, Entity e);
 	void init(Scene *s, Entity e);
 
 	//TODO: off, size
