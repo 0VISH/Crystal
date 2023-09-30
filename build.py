@@ -45,7 +45,7 @@ if(plat == "win"):
     if not os.path.isfile(editorPath): shouldBuildEditor = True
     if not os.path.isfile(box2dPath): shouldBuildBox2d = True
     if(shouldBuildIMGUI):
-        Omen.build("src/Windows/imgui.cc", "imgui", "cl", intermediateOnly=True, extraSwitches="/I include/ /I vendor/imgui/")
+        Omen.build("src/Windows/imgui.cc", "imgui", "cl", intermediateOnly=True, extraSwitches="/I include/ /I vendor/imgui/", defines=[renderingAPI])
     if(shouldBuildGLAD):
         Omen.build("vendor/glad/src/glad.c", "glad", "cl", intermediateOnly=True, extraSwitches="/I vendor/glad/include/")
     if(shouldBuildBox2d):

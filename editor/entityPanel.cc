@@ -140,24 +140,39 @@ struct EntityPanel{
 		    ImGui::CloseCurrentPopup();
 		};
 		if(ImGui::MenuItem("PCamera")){
-		    addComponent<Component::PCamera>(e, ComponentID::CAMERA);
+		    addComponent<Component::PCamera>(e, ComponentID::PCAMERA);
+		    ImGui::CloseCurrentPopup();
+		};
+		if(ImGui::MenuItem("RigidBody")){
+		    addComponent<Component::RigidBody>(e, ComponentID::RIGIDBODY);
+		    ImGui::CloseCurrentPopup();
+		};
+		if(ImGui::MenuItem("Box Collider")){
+		    addComponent<Component::BoxCollider>(e, ComponentID::BOXCOLLIDER);
 		    ImGui::CloseCurrentPopup();
 		};
 		ImGui::EndPopup();
 	    };
 	    drawComponent<Component::Transform>("Transform", e, s, ComponentID::TRANSFORM, [](auto *c, Scene *s, Entity e){
-		DrawVec3Control("position", c->position);
-		DrawVec3Control("rotation", c->rotation);
-		DrawVec3Control("scale", c->scale);
+		DrawVec3Control("Position", c->position);
+		DrawVec3Control("Rotation", c->rotation);
+		DrawVec3Control("Scale", c->scale);
 	    });
-	    drawComponent<Component::PCamera>("PCamera", e, s, ComponentID::CAMERA, [](auto *c, Scene *s, Entity e){
-		DrawVec3Control("position", c->pos);
-		ImGui::DragFloat("zoomLevel", &c->zoomLevel);
-		ImGui::DragFloat("aspectRatio", &c->aspectRatio);
-		ImGui::DragFloat("fieldOfView", &c->fieldOfView);
+	    drawComponent<Component::PCamera>("PCamera", e, s, ComponentID::PCAMERA, [](auto *c, Scene *s, Entity e){
+		DrawVec3Control("Position", c->pos);
+		ImGui::DragFloat("Zoom Level", &c->zoomLevel);
+		ImGui::DragFloat("Aspect Ratio", &c->aspectRatio);
+		ImGui::DragFloat("Field Of View", &c->fieldOfView);
 		if(ImGui::Button("Set Active")){
 		    s->activeCam = e;
 		};
+	    });
+	    drawComponent<Component::RigidBody>("RigidBody", e, s, ComponentID::RIGIDBODY, [](auto *c, Scene *s, Entity e){
+		ImGui::Checkbox("Fixed Rotation", &c->fixedRotation);
+	    });
+	    drawComponent<Component::BoxCollider>("Box Collider", e, s, ComponentID::BOXCOLLIDER, [](auto *c, Scene *s, Entity e){
+		ImGui::DragFloat("Friction", &c->friction);
+		ImGui::DragFloat("Density", &c->density);
 	    });
 	    ImGui::End();
 	};

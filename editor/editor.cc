@@ -358,6 +358,7 @@ namespace Editor{
 		    };
 		    allocAndSetCurrentScene();
 		    initCurrentScene(5);
+		    engine->curScene->state = SceneState::NONE;
 		};
 		ImGui::EndMenu();
 	    };

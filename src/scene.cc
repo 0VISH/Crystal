@@ -8,8 +8,8 @@ void componentPoolInit(ComponentPool &cp, u64 size, u32 begLen, u32 ew=1){
     cp.componentSize = size;
     cp.len = begLen;
     cp.mem = (char*)mem::calloc(cp.componentSize * cp.len);
-    cp.entityToComponentOff = (Entity*)mem::alloc(cp.entityWatermark);
-    memset(cp.entityToComponentOff, -1, cp.entityWatermark);
+    cp.entityToComponentOff = (Entity*)mem::alloc(sizeof(Entity)*cp.entityWatermark);
+    memset(cp.entityToComponentOff, -1, sizeof(Entity)*cp.entityWatermark);
 };
 void componentPoolUninit(ComponentPool &cp){
     mem::free(cp.mem);
@@ -243,7 +243,7 @@ void deserializeToCurrentScene(char *fileName){
 	};
     };
     s->activeCam = *(Entity*)charMem;
-    s->physicsWorld = new b2World({0.0, 9.8});
+    s->physicsWorld = new b2World({0.0, -9.8});
     mem::free(mem);
     fclose(f);
 };
@@ -288,9 +288,13 @@ void allocAndSetCurrentScene(){
 };
 void initCurrentScene(u32 begEntityCount){
     Scene *s = engine->curScene;
+    s->onInit   = nullptr;
+    s->onUpdate = nullptr;
+    s->onRender = nullptr;
+    s->onUninit = nullptr;
     map_init(&s->entityNameToID);
     s->state = SceneState::PLAYING;
-    s->physicsWorld = new b2World({0.0, 9.8});
+    s->physicsWorld = new b2World({0.0, -9.8});
     s->id = sceneID;
     s->activeCam = -1;
     sceneID += 1;

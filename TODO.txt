@@ -1,4 +1,5 @@
 :: Cleanup
+:: Handle close event
 :: Textures
 :: Port to linux
 :: Port to android

@@ -88,10 +88,11 @@ namespace Component{
 	b2Body *body = rigidBody->runtimeBody;
 	
 	auto *transform = (Component::Transform*)getComponent(e, (u32)ComponentID::RIGIDBODY);
+	//TODO: change x,y
 	if(transform == nullptr){
-	    runtimeFixture = createBoxColliderFixture(0.0f, 0.0f, density, friction, body);
+	    runtimeFixture = createBoxColliderFixture(5.0f, 5.0f, density, friction, body);
 	}else{
-	    runtimeFixture = createBoxColliderFixture(transform->position.x * transform->scale.x, transform->position.y * transform->position.y, density, friction, body);
+	    runtimeFixture = createBoxColliderFixture(5, 5, density, friction, body);
 	};
     };
 };

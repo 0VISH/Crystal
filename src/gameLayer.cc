@@ -22,11 +22,14 @@ namespace GameLayer{
 	    auto *trans = (Component::Transform*)getComponent(x, (u32)ComponentID::TRANSFORM);
 	    if(trans == nullptr){continue;};
 	    auto *rb = (Component::RigidBody*)getComponent(x, (u32)ComponentID::RIGIDBODY);
+	    if(rb == nullptr){continue;};
 	    auto *body = rb->runtimeBody;
 	    auto pos = body->GetPosition();
 	    trans->position.x = pos.x;
 	    trans->position.y = pos.y;
+	    print("%f %f", pos.x, pos.y);
 	    auto angle = body->GetAngle();
+	    print("%f", angle);
 	    trans->rotation.x = angle;
 	};
 	return res;
@@ -37,7 +40,7 @@ namespace GameLayer{
 	if(s->onRender != nullptr && s->state == SceneState::PLAYING){s->onRender();};
 	Entity e = s->activeCam;
 	if(e < 0){return;};
-	auto *cam = (Component::PCamera*)getComponent(e, (u32)ComponentID::CAMERA);
+	auto *cam = (Component::PCamera*)getComponent(e, (u32)ComponentID::PCAMERA);
 	cam->calculateViewMat();
 
 	fillRenderBufferHeader(engine->r, cam->projection * cam->view);
@@ -49,5 +52,6 @@ namespace GameLayer{
 	if(s->onUninit){
 	    s->onUninit();
 	};
+	uninitAndFreeCurrentScene();
     };
 };

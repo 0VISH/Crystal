@@ -2,7 +2,7 @@
 
 //templates suck
 enum class ComponentID{
-    CAMERA,
+    PCAMERA,
     TRANSFORM,
     RIGIDBODY,
     BOXCOLLIDER,
