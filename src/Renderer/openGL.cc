@@ -1,4 +1,9 @@
+#if(WIN)
 #include "../../vendor/glad/include/glad/glad.h"
+#elif(ANDROID)
+#include <EGL/egl.h>
+#include <GLES3/gl3.h>
+#endif
 #include "renderer.hh"
 
 //NOTE: debug stuff
@@ -106,8 +111,8 @@ namespace OpenGL{
 	glDeleteBuffers(1, &sq.vbo);
 	glDeleteVertexArrays(1, &sq.vao);
     };
-    void drawWireframe(){glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);};
-    void drawFill(){glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);};
+    void drawWireframe(){/*glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);*/};
+    void drawFill(){/*glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);*/};
     void setMat4Uniform(glm::mat4 &mat, char *uniformName, u32 shaderProgram){
 	s32 uLoc = glGetUniformLocation(shaderProgram, uniformName);
 	glUniformMatrix4fv(uLoc, 1, GL_FALSE, glm::value_ptr(mat));

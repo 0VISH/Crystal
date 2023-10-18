@@ -29,6 +29,8 @@ struct Crystal{
 
 #if(WIN) 
     HMODULE           gameCode;
+#elif(ANDROID)
+    void             *gameCode;
 #endif
 
     void init();

@@ -3,7 +3,7 @@
 #include "crystal.hh"
 #include "componentID.hh"
 
-void submitQuad(Renderer &r, glm::mat4 &mat){
+void submitQuad(Renderer &r, const glm::mat4 &mat){
     float quadVertices[] = {
 	0.5f,  0.5f,
 	0.5f, -0.5f,
@@ -56,7 +56,7 @@ void fillRenderBufferWithGivenMS(Renderer &r, MaterialSystem *ms){
 	fillRenderBufferWithGivenMat(r, ms->materials[x]);
     };
 };
-void fillRenderBufferHeader(Renderer &r, glm::mat4 &projectionView){
+void fillRenderBufferHeader(Renderer &r, const glm::mat4 &projectionView){
     r.watermark = r.renderBuffer;
     r.bufferEmpty = false;
 

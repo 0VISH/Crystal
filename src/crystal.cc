@@ -1,7 +1,7 @@
 #include "scene.hh"
 #include "crystal.hh"
 
-static Crystal *engine;
+Crystal *engine;
 
 void Crystal::init(){
     gameCode = nullptr;

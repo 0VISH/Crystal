@@ -1,3 +1,5 @@
+#pragma once
+
 #include "collision/b2_broad_phase.cpp"
 #include "collision/b2_chain_shape.cpp"
 #include "collision/b2_circle_shape.cpp"

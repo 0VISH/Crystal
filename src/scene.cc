@@ -141,11 +141,11 @@ u64 serializedComponentSize[] = {
 void serializeCurrentScene(char *fileName){
     Scene *s = engine->curScene;
     FILE *f = fopen(fileName, "wb");
-    const char *key;
+    char *key = nullptr;
     map_iter_t iter = map_iter(&s->entityNameToID);
     fwrite(&s->id, sizeof(s->id), 1, f);
     fwrite(&s->entityCount, sizeof(s->entityCount), 1, f);
-    while(key = map_next(&s->entityNameToID, &iter)){
+    while(key == map_next(&s->entityNameToID, &iter)){
 	u32 len = strlen(key) + 1;  //+1 for null byte
 	fwrite(&len, sizeof(len), 1, f);
 	fwrite(key, len, 1, f);

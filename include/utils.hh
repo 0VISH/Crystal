@@ -1,7 +1,5 @@
 #pragma once
 
-typedef void (*LayerFunc)();
-
 typedef void  (*setGameCodeType)(char *path);
 typedef void  (*setSceneType)(char *path);
 typedef void  (*setMaterialSystemType)(char *path);
