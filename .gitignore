@@ -1,6 +1,7 @@
 misc/
 vendor/glad/
 **/bin/
+!AndroidStudio/buildBin/bin/
 **/.vs/
 **/imgui.ini
 **/*.log
