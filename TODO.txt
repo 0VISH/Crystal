@@ -8,4 +8,3 @@
 :: Handle close event
 :: Phy update at const cycles
 :: Add orth cam
-:: Remove component mask

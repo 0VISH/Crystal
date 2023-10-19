@@ -3,7 +3,6 @@
 #include "basic.hh"
 #include "utils.hh"
 logType print;
-#include "checks.hh"
 #include "../include.hh"
 #include "include.hh"
 

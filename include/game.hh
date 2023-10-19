@@ -32,7 +32,6 @@ EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct,
     editorSignal = est;
 };
 #endif
-#include "checks.hh"
 
 #include "map.hh"
 #include "ds.hh"

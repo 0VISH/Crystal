@@ -182,6 +182,7 @@ void deserializeToCurrentScene(char *fileName){
     fseek(f, 0, SEEK_END);
     long size = ftell(f);
     fseek(f, 0, SEEK_SET);
+    ASSERT(size);
 
     void *mem = mem::alloc(size);
     fread(mem, size, 1, f);
