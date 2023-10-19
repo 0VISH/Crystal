@@ -2,8 +2,9 @@
     auto setupUtilPointer = (void(*)(logType l,				\
 				     setGameCodeType sgct, setSceneType sct, \
 				     setMaterialSystemType smst,	\
+				     allocType at, freeType ft,		\
 				     editorSignalType est))GetProcAddress(HANDLE, "setupUtilPointers"); \
-    setupUtilPointer(print, Code::setGameCode, setScene, setMaterialSystem, editorSignal); \
+    setupUtilPointer(print, Code::setGameCode, setScene, setMaterialSystem, mem::alloc, mem::free, editorSignal); \
 									\
     auto setupPointers = (void(*)(materialRegisterEntityType mret, newMaterialType nmt, \
 				  serializeMaterialSystemType smst, deserializeMaterialSystemType dmst,	\

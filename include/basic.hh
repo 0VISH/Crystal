@@ -19,21 +19,3 @@ typedef unsigned int            b32;
 typedef unsigned long long int  b64;
 typedef float                   f32;
 typedef double                  f64;
-
-#if(DBG)
-
-#include <stdio.h>
-
-void unreachable(char *file, u32 line) {
-    printf("\n[ERROR] unreachable area reached: %s:%d", file, line);
-};
-#define UNREACHABLE unreachable(__FILE__, __LINE__)
-void ass(bool x, char *file, u32 line){
-    if(x){return;};
-    printf("\n%s:%d assertion failed\n", file, line);
-};
-#define ASSERT(expr)   ass(expr, __FILE__, __LINE__)
-#else
-#define UNREACHABLE
-#define ASSERT(expr)
-#endif

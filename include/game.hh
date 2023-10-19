@@ -1,24 +1,38 @@
 #pragma once
 
+#if(WIN)
 #define EXPORT extern "C" __declspec(dllexport)
+#else
+#define EXPORT
+#endif
+
+#define GAME true
 
 #include "basic.hh"
-
+#if(WIN)
 #include "utils.hh"
+namespace game{
+    allocType alloc;
+    freeType  free;
+};
 logType print;
 setGameCodeType  setGameCode;
 setSceneType     setScene;
 setMaterialSystemType setMaterialSystem;
 editorSignalType editorSignal;
 
-EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct, setMaterialSystemType smst, editorSignalType est){
+EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct, setMaterialSystemType smst, allocType at, freeType ft,  editorSignalType est){
     print = l;
     setGameCode = sgct;
     setScene = sct;
     setMaterialSystem = smst;
+    game::alloc = at;
+    game::free = ft;
 
     editorSignal = est;
 };
+#endif
+#include "checks.hh"
 
 #include "map.hh"
 #include "ds.hh"
@@ -29,8 +43,8 @@ EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct,
 #include "event.hh"
 #include "renderer.hh"
 
+#if(WIN)
 #include "enginePointers.hh"
-
 materialRegisterEntityType materialRegisterEntity;
 newMaterialType newMaterial;
 serializeMaterialSystemType serializeMaterialSystem;
@@ -96,6 +110,7 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt, 
     
     isKeyDown = ikdt;
 };
+#endif
 
 //cpp code which every game has to compile
 #include "../game/include.hh"

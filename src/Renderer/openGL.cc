@@ -8,6 +8,7 @@
 
 //NOTE: debug stuff
 namespace OpenGL{
+#if(WIN)
     void APIENTRY DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
     {
 	//https://learnopengl.com/In-Practice/Debugging
@@ -45,7 +46,7 @@ namespace OpenGL{
 	    case GL_DEBUG_SEVERITY_NOTIFICATION: print("Severity: notification"); break;
 	    };
     }
-
+#endif
     void vertexCheckErr(u32 shader){
 	s32  success;
 	char infoLog[512];
@@ -107,10 +108,12 @@ namespace OpenGL{
     void useShader(u32 shaderProgram){
 	glUseProgram(shaderProgram);
     };
+#if(WIN)
     void enableDebugMode(){
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(OpenGL::DebugCallback, nullptr);
     };
+#endif
 };
 
 namespace OpenGL{

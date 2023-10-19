@@ -1,6 +1,7 @@
 #pragma once
 
+#if(WIN)
 #include "map.cc"
-#include "mem.cc"
 #include "addComponent.cc"
 #include "components.cc"
+#endif

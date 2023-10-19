@@ -1,5 +1,13 @@
 #pragma once
 
+#if(ENGINE)
+#define ALLOC mem::alloc
+#define FREE  mem::free
+#elif(GAME)
+#define ALLOC game::alloc
+#define FREE  game::free
+#endif
+
 namespace ds{
     template<typename T>
     struct DynamicArray {
@@ -8,9 +16,9 @@ namespace ds{
 	u32 len;
 
 	void realloc(u32 newCap) {
-	    void *newMem = mem::alloc(sizeof(T) * newCap);
+	    void *newMem = ALLOC(sizeof(T) * newCap);
 	    memcpy(newMem, mem, sizeof(T) * len);
-	    mem::free(mem);
+	    FREE(mem);
 	    mem = (T*)newMem;
 	    len = newCap;
 	};
@@ -26,9 +34,9 @@ namespace ds{
 	void init(u32 startCount = 5) {
 	    count = 0;
 	    len = startCount;
-	    mem = (T*)mem::alloc(sizeof(T) * startCount);
+	    mem = (T*)ALLOC(sizeof(T) * startCount);
 	};
-	void uninit() { mem::free(mem); };
+	void uninit() { FREE(mem); };
 	void push(const T &t) {
 	    if (count == len) { realloc(len + len / 2 + 1); };
 	    mem[count] = t;
