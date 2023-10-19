@@ -1,10 +1,6 @@
-:: shader.cc
-   - compilerShader
 :: openGL.cc
    - drawWireframe
    - drawFill
-:: change box2dInclude.cc file name
-
 
 :: Low hanging fruits in editor
 :: Full fledged box2d support

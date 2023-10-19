@@ -6,6 +6,6 @@ struct ShaderSystem{
     
     void init();
     void uninit();
-    u32 newShaderProgram();
+    u32 newShader(char *vertexShaderPath, char *fragmentShaderPath);
     u32 getDefaultShader();
 };

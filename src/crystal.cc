@@ -12,11 +12,10 @@ void Crystal::init(){
     allocMaterialSystem();
     materialSystemInit();
     ss.init();
-    u32 defaultShader = ss.newShaderProgram();
 
     Package::loadPkg("package/setup.pkg", Package::curPkg);
 	
-    Shader::createShader("package/shader/vertex.glsl", "package/shader/fragment.glsl", defaultShader);
+    u32 defaultShader = ss.newShader("package/shader/vertex.glsl", "package/shader/fragment.glsl");
     Shader::useShader(defaultShader);
     fb.init(windowX, windowY);
 };
