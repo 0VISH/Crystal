@@ -1,28 +1,24 @@
-//change this while compiling to android
-#define GAME_SRC   "../../sandbox/src/include.hh"
-//-----------------------------------------------
-
-#define ENGINE true
-#define APIENTRY
-
+//@ignore
+#if(__clang__)
 #pragma clang diagnostic ignored "-Wwritable-strings"
 #pragma clang diagnostic ignored "-Wswitch"
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
+#define APIENTRY
+#define ENGINE true
+#define EXPORT extern "C" JNIEXPORT
 
 #include <jni.h>
+#include <dlfcn.h>
 #include "basic.hh"
 #include "utils.hh"
 logType print;
-#include "checks.hh"
 #include "../include.hh"
 #include "../box2dFiles.cc"
 #include "package.cc"
 
-#include GAME_SRC
-
-extern "C" JNIEXPORT s32 JNICALL JNImain(JNIEnv* env, jobject) {
-    int a = 6;
-    int b = 9;
-    int c = a + b;
-    return c;
+EXPORT int JNICALL JNImain(JNIEnv* env, jobject) {
+    void *gameCode = dlopen("gameAnd.so", RTLD_LAZY);
+    return EXIT_SUCCESS;
 }

@@ -74,7 +74,7 @@ typedef void* (*DeserializeComponent)(char *mem, u32 count);
 const u64 camSize = sizeof(Component::PCamera::pos) + sizeof(Component::PCamera::zoomLevel) + sizeof(Component::PCamera::aspectRatio) + sizeof(Component::PCamera::fieldOfView);
 const u64 transSize = sizeof(Component::Transform::position) + sizeof(Component::Transform::rotation) + sizeof(Component::Transform::scale);
 
-u64 serializeCamera(FILE *f, void *mem, u32 count){
+u64 serializePCamera(FILE *f, void *mem, u32 count){
     Component::PCamera *cmem = (Component::PCamera*)mem;
     for(u32 x=0; x<count; x+=1){
 	Component::PCamera &cc = cmem[x];
@@ -85,7 +85,7 @@ u64 serializeCamera(FILE *f, void *mem, u32 count){
     };
     return camSize;
 };
-void *deserializeCamera(char *mem, u32 count){
+void *deserializePCamera(char *mem, u32 count){
     Component::PCamera *cmem = (Component::PCamera*)mem::alloc(count * sizeof(Component::PCamera));
     for(u32 x=0; x<count; x+=1){
 	Component::PCamera &cam = cmem[x];
@@ -126,11 +126,11 @@ void *deserializeTransform(char *mem, u32 count){
 };
 
 SerializeComponent serializeComponent[] = {
-    serializeCamera,
+    serializePCamera,
     serializeTransform,
 };
 DeserializeComponent deserializeComponent[] = {
-    deserializeCamera,
+    deserializePCamera,
     deserializeTransform,
 };
 u64 serializedComponentSize[] = {
@@ -141,16 +141,17 @@ u64 serializedComponentSize[] = {
 void serializeCurrentScene(char *fileName){
     Scene *s = engine->curScene;
     FILE *f = fopen(fileName, "wb");
-    char *key = nullptr;
     map_iter_t iter = map_iter(&s->entityNameToID);
     fwrite(&s->id, sizeof(s->id), 1, f);
     fwrite(&s->entityCount, sizeof(s->entityCount), 1, f);
-    while(key == map_next(&s->entityNameToID, &iter)){
+    char *key = (char*)map_next(&s->entityNameToID, &iter);
+    while(key){
 	u32 len = strlen(key) + 1;  //+1 for null byte
 	fwrite(&len, sizeof(len), 1, f);
 	fwrite(key, len, 1, f);
 	Entity e = *map_get(&s->entityNameToID, key);
 	fwrite(&e, sizeof(e), 1, f);
+	char *key = (char*)map_next(&s->entityNameToID, &iter);
     };
     fwrite(&s->entityComponentMask.count, sizeof(s->entityComponentMask.count), 1, f);
     fwrite(s->entityComponentMask.mem, s->entityComponentMask.count * sizeof(u32), 1, f);
@@ -191,11 +192,11 @@ void deserializeToCurrentScene(char *fileName){
 
     u8 id = *(u8*)charMem;
     charMem += sizeof(id);
-    s->entityCount = id;
+    s->id = id;
     Entity entityCount = *(Entity*)charMem;
     charMem += sizeof(entityCount);
+    s->entityCount = entityCount;
     if(entityCount != 0){
-	s->entityCount = entityCount;
 	while(entityCount != 0){
 	    u32 len = *(u32*)charMem;
 	    charMem += sizeof(len);

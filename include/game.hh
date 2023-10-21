@@ -1,7 +1,16 @@
 #pragma once
 
+//@ignore
+#if(__clang__)
+#pragma clang diagnostic ignored "-Wwritable-strings"
+#pragma clang diagnostic ignored "-Wswitch"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 #if(WIN)
 #define EXPORT extern "C" __declspec(dllexport)
+#elif(AND)
+#define EXPORT
 #else
 #define EXPORT
 #endif
@@ -9,7 +18,7 @@
 #define GAME true
 
 #include "basic.hh"
-#if(WIN)
+
 #include "utils.hh"
 namespace game{
     allocType alloc;
@@ -31,7 +40,6 @@ EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct,
 
     editorSignal = est;
 };
-#endif
 
 #include "map.hh"
 #include "ds.hh"
@@ -41,8 +49,8 @@ EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct,
 #include "material.hh"
 #include "event.hh"
 #include "renderer.hh"
+#include "componentID.hh"
 
-#if(WIN)
 #include "enginePointers.hh"
 materialRegisterEntityType materialRegisterEntity;
 newMaterialType newMaterial;
@@ -109,7 +117,6 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt, 
     
     isKeyDown = ikdt;
 };
-#endif
 
 //cpp code which every game has to compile
 #include "../game/include.hh"
