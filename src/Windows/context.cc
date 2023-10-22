@@ -2,7 +2,7 @@
 namespace ContextGL{
     HDC windowHandleToDeviceContext;
     HGLRC openGLRenderingContext;
-    void init(window::Window window){
+    void init(HWND window){
 	HDC hDc = ::GetDC(window);
 	PIXELFORMATDESCRIPTOR pfd = { 0 };
 	pfd.nSize = sizeof(pfd);
@@ -19,7 +19,7 @@ namespace ContextGL{
 	gladLoadGL();
     };
     void swapBuffers(){SwapBuffers(windowHandleToDeviceContext);};
-    void uninit(window::Window window){
+    void uninit(HWND window){
 	wglMakeCurrent(NULL, NULL);
 	ReleaseDC(window, windowHandleToDeviceContext);
 	wglDeleteContext(openGLRenderingContext);
@@ -29,7 +29,7 @@ namespace ContextGL{
 #endif
 
 namespace RenderContext{
-    void init(window::Window window){
+    void init(HWND window){
 #if(GL)
 	ContextGL::init(window);
 #endif
@@ -39,7 +39,7 @@ namespace RenderContext{
 	ContextGL::swapBuffers();
 #endif
     };
-    void uninit(window::Window window){
+    void uninit(HWND window){
 #if(GL)
 	ContextGL::uninit(window);
 #endif

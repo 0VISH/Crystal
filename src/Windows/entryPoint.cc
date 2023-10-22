@@ -15,7 +15,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 #endif
     engine = (Crystal*)mem::alloc(sizeof(Crystal));
     
-    window::Window window = window::create("Crystal", 1280, 800);
+    HWND window = window::create("Crystal", 1280, 800);
     RenderContext::init(window);
 
     // Show the window
@@ -24,6 +24,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     Package::allocPackages();
     engine->init();
+    engine->initGraphics();
 
     ScreenQuad sq;
     sq.vao = 69;

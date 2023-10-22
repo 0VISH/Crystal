@@ -34,6 +34,7 @@ struct Crystal{
 #endif
 
     void init();
+    void initGraphics();
     void uninit();
 };
 

@@ -13,8 +13,8 @@ public class MainActivity extends AppCompatActivity{
     static {
         System.loadLibrary("crystal");
     }
-    public native int CrystalInit();
-    public native int CrystalUninit();
+    public native void CrystalInit();
+    public native void CrystalUninit();
 
     private GLSurfaceView surfaceView = null;
 
@@ -63,10 +63,12 @@ class Renderer implements GLSurfaceView.Renderer{
     static {
         System.loadLibrary("crystal");
     }
-    public native int CrystalDraw();
+    public native void CrystalDraw();
+    public native void CrystalUpdate();
+    public native void CrystalSurfaceCreated();
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
-
+        CrystalSurfaceCreated();
     }
 
     @Override
@@ -76,6 +78,7 @@ class Renderer implements GLSurfaceView.Renderer{
 
     @Override
     public void onDrawFrame(GL10 gl10) {
+        CrystalUpdate();
         CrystalDraw();
     }
 }

@@ -222,7 +222,6 @@ bool isKeyDown(ButtonCode code){
 extern  LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace window{
-    typedef HWND Window;
     const char* className = "Crystal";
 
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
@@ -279,7 +278,7 @@ namespace window{
 	return res;
     };
     
-    Window create(char *windowName, u32 windowX, u32 windowY){
+    HWND create(char *windowName, u32 windowX, u32 windowY){
 	engine->windowX = windowX;
 	engine->windowY = windowY;
 	engine->ed.init();
@@ -289,7 +288,7 @@ namespace window{
 	HWND hwnd = ::CreateWindowW(wc.lpszClassName, (LPCWSTR)windowName, WS_OVERLAPPEDWINDOW, 100, 100, windowX, windowY, NULL, NULL, wc.hInstance, NULL);
 	return hwnd;
     };
-    void destroy(Window window){
+    void destroy(HWND window){
 	DestroyWindow(window);
 	::UnregisterClassW((LPCWSTR)className, GetModuleHandle(NULL));
     };

@@ -8,13 +8,13 @@ void Crystal::init(){
     curScene = nullptr;
     gameLayerOff = -1;
     lm.init(3);
+};
+void Crystal::initGraphics(){
     Draw::init(r);
     allocMaterialSystem();
     materialSystemInit();
     ss.init();
-
     Package::loadPkg("package/setup.pkg", Package::curPkg);
-	
     u32 defaultShader = ss.newShader("package/shader/vertex.glsl", "package/shader/fragment.glsl");
     Shader::useShader(defaultShader);
     fb.init(windowX, windowY);
