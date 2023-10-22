@@ -1,5 +1,9 @@
 #include <stdarg.h>
 
+#if(DBG)
+#include <android/log.h>
+#endif
+
 void dlog(char *fmt, ...){
 #if(DBG)
     va_list args;

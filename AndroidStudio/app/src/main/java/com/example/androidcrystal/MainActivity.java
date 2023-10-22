@@ -10,11 +10,11 @@ import android.util.Log;
 import android.view.Surface;
 
 public class MainActivity extends AppCompatActivity{
-
     static {
         System.loadLibrary("crystal");
     }
-    public native int CrystalMain(Surface surface);
+    public native int CrystalInit();
+    public native int CrystalUninit();
 
     private GLSurfaceView surfaceView = null;
 
@@ -29,7 +29,12 @@ public class MainActivity extends AppCompatActivity{
     public void onStart(){
         super.onStart();
         Surface surface = surfaceView.getHolder().getSurface();
-        int result = CrystalMain(surface);
+        CrystalInit();
+    }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        CrystalUninit();
     }
 
     @Override
@@ -54,6 +59,11 @@ class SurfaceView extends GLSurfaceView{
     }
 }
 class Renderer implements GLSurfaceView.Renderer{
+
+    static {
+        System.loadLibrary("crystal");
+    }
+    public native int CrystalDraw();
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
 
@@ -66,5 +76,6 @@ class Renderer implements GLSurfaceView.Renderer{
 
     @Override
     public void onDrawFrame(GL10 gl10) {
+        CrystalDraw();
     }
 }
