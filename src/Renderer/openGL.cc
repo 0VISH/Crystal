@@ -113,6 +113,8 @@ namespace OpenGL{
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(OpenGL::DebugCallback, nullptr);
     };
+#else
+    void enableDebugMode(){};
 #endif
 };
 

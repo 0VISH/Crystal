@@ -8,11 +8,11 @@ logType print;
 
 #if(DBG)
 s32 main(){
+    mem::calls = 0;
 #else
 //no console
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow){
 #endif
-    mem::calls = 0;
     engine = (Crystal*)mem::alloc(sizeof(Crystal));
     
     window::Window window = window::create("Crystal", 1280, 800);
@@ -28,7 +28,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     ScreenQuad sq;
     sq.vao = 69;
     HMODULE editorCode = nullptr;
-    engine->gameCode = Code::load("gameWin.dll");
+    engine->gameCode = Code::load("gamewin.dll");
     u32 screenShader;
     if(engine->gameCode == NULL){
 	editorCode = Code::load("bin/win/dbg/editor.dll");

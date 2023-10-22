@@ -1,3 +1,5 @@
+:: clean up log windows
+:: reduce windows folder complexity
 :: openGL.cc
    - drawWireframe
    - drawFill

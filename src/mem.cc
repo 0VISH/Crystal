@@ -1,8 +1,10 @@
 #include "log.hh"
 
 namespace mem {
+#if(DBG)
     s32 calls = 0;
     u64 notFreed = 0;
+#endif
     
     //TODO: write an allocator
     void *alloc(u64 size) {
