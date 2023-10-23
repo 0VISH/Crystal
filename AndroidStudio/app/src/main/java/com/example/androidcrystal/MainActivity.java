@@ -5,32 +5,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.content.Context;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-import android.util.Log;
-import android.view.Surface;
 
 public class MainActivity extends AppCompatActivity{
     static {
         System.loadLibrary("crystal");
     }
-    public native void CrystalInit(AssetManager assetManager);
+    public native void CrystalInit(AssetManager assetManager, int x, int y);
     public native void CrystalUninit();
 
-    private GLSurfaceView surfaceView = null;
+    private GLSurfaceView glSurfaceView = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        surfaceView = new SurfaceView(this);
-        setContentView(surfaceView);
+        setContentView(R.layout.activity_main);
+
+        glSurfaceView = findViewById(R.id.glSurfaceView);
+        Renderer renderer = new Renderer();
+
+        glSurfaceView.setEGLContextClientVersion(3);
+        glSurfaceView.setRenderer(renderer);
     }
     @Override
     public void onStart(){
         super.onStart();
-        CrystalInit(getAssets());
+        CrystalInit(getAssets(), glSurfaceView.getWidth(), glSurfaceView.getHeight());
     }
     @Override
     public void onDestroy(){
@@ -41,23 +43,14 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onPause(){
         super.onPause();
-        surfaceView.onResume();
+        glSurfaceView.onResume();
     }
     @Override
     public void onResume(){
         super.onResume();
-        surfaceView.onResume();
+        glSurfaceView.onResume();
     }
 
-}
-
-class SurfaceView extends GLSurfaceView{
-    public SurfaceView(Context context){
-        super(context);
-        setEGLContextClientVersion(3);
-        GLSurfaceView.Renderer renderer = new com.example.androidcrystal.Renderer();
-        setRenderer(renderer);
-    }
 }
 class Renderer implements GLSurfaceView.Renderer{
 
@@ -67,14 +60,16 @@ class Renderer implements GLSurfaceView.Renderer{
     public native void CrystalDraw();
     public native void CrystalUpdate();
     public native void CrystalSurfaceCreated();
+    public native void CrystalSurfaceChanged(int x, int y);
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
+
         CrystalSurfaceCreated();
     }
 
     @Override
-    public void onSurfaceChanged(GL10 gl10, int i, int i1) {
-
+    public void onSurfaceChanged(GL10 gl10, int x, int y) {
+        CrystalSurfaceChanged(x, y);
     }
 
     @Override

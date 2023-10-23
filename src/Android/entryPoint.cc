@@ -29,6 +29,8 @@ EXPORT void JNICALL Java_com_example_androidcrystal_MainActivity_CrystalInit(JNI
 #endif
     engine = (Crystal*)mem::alloc(sizeof(Crystal));
     engine->init();
+    engine->windowX = 0;
+    engine->windowY = 0;
     engine->gameCode = dlopen("libgameand.so", RTLD_LAZY);
     SETUP_POINTERS(engine->gameCode);
     engine->gameLayerOff = engine->lm.layerCount;
@@ -51,6 +53,12 @@ EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalSurfaceCreat
     sq = Draw::initScreenQuad();
     screenShader = engine->ss.newShader("package/shader/glsl3es/displayVertex.glsl", "package/shader/glsl3es/displayFragment.glsl");
 };
+EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalSurfaceChanged(JNIEnv* env, jobject obj, jint x, jint y){
+    engine->windowX = x;
+    engine->windowY = y;
+    glViewport(0, 0, x, y);
+    engine->fb.init(x, y);
+};
 EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalUpdate(JNIEnv* env, jobject obj){
     Event e;
     f64 dt = 1;
@@ -65,7 +73,7 @@ EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalDraw(JNIEnv*
     Draw::endFrame(engine->r, engine->fb);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
+    glClearColor(0.0f, 0.5f, 0.3f, 1.0f); 
     glClear(GL_COLOR_BUFFER_BIT);
 
     Shader::useShader(screenShader);

@@ -1,6 +1,7 @@
 #include "framebuffer.hh"
 
 void FrameBuffer::init(u32 x, u32 y){
+    if(x == 0 || y == 0){return;};
 #if(GL)
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);

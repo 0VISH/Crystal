@@ -1,3 +1,4 @@
+:: scene serialization(hangs) and deserialization(entity count is 0)
 :: clean up log windows
 :: reduce windows folder complexity
 :: openGL.cc

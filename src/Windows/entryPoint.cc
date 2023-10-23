@@ -80,10 +80,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         engine->lm.updateLayers(e, dt);
         engine->lm.renderLayers();
 
-        Draw::beginFrame(engine->r, engine->fb);
+	Draw::beginFrame(engine->r, engine->fb);
 	Draw::draw(engine->r);
 	Draw::endFrame(engine->r, engine->fb);
-
+	
 	if(editorCode == nullptr){
 	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
