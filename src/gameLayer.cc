@@ -10,7 +10,6 @@ namespace GameLayer{
 	//TODO: set physics to const rate?
         const u32 hertz = 60;
 	const f32 timeStamp = 1/hertz;
-	print("%f %f", dt, timeStamp);
 	s32 velocityIterations = 6;
 	s32 positionIterations = 2;
 	s->physicsWorld->Step(1.0f/60.0f, velocityIterations, positionIterations);

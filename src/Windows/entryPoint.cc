@@ -46,7 +46,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	auto setGameTextureAdd = (void(*)(u32* tAdd))GetProcAddress(editorCode, "setGameTextureAdd");
 	setGameTextureAdd(&engine->fb.texture);
     }else{
-	initLogOutputFile("runtime.log");
+	initLogOutputFile("info.log");
 	print = _log;
 
 	print("Loaded game code\n");

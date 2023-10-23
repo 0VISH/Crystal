@@ -53,20 +53,21 @@ EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalSurfaceCreat
 };
 EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalUpdate(JNIEnv* env, jobject obj){
     Event e;
-    f64 dt = 0;
+    f64 dt = 1;
     e.type = EventType::NONE;
     engine->lm.updateLayers(e, dt);
 };
 EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalDraw(JNIEnv* env, jobject obj){
     engine->lm.renderLayers();
+
     Draw::beginFrame(engine->r, engine->fb);
     Draw::draw(engine->r);
     Draw::endFrame(engine->r, engine->fb);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClearColor(0.0f, 0.5f, 0.0f, 1.0f); 
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
     glClear(GL_COLOR_BUFFER_BIT);
-  
+
     Shader::useShader(screenShader);
     glBindVertexArray(sq.vao);
     glBindTexture(GL_TEXTURE_2D, engine->fb.texture);
