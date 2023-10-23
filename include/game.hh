@@ -10,7 +10,7 @@
 #if(WIN)
 #define EXPORT extern "C" __declspec(dllexport)
 #elif(AND)
-#define EXPORT
+#define EXPORT extern "C"
 #else
 #define EXPORT
 #endif

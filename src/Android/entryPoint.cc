@@ -30,6 +30,16 @@ EXPORT void JNICALL Java_com_example_androidcrystal_MainActivity_CrystalInit(JNI
     engine = (Crystal*)mem::alloc(sizeof(Crystal));
     engine->init();
     engine->gameCode = dlopen("libgameand.so", RTLD_LAZY);
+    SETUP_POINTERS(engine->gameCode);
+    engine->gameLayerOff = engine->lm.layerCount;
+    engine->lm.newLayer();
+    Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
+    gameLayer->onUpdate = GameLayer::onUpdate;
+    gameLayer->onRender = GameLayer::onRender;
+    gameLayer->onUninit = GameLayer::onUninit;
+    //TODO: let game code do this
+    setMaterialSystem("runtime/woa.ms");
+    setScene("runtime/trial.scn");
 }
 EXPORT void JNICALL Java_com_example_androidcrystal_MainActivity_CrystalUninit(JNIEnv* env, jobject obj){
     dlclose(engine->gameCode);
@@ -39,7 +49,7 @@ EXPORT void JNICALL Java_com_example_androidcrystal_MainActivity_CrystalUninit(J
 EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalSurfaceCreated(JNIEnv* env, jobject obj){
     engine->initGraphics();
     sq = Draw::initScreenQuad();
-    screenShader = engine->ss.newShader("package/shader/displayVertex.glsl", "package/shader/displayFragment.glsl");
+    screenShader = engine->ss.newShader("package/shader/glsl3es/displayVertex.glsl", "package/shader/glsl3es/displayFragment.glsl");
 };
 EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalUpdate(JNIEnv* env, jobject obj){
     Event e;

@@ -12,7 +12,7 @@ add_library(
 		${CMAKE_SOURCE_DIR}/../../sandbox/src/sandbox.cc
 )
 
-add_definitions(-DANDROID=1)
+add_definitions(-DAND=1)
 add_definitions(-DGL=1)
 add_definitions(-DDBG=1)  #TODO: change this
 
@@ -24,10 +24,6 @@ include_directories(PRIVATE
 	${CMAKE_SOURCE_DIR}/../../vendor/box2d/include/)
 include_directories(PRIVATE
 	${CMAKE_SOURCE_DIR}/../../vendor/box2d/src/)
-
-set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/../../package)
-set(DESTINATION_DIR ${CMAKE_SOURCE_DIR}/src/main/assets)
-file(COPY ${SOURCE_DIR} DESTINATION ${DESTINATION_DIR})
 
 target_link_libraries(crystal
         android

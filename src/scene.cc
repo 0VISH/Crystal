@@ -172,23 +172,10 @@ void deserializeToCurrentScene(char *fileName){
     Scene *s = engine->curScene;
     s->state = SceneState::PLAYING;
     map_init(&s->entityNameToID);
-    
-    FILE *f = fopen(fileName, "rb");
-    if(f == nullptr){
-	print("[error] Could not open scene file: %s", fileName);
-	mem::free(s);
-	engine->curScene = nullptr;
-	return;
-    };
-    fseek(f, 0, SEEK_END);
-    long size = ftell(f);
-    fseek(f, 0, SEEK_SET);
-    ASSERT(size);
 
-    void *mem = mem::alloc(size);
-    fread(mem, size, 1, f);
-    fclose(f);
-    char *charMem = (char*)mem;
+    bool fromFile = true;
+    char *mem = Package::openNormalFileFromPkgElseFile(fileName, fromFile, Package::curPkg);
+    char *charMem = mem;
 
     u8 id = *(u8*)charMem;
     charMem += sizeof(id);
@@ -246,8 +233,7 @@ void deserializeToCurrentScene(char *fileName){
     };
     s->activeCam = *(Entity*)charMem;
     s->physicsWorld = new b2World({0.0, -9.8});
-    mem::free(mem);
-    fclose(f);
+    if(fromFile){mem::free(mem);};
 };
 Entity sceneNewEntity(char *name){
     Scene *s = engine->curScene;

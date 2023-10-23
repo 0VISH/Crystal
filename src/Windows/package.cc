@@ -2,14 +2,6 @@
 #include "stb_image.hh"
 
 namespace Package{
-    struct Pkg{
-	map_int_t fileToOff;
-	void *mem;
-	char *content;
-    };
-    Pkg *commonPkg;
-    Pkg *curPkg;
-    
     void allocPackages(){
 	commonPkg = (Pkg*)mem::alloc(sizeof(Pkg));
 	curPkg = (Pkg*)mem::alloc(sizeof(Pkg));
@@ -58,12 +50,14 @@ namespace Package{
 	};
     };
     char *openNormalFileFromPkgElseFile(char *fileName, bool &fromFile, Pkg *package){
-	if(package->mem != nullptr){
-	    //pkg
-	    int *offPtr = map_get(&package->fileToOff, fileName);
-	    if(offPtr != nullptr){
-		fromFile = false;
-		return package->content + (*offPtr);
+	if(package != nullptr){
+	    if(package->mem != nullptr){
+		//pkg
+		int *offPtr = map_get(&package->fileToOff, fileName);
+		if(offPtr != nullptr){
+		    fromFile = false;
+		    return package->content + (*offPtr);
+		};
 	    };
 	};
 

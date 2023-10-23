@@ -59,16 +59,9 @@ void serializeMaterialSystem(char *filePath){
 };
 void deserializeMaterialSystem(char *filePath){
     MaterialSystem *ms = engine->ms;
-    
-    FILE *f = fopen(filePath, "rb");
-    ASSERT(f);
-    fseek(f, 0, SEEK_END);
-    long size = ftell(f);
-    fseek(f, 0, SEEK_SET);
 
-    void *mem = mem::alloc(size);
-    fread(mem, size, 1, f);
-    fclose(f);
+    bool fromFile = true;
+    void *mem = Package::openNormalFileFromPkgElseFile(filePath, fromFile, nullptr);
     char *charMem = (char*)mem;
 
     u32 count = *(u32*)charMem;
@@ -106,7 +99,5 @@ void deserializeMaterialSystem(char *filePath){
 
 	ms->materials.push(mat);
     };
-    
-    mem::free(mem);
-    fclose(f);
+    if(fromFile){mem::free(mem);};
 };

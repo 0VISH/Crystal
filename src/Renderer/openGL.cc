@@ -47,32 +47,38 @@ namespace OpenGL{
 	    };
     }
 #endif
-    void vertexCheckErr(u32 shader){
+    bool vertexCheckErr(u32 shader){
 	s32  success;
 	char infoLog[512];
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if(!success){
 	    glGetShaderInfoLog(shader, 512, NULL, infoLog);
 	    print("[VERTEX SHADER ERROR]: %s\n", infoLog);
+	    return false;
 	};
+	return true;
     };
-    void fragmentCheckErr(u32 shader){
+    bool fragmentCheckErr(u32 shader){
 	s32  success;
 	char infoLog[512];
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if(!success){
 	    glGetShaderInfoLog(shader, 512, NULL, infoLog);
 	    print("[FRAGMENT SHADER ERROR]: %s\n", infoLog);
+	    return false;
 	};
+	return true;
     };
-    void linkCheckErr(u32 shaderProgram){
+    bool linkCheckErr(u32 shaderProgram){
 	s32  success;
 	char infoLog[512];
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if(!success) {
 	    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 	    print("[SHADER LINK ERROR]: %s\n", infoLog);
+	    return false;
 	}
+	return true;
     };
     u32 compileShader(char *shaderSrc, GLenum type){
 	bool fromFile;
@@ -88,10 +94,10 @@ namespace OpenGL{
     void createShader(char *vertexShaderPath, char *fragmentShaderPath, u32 shaderProgram){
 	//SHADER
 	u32 vertexShader = compileShader(vertexShaderPath, GL_VERTEX_SHADER);
-	OpenGL::vertexCheckErr(vertexShader);
+	if(OpenGL::vertexCheckErr(vertexShader) == false){print("VERTEX_SHADER_PATH: %s", vertexShaderPath);};
 	
 	u32 fragmentShader = compileShader(fragmentShaderPath, GL_FRAGMENT_SHADER);
-	OpenGL::fragmentCheckErr(fragmentShader);
+	if(OpenGL::fragmentCheckErr(fragmentShader) == false){print("FRAGMENT_SHADER_PATH: %s", fragmentShaderPath);};
 	
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);

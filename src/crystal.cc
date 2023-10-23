@@ -6,6 +6,7 @@ Crystal *engine;
 void Crystal::init(){
     gameCode = nullptr;
     curScene = nullptr;
+    ms       = nullptr;
     gameLayerOff = -1;
     lm.init(3);
 };
@@ -15,7 +16,11 @@ void Crystal::initGraphics(){
     materialSystemInit();
     ss.init();
     Package::loadPkg("package/setup.pkg", Package::curPkg);
-    u32 defaultShader = ss.newShader("package/shader/vertex.glsl", "package/shader/fragment.glsl");
+#if(WIN)
+    u32 defaultShader = ss.newShader("package/shader/glsl4/vertex.glsl", "package/shader/glsl4/fragment.glsl");
+#elif(AND)
+    u32 defaultShader = ss.newShader("package/shader/glsl3es/vertex.glsl", "package/shader/glsl3es/fragment.glsl");
+#endif
     Shader::useShader(defaultShader);
     fb.init(windowX, windowY);
 };

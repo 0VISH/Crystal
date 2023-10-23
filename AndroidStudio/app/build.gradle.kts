@@ -37,6 +37,14 @@ android {
     }
 }
 
+tasks.register("copyFiles", Copy::class) {
+    from("/../../package/")
+    into("src/main/assets/package/")
+}
+tasks.named("preBuild").configure {
+    dependsOn("copyFiles")
+}
+
 dependencies {
 
     implementation("androidx.appcompat:appcompat:1.6.1")

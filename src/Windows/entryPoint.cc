@@ -52,7 +52,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	print("Loaded game code\n");
 
 	sq = Draw::initScreenQuad();
-	screenShader = engine->ss.newShader("package/shader/displayVertex.glsl", "package/shader/displayFragment.glsl");
+	screenShader = engine->ss.newShader("package/shader/glsl4/displayVertex.glsl", "package/shader/glsl4/displayFragment.glsl");
     };
     engine->gameLayerOff = engine->lm.layerCount;
     engine->lm.newLayer();
