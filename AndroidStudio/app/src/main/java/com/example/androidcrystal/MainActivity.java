@@ -1,6 +1,8 @@
 package com.example.androidcrystal;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.content.Context;
@@ -13,7 +15,7 @@ public class MainActivity extends AppCompatActivity{
     static {
         System.loadLibrary("crystal");
     }
-    public native void CrystalInit();
+    public native void CrystalInit(AssetManager assetManager);
     public native void CrystalUninit();
 
     private GLSurfaceView surfaceView = null;
@@ -28,8 +30,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onStart(){
         super.onStart();
-        Surface surface = surfaceView.getHolder().getSurface();
-        CrystalInit();
+        CrystalInit(getAssets());
     }
     @Override
     public void onDestroy(){

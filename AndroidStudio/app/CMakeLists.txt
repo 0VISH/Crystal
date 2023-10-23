@@ -25,6 +25,10 @@ include_directories(PRIVATE
 include_directories(PRIVATE
 	${CMAKE_SOURCE_DIR}/../../vendor/box2d/src/)
 
+set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/../../package)
+set(DESTINATION_DIR ${CMAKE_SOURCE_DIR}/src/main/assets)
+file(COPY ${SOURCE_DIR} DESTINATION ${DESTINATION_DIR})
+
 target_link_libraries(crystal
         android
 		GLESv3

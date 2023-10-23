@@ -4,6 +4,7 @@
    - drawWireframe
    - drawFill
 
+:: add runtime/ to cry file
 :: Low hanging fruits in editor
 :: Full fledged box2d support
 :: OpenGL error sometimes

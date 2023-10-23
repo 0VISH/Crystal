@@ -21,26 +21,30 @@ logType print;
 ScreenQuad sq;
 u32 screenShader;
 
-EXPORT void JNICALL Java_com_example_androidcrystal_MainActivity_CrystalInit(JNIEnv* env, jobject obj){
+EXPORT void JNICALL Java_com_example_androidcrystal_MainActivity_CrystalInit(JNIEnv* env, jobject obj, jobject assetManager){
+    Package::assetManager = AAssetManager_fromJava(env, assetManager);
 #if(DBG)
     print = dlog;
 #else
 #endif
     engine = (Crystal*)mem::alloc(sizeof(Crystal));
+    engine->init();
+    engine->gameCode = dlopen("libgameand.so", RTLD_LAZY);
 }
 EXPORT void JNICALL Java_com_example_androidcrystal_MainActivity_CrystalUninit(JNIEnv* env, jobject obj){
     dlclose(engine->gameCode);
-    //engine->uninit();
+    engine->uninit();
     mem::free(engine);
 };
 EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalSurfaceCreated(JNIEnv* env, jobject obj){
-    //engine->init();
+    engine->initGraphics();
     sq = Draw::initScreenQuad();
     screenShader = engine->ss.newShader("package/shader/displayVertex.glsl", "package/shader/displayFragment.glsl");
-    engine->gameCode = dlopen("libgameand.so", RTLD_LAZY);
 };
 EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalUpdate(JNIEnv* env, jobject obj){
-    Event e = Event::NONE;
+    Event e;
+    f64 dt = 0;
+    e.type = EventType::NONE;
     engine->lm.updateLayers(e, dt);
 };
 EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalDraw(JNIEnv* env, jobject obj){
@@ -50,7 +54,7 @@ EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalDraw(JNIEnv*
     Draw::endFrame(engine->r, engine->fb);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
+    glClearColor(0.0f, 0.5f, 0.0f, 1.0f); 
     glClear(GL_COLOR_BUFFER_BIT);
   
     Shader::useShader(screenShader);

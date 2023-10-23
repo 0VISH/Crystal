@@ -1,9 +1,15 @@
-#include "../package.hh"
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.hh"
 
 namespace Package{
+    struct Pkg{
+	map_int_t fileToOff;
+	void *mem;
+	char *content;
+    };
+    Pkg *commonPkg;
+    Pkg *curPkg;
+    
     void allocPackages(){
 	commonPkg = (Pkg*)mem::alloc(sizeof(Pkg));
 	curPkg = (Pkg*)mem::alloc(sizeof(Pkg));
