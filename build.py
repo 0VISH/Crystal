@@ -49,7 +49,7 @@ if(plat == "win"):
     if(shouldBuildGLAD):
         Omen.build("vendor/glad/src/glad.c", "glad", "cl", intermediateOnly=True, extraSwitches="/I vendor/glad/include/")
     if(shouldBuildBox2d):
-        Omen.build("src/box2dFiels.cc", "box2d", "cl", intermediateOnly=True, extraSwitches="/I vendor/box2d/include/ /I vendor/box2d/src/")
+        Omen.build("src/box2dFiles.cc", "box2d", "cl", intermediateOnly=True, extraSwitches="/I vendor/box2d/include/ /I vendor/box2d/src/")
     if(shouldBuildEditor):
         Omen.build("editor/editor.cc", "editor", "cl", intermediateOnly=True, defines=[renderingAPI], includes=["vendor/imgui/", "vendor/glm/", "vendor/box2d/include/", "vendor/glad/include/", "include/"])
         Omen.runCmd("link /NOLOGO /DEBUG /DLL /PDB:" + folder + "editor.pdb " + editorPath + " " + imguiPath + " " + box2dPath + " /OUT:" + folder + "editor.dll")

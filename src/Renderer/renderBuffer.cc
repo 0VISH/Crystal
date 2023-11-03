@@ -35,7 +35,7 @@ void submitQuad(Renderer &r, const glm::mat4 &mat){
 void fillRenderBufferWithGivenMat(Renderer &r, Material &m){
     r.curMat = &m;
     Draw::Vertex *info = r.watermark;
-    info->pos.x = m.shader;
+    info->shader = m.shader;
     r.watermark += 1;
     u32 submittedQuads = 0;
     for(u32 x=0; x<m.registeredEntities.count; x+=1){
@@ -49,8 +49,7 @@ void fillRenderBufferWithGivenMat(Renderer &r, Material &m){
 	r.watermark -= 1;
 	return;
     };
-    info->pos.y = submittedQuads;
-    print("qua: %d", submittedQuads);
+    info->submittedQuads = submittedQuads;
 };
 void fillRenderBufferWithGivenMS(Renderer &r, MaterialSystem *ms){
     for(u32 x=0; x<ms->materials.count; x+=1){
@@ -61,7 +60,6 @@ void fillRenderBufferHeader(Renderer &r, const glm::mat4 &projectionView){
     r.watermark = r.renderBuffer;
     r.bufferEmpty = false;
 
-    glm::mat4 *mat = (glm::mat4*)r.watermark;
-    *mat = projectionView;
+    memcpy(r.watermark, &projectionView, sizeof(projectionView));
     r.watermark += (u32)ceil((f64)sizeof(glm::mat4)/(f64)sizeof(Draw::Vertex));
 };

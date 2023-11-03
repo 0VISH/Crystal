@@ -4,8 +4,12 @@
 
 namespace Draw{
     struct Vertex{
+	union{
+	    glm::vec4 col;
+	    u32 submittedQuads;
+	    u16 shader;
+	};
 	glm::vec3 pos;
-	glm::vec4 col;
 	glm::vec2 textPos;
     };
 

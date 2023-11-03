@@ -68,7 +68,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     LARGE_INTEGER freq, start, end;
     f64 dt  = 0;
     QueryPerformanceFrequency(&freq);
-    
+
     while(true){
 	QueryPerformanceCounter(&start);
 	

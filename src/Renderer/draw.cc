@@ -28,20 +28,19 @@ namespace Draw{
     void draw(Renderer &r){
 	if(r.bufferEmpty){return;};
 	Draw::Vertex *x = r.renderBuffer + (u32)ceil((f64)sizeof(glm::mat4)/(f64)sizeof(Draw::Vertex));
-	u32 curShader = x->pos.x;
+	u32 curShader = x->shader;
 	Shader::useShader(curShader);
 	while(x != r.watermark){
 	    Draw::Vertex *info = x;
-	    if(info->pos.x != curShader){
-		curShader = info->pos.x;
+	    if(info->shader != curShader){
+		curShader = info->shader;
 		Shader::useShader(curShader);
 	    };
 	    x += 1;
-	    u32 quadVerticesCount = (u32)info->pos.y * 4;
+	    u32 quadVerticesCount = (u32)info->submittedQuads * 4;
 #if(GL)
 	    OpenGL::setMat4Uniform(*(glm::mat4*)r.renderBuffer, "uProjectionView", curShader);
 	    OpenGL::batchAndDraw(r, x, x + quadVerticesCount);
-	    print("%d %d", info->pos.x, info->pos.y);
 #if(AND)
 	    u32 error = glGetError();
 	    while(error != GL_NO_ERROR){
@@ -61,7 +60,6 @@ namespace Draw{
     void beginFrame(Renderer &r, FrameBuffer &fb){
 	r.drawCalls = 0;
 	fb.bind();
-	glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
 	Draw::clearColourBuffer();
     };
     void endFrame(Renderer &r, FrameBuffer &fb){
