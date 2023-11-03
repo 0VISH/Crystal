@@ -1,4 +1,5 @@
 :: default shader is always 1
+:: port shaders
 :: clean up log windows
 :: reduce windows folder complexity
 :: openGL.cc

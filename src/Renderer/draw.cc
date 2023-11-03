@@ -60,7 +60,6 @@ namespace Draw{
     void beginFrame(Renderer &r, FrameBuffer &fb){
 	r.drawCalls = 0;
 	fb.bind();
-	glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
 	Draw::clearColourBuffer();
     };
     void endFrame(Renderer &r, FrameBuffer &fb){

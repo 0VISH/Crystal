@@ -30,3 +30,6 @@ target_link_libraries(crystal
 		GLESv3
         log       #TODO: depends on build
 		egl)
+target_link_libraries(gameand
+		log       #TODO: depends on build
+)

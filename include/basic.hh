@@ -21,14 +21,26 @@ typedef float                   f32;
 typedef double                  f64;
 
 #if(DBG)
+#if(WIN)
 #include <stdio.h>
+#elif(AND)
+#include <android/log.h>
+#endif
 void unreachable(char *file, u32 line) {
+#if(WIN)
     printf("\n[ERROR] unreachable area reached: %s:%d", file, line);
+#elif(AND)
+        __android_log_print(ANDROID_LOG_ERROR, "UNREACHABLE", "\n[ERROR] unreachable area reached: %s:%d", file, line);
+#endif
 };
 #define UNREACHABLE unreachable(__FILE__, __LINE__)
 void ass(bool x, char *file, u32 line){
     if(x){return;};
-    printf("\n%s:%d assertion failed\n", file, line);
+#if(WIN)
+    printf("\n[ERROR]%s:%d assertion failed\n", file, line);
+#elif(AND)
+    __android_log_print(ANDROID_LOG_ERROR, "ASSERT", "\n[ERROR]%s:%d assertion failed\n", file, line);
+#endif
 };
 #define ASSERT(expr)   ass(expr, __FILE__, __LINE__)
 #else
