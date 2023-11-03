@@ -1,11 +1,11 @@
 #version 310 es
 
-in vec2 iPos;
-in vec2 iTextCord;
+in vec2 vertexPosition;
+in vec2 vertexTextureCordinate;
 
-out vec2 oTextCord;
+out vec2 intermediateTextureCordinate;
 
 void main() {
-    oTextCord = iTextCord;
-    gl_Position = vec4(iPos, 0.0, 1.0);
+    intermediateTextureCordinate = vertexTextureCordinate;
+    gl_Position = vec4(vertexPosition, 0.0, 1.0);
 };

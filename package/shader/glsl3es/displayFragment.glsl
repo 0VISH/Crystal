@@ -1,12 +1,12 @@
 #version 310 es
 precision mediump float;
 
-in vec2 iTextCord;
+in vec2 intermediateTextureCordinate;
 
-out vec4 oCol;
+out vec4 fragmentColour;
 
 uniform sampler2D screenTexture;
 
 void main(){
-     oCol = texture(screenTexture, iTextCord);
+     fragmentColour = texture(screenTexture, intermediateTextureCordinate);
 };

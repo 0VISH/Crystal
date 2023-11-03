@@ -1,10 +1,10 @@
 #version 310 es
 precision mediump float;
 
-in vec4 iCol;
+in vec4 intermediateColour;
 
-out vec4 oFragCol;
+out vec4 fragmentColour;
 
 void main() {
-    oFragCol = iCol;
+    fragmentColour = intermediateColour;
 };
