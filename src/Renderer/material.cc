@@ -68,6 +68,7 @@ void deserializeMaterialSystem(char *filePath){
     ms->materials.init(count);
     charMem += sizeof(count);
 
+    //TODO: alloc a block for material names
     for(u32 x=0; x<count; x+=1){
 	Material mat;
 	

@@ -50,6 +50,7 @@ void fillRenderBufferWithGivenMat(Renderer &r, Material &m){
 	return;
     };
     info->pos.y = submittedQuads;
+    print("qua: %d", submittedQuads);
 };
 void fillRenderBufferWithGivenMS(Renderer &r, MaterialSystem *ms){
     for(u32 x=0; x<ms->materials.count; x+=1){

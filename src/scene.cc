@@ -138,6 +138,9 @@ u64 serializedComponentSize[] = {
     transSize,
 };
 
+const u32 magicNumber1 = 6969;
+const u32 magicNumber2 = 420420;
+
 void serializeCurrentScene(char *fileName){
     Scene *s = engine->curScene;
     FILE *f = fopen(fileName, "wb");
@@ -151,8 +154,9 @@ void serializeCurrentScene(char *fileName){
 	fwrite(key, len, 1, f);
 	Entity e = *map_get(&s->entityNameToID, key);
 	fwrite(&e, sizeof(e), 1, f);
-	char *key = (char*)map_next(&s->entityNameToID, &iter);
+	key = (char*)map_next(&s->entityNameToID, &iter);
     };
+    fwrite(&magicNumber1, sizeof(magicNumber1), 1, f);
     fwrite(&s->entityComponentMask.count, sizeof(s->entityComponentMask.count), 1, f);
     fwrite(s->entityComponentMask.mem, s->entityComponentMask.count * sizeof(u32), 1, f);
     fwrite(&s->components.count, sizeof(s->components.count), 1, f);
@@ -165,6 +169,7 @@ void serializeCurrentScene(char *fileName){
 	fwrite(cp.entityToComponentOff, sizeof(Entity)*cp.entityWatermark, 1, f);
 	serializeComponent[x](f, cp.mem, cp.count);
     };
+    fwrite(&magicNumber2, sizeof(magicNumber2), 1, f);
     fwrite(&s->activeCam, sizeof(s->activeCam), 1, f);
     fclose(f);
 };
@@ -177,23 +182,28 @@ void deserializeToCurrentScene(char *fileName){
     char *mem = Package::openNormalFileFromPkgElseFile(fileName, fromFile, Package::curPkg);
     char *charMem = mem;
 
-    u8 id = *(u8*)charMem;
-    charMem += sizeof(id);
-    s->id = id;
+    s->id = *(u8*)charMem;
+    charMem += sizeof(s->id);
     Entity entityCount = *(Entity*)charMem;
     charMem += sizeof(entityCount);
     s->entityCount = entityCount;
-    if(entityCount != 0){
-	while(entityCount != 0){
-	    u32 len = *(u32*)charMem;
-	    charMem += sizeof(len);
-	    char *str = charMem;
-	    charMem += len;
-	    Entity e = *(Entity*)charMem;
-	    charMem += sizeof(e);
-	    map_set(&s->entityNameToID, str, e);
-	    entityCount -= 1;
-	};
+    while(entityCount != 0){
+	u32 len = *(u32*)charMem;
+	charMem += sizeof(len);
+	char *str = charMem;
+	charMem += len;
+	Entity e = *(Entity*)charMem;
+	charMem += sizeof(e);
+	map_set(&s->entityNameToID, str, e);
+	entityCount -= 1;
+    };
+    u32 magicNumberRead = *(u32*)charMem;
+    charMem += sizeof(magicNumber1);
+    if(magicNumberRead != magicNumber1){
+	print("magic number 1 in %s is %d", fileName, magicNumberRead);
+	if(fromFile){mem::free(mem);};
+	s->id = -1;
+	return;
     };
     u32 maskCount = *(u32*)charMem;
     charMem += sizeof(maskCount);
@@ -230,6 +240,14 @@ void deserializeToCurrentScene(char *fileName){
 	    cp.mem = (char*)deserializeComponent[x](charMem, cp.count);
 	    charMem += serializedComponentSize[x]*cp.count;
 	};
+    };
+    magicNumberRead = *(u32*)charMem;
+    charMem += sizeof(magicNumber2);
+    if(magicNumberRead != magicNumber2){
+	print("magic number 2 in %s is %d", fileName, magicNumberRead);
+	if(fromFile){mem::free(mem);};
+	s->id = -1;
+	return;
     };
     s->activeCam = *(Entity*)charMem;
     s->physicsWorld = new b2World({0.0, -9.8});

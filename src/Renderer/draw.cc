@@ -41,6 +41,14 @@ namespace Draw{
 #if(GL)
 	    OpenGL::setMat4Uniform(*(glm::mat4*)r.renderBuffer, "uProjectionView", curShader);
 	    OpenGL::batchAndDraw(r, x, x + quadVerticesCount);
+	    print("%d %d", info->pos.x, info->pos.y);
+#if(AND)
+	    u32 error = glGetError();
+	    while(error != GL_NO_ERROR){
+		print("[error] OpenGL error: %d", error);
+		error = glGetError();
+	    };
+#endif
 #endif
 	    x += quadVerticesCount;
 	};
@@ -53,6 +61,7 @@ namespace Draw{
     void beginFrame(Renderer &r, FrameBuffer &fb){
 	r.drawCalls = 0;
 	fb.bind();
+	glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
 	Draw::clearColourBuffer();
     };
     void endFrame(Renderer &r, FrameBuffer &fb){

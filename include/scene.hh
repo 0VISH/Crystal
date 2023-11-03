@@ -33,5 +33,5 @@ struct Scene{
     Entity   activeCam;
     Entity   entityCount;
     SceneState state;
-    u8       id;
+    s8         id;
 };

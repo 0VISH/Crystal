@@ -86,7 +86,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	
 	if(editorCode == nullptr){
 	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
 	    glClear(GL_COLOR_BUFFER_BIT);
   
 	    Shader::useShader(screenShader);
