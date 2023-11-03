@@ -38,15 +38,23 @@ namespace GameLayer{
 	Entity e = s->activeCam;
 	if(e < 0){return;};
 	auto *cam = (Component::PCamera*)getComponent(e, (u32)ComponentID::PCAMERA);
+	cam->init(s, e);
 	cam->calculateViewMat();
 
+	Entity quad = getEntity("TODO: REMOVE ME");
+	auto *trans = (Component::Transform*)getComponent(e, (u32)ComponentID::TRANSFORM);
+	print("pos: %d %d %d", trans->position.x,  trans->position.y,  trans->position.z);
+	print("scale: %d %d %d", trans->scale.x,  trans->scale.y,  trans->scale.z);
+	print("trans: %d %d %d", trans->rotation.x,  trans->rotation.y,  trans->rotation.z);
+	
+	
 	fillRenderBufferHeader(engine->r, cam->projection * cam->view);
 	fillRenderBufferWithGivenMS(engine->r, engine->ms);
     };
     void onUninit(){
 	Scene *s = engine->curScene;
 	if(s == nullptr){return;};
-	if(s->onUninit){
+	if(s->onUninit && s->id != -1){
 	    s->onUninit();
 	};
 	uninitAndFreeCurrentScene();

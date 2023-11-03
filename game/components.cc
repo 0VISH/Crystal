@@ -18,7 +18,7 @@ namespace Component{
     };
     void PCamera::init(Scene *s, Entity e){
 	zoomLevel = 1;
-	initPerspective(45, 1280/720, glm::vec3(0.0f, 0.0f, 3.0f));
+	initPerspective(45, (f32)engine->windowX/(f32)engine->windowY, glm::vec3(0.0f, 0.0f, 3.0f));
     };
     void PCamera::calculateViewMat(){
 	glm::mat4 t = glm::translate(glm::mat4(1.0f), pos);
