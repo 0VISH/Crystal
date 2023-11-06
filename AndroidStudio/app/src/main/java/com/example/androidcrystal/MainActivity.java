@@ -1,10 +1,13 @@
 package com.example.androidcrystal;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.view.Window;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -12,7 +15,7 @@ public class MainActivity extends AppCompatActivity{
     static {
         System.loadLibrary("crystal");
     }
-    public native void CrystalInit(AssetManager assetManager, int x, int y);
+    public native void CrystalInit(AssetManager assetManager);
     public native void CrystalUninit();
 
     private GLSurfaceView glSurfaceView = null;
@@ -20,8 +23,10 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){actionBar.hide();};
 
         glSurfaceView = findViewById(R.id.glSurfaceView);
         Renderer renderer = new Renderer();
@@ -32,7 +37,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onStart(){
         super.onStart();
-        CrystalInit(getAssets(), glSurfaceView.getWidth(), glSurfaceView.getHeight());
+        CrystalInit(getAssets());
     }
     @Override
     public void onDestroy(){

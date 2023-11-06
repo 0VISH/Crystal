@@ -1,13 +1,13 @@
-#version 310 es
+precision mediump float;
 
-in vec3 vertexPosition;
-in vec4 vertexColour;
+attribute vec3 vertexPosition;
+attribute vec4 vertexColour;
 
-out vec4 intermediateColour;
+varying vec4 intermediateColour;
 
 uniform mat4 uProjectionView;
 
 void main(){
      intermediateColour = vertexColour;
      gl_Position = uProjectionView * vec4(vertexPosition, 1.0);
-};
+}

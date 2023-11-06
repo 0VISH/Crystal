@@ -1,11 +1,11 @@
-#version 310 es
+precision mediump float;
 
-in vec2 vertexPosition;
-in vec2 vertexTextureCordinate;
+attribute vec2 vertexPosition;
+attribute vec2 vertexTextureCordinate;
 
-out vec2 intermediateTextureCordinate;
+varying vec2 intermediateTextureCordinate;
 
 void main() {
     intermediateTextureCordinate = vertexTextureCordinate;
     gl_Position = vec4(vertexPosition, 0.0, 1.0);
-};
+}

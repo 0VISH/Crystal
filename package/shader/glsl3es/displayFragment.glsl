@@ -1,12 +1,9 @@
-#version 310 es
 precision mediump float;
 
-in vec2 intermediateTextureCordinate;
-
-out vec4 fragmentColour;
+varying vec2 intermediateTextureCordinate;
 
 uniform sampler2D screenTexture;
 
 void main(){
-     fragmentColour = texture(screenTexture, intermediateTextureCordinate);
-};
+     gl_FragColor = texture2D(screenTexture, intermediateTextureCordinate);
+}
