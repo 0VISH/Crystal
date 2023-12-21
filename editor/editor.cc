@@ -306,20 +306,43 @@ namespace Editor{
 	game::free(s);
     };
     EXPORT bool update(Event e, f64 dt){
+	//NEW FRAME
+	ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplWin32_NewFrame();
+        ImGui::NewFrame();
+	
 	//FEEDING IMGUI EVENTS
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGuiIO& io = ImGui::GetIO();
 	if(isMouseButtonEvent(e)){
 	    io.AddMouseButtonEvent((s32)e.buttonCode, e.type == EventType::MOUSE_BUTTON_DOWN);
 	}else if(e.type == EventType::MOUSE_SCROLL){
 	    io.AddMouseWheelEvent(0.0f, e.scroll / 120);
 	}else if(isKeyboardButtonEvent(e)){
 	    //TODO: WTFFFFFFFFFF WHY NO WORK???????
+	    if(e.buttonCode >= ButtonCode::Key_A && e.buttonCode <= ButtonCode::Key_Z && e.type == EventType::KEY_DOWN){
+		io.AddInputCharacter((u32)e.buttonCode + ((u32)'a' - (u32)ButtonCode::Key_A));
+	    }else{
+		ImGuiKey key = ImGuiKey_None;
+		switch(e.buttonCode){
+		case ButtonCode::Key_LeftShift:
+		    key = ImGuiKey_LeftShift;
+		    break;
+		case ButtonCode::Key_RightShift:
+		    key = ImGuiKey_RightShift;
+		    break;
+		case ButtonCode::Key_Backspace:
+		    key = ImGuiKey_Backspace;
+		    break;
+		case ButtonCode::Key_LeftArrow:
+		    key = ImGuiKey_LeftArrow;
+		    break;
+		case ButtonCode::Key_RightArrow:
+		    key = ImGuiKey_RightArrow;
+		    break;
+		};
+		io.AddKeyEvent(key, e.type == EventType::KEY_DOWN);
+	    };
 	};
-
-	//NEW FRAME
-	ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplWin32_NewFrame();
-        ImGui::NewFrame();
 
 	//DOCKSPACE
 	bool dockspaceOpen = true;
@@ -451,7 +474,6 @@ namespace Editor{
 		editorSignal();
 	    };
 	};
-	
 	return io.WantCaptureMouse || io.WantCaptureKeyboard;
     };
     EXPORT void render(){

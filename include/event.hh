@@ -11,7 +11,6 @@ enum class EventType : u8{
     MOUSE_SCROLL,
 };
 enum class ButtonCode : u32{
-    //NOTE: this is in peace with imgui's button code
     L_MOUSE = 0,
     R_MOUSE,
     M_MOUSE,
@@ -124,12 +123,13 @@ enum class ButtonCode : u32{
 
 struct Event{
     EventType type;
-    ButtonCode buttonCode;
-    f32 scroll;
+    union{
+	ButtonCode buttonCode;
+	f32 scroll;
+    };
 };
 struct EventDispatcher{
-    Event events[EVENT_COUNT];
-    u8 off;
+    Event event;
 
     void init();
     void registerEvent(Event e);
