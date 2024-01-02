@@ -34,7 +34,7 @@ namespace Package{
 	char *tableEnd = tableStart + tableSize;
 
 	package->mem = mem;
-	map_init(&package->fileToOff);
+	package->fileToOff.init();
 	package->content = (char*)mem + sizeof(tableSize) + sizeof(fileCount) +tableSize;
 	
 	while(tableStart != tableEnd){
@@ -43,20 +43,20 @@ namespace Package{
 	    tableStart += sizeof(int);
 	    char *stringMem = tableStart;
 	    tableStart += len;
-	    int off = *(int*)tableStart;
-	    tableStart += sizeof(int);
+	    u32 off = *(u32*)tableStart;
+	    tableStart += sizeof(u32);
 
-	    map_set(&package->fileToOff, stringMem, off);
+	    package->fileToOff.insertValue({stringMem, (u32)strlen(stringMem)}, off);
 	};
     };
     char *openNormalFileFromPkgElseFile(char *fileName, bool &fromFile, Pkg *package){
 	if(package != nullptr){
 	    if(package->mem != nullptr){
 		//pkg
-		int *offPtr = map_get(&package->fileToOff, fileName);
-		if(offPtr != nullptr){
+	        u32 off;
+		if(package->fileToOff.getValue({fileName, (u32)strlen(fileName)}, &off)){
 		    fromFile = false;
-		    return package->content + (*offPtr);
+		    return package->content + off;
 		};
 	    };
 	};
@@ -83,10 +83,10 @@ namespace Package{
     char *openImgFileFromPkgElseFile(char *fileName, s32 &width, s32 &height, s32 &nrChannels, bool &fromFile, Pkg *package){
 	if(package->mem != nullptr){
 	    //pkg
-	    int *offPtr = map_get(&package->fileToOff, fileName);
-	    if(offPtr != nullptr){
+	    u32 off;
+	    if(package->fileToOff.getValue({fileName, (u32)strlen(fileName)}, &off)){
 		fromFile = false;
-		s32 *mem = (s32*)(package->content + (*offPtr));
+		s32 *mem = (s32*)(package->content + off);
 		
 		width = *mem;
 		mem += 1;
@@ -105,7 +105,7 @@ namespace Package{
     };
     void unloadPkg(Pkg *package){
 	if(package->mem == nullptr){return;};
-	map_deinit(&package->fileToOff);
+	package->fileToOff.uninit();
 	mem::free(package->mem);
     };
 };

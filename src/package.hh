@@ -1,8 +1,11 @@
 #pragma once
 
+#include "basic.hh"
+#include "ds.cc"
+
 namespace Package{
      struct Pkg{
-	map_int_t fileToOff;
+	HashmapStr fileToOff;
 	void *mem;
 	char *content;
     };

@@ -42,7 +42,6 @@ EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct,
 };
 
 #include "../src/mem.cc"
-#include "map.hh"
 #include "event.hh"
 #include "layer.hh"
 #include "scene.hh"
