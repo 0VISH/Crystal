@@ -142,6 +142,24 @@ const u32 magicNumber1 = 6969;
 const u32 magicNumber2 = 420420;
 
 void serializeCurrentScene(char *fileName){
+    Scene *s = engine->curScene;
+    FILE  *f = fopen(fileName, "wb");
+
+    fwrite(&s->id, sizeof(s->id), 1, f);
+    fwrite(&s->activeCam, sizeof(s->activeCam), 1, f);
+    serializeHashmapStr(s->entityNameToID, f);
+    serializeDynamicArray<u32>(s->entityComponentMask, f);
+    fwrite(&s->components.count, sizeof(s->components.count), 1, f);
+    for(u32 x=0; x<s->components.count; x+=1){
+	ComponentPool &cp = s->components[x];
+	fwrite(&cp.count, sizeof(cp.count), 1, f);
+	fwrite(&cp.componentSize, sizeof(cp.componentSize), 1, f);
+	if(cp.count == 0){continue;};
+	fwrite(&cp.entityWatermark, sizeof(cp.entityWatermark), 1, f);
+	fwrite(cp.entityToComponentOff, sizeof(Entity)*cp.entityWatermark, 1, f);
+	serializeComponent[x](f, cp.mem, cp.count);
+    };
+    fclose(f);
 };
 void deserializeToCurrentScene(char *fileName){
 };
