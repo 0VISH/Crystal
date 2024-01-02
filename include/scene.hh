@@ -23,7 +23,7 @@ struct ComponentPool{
 };
 
 struct Scene{
-    map_int_t             entityNameToID;
+    HashmapStr        entityNameToID;
     DynamicArray<u32> entityComponentMask;
     DynamicArray<ComponentPool> components;
     b2World *physicsWorld;

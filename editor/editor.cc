@@ -140,6 +140,7 @@ namespace Editor{
     };
     
     EXPORT void init(HWND window){
+	mem::init();
 	gameTexture = nullptr;
 	engine = getEngine();
 	r = &engine->r;
@@ -269,12 +270,15 @@ namespace Editor{
 	for(u32 x=0; x<cur->entityComponentMask.count; x+=1){
 	    cpy->entityComponentMask.push(cur->entityComponentMask[x]);
 	};
-	map_init(&cpy->entityNameToID);
-	const char *key;
-	map_iter_t iter = map_iter(&cur->entityNameToID);
-	while(key = map_next(&cur->entityNameToID, &iter)){
-	    Entity e = *map_get(&cur->entityNameToID, key);
-	    map_set(&cpy->entityNameToID, key, e);
+	cpy->entityNameToID.init();
+	HashmapStr &map = cur->entityNameToID;
+	for(u32 j=0; j<map.len; j+=1){
+	    if(map.status[j]){
+		String str = map.keys[j];
+		u32 e;
+		map.getValue(str, &e);
+		cpy->entityNameToID.insertValue(str, e);
+	    };
 	};
 	cpy->physicsWorld = new b2World({0.0, -9.8});
 	if(cpy->components.count <= (u32)ComponentID::RIGIDBODY){return cpy;};
@@ -301,7 +305,7 @@ namespace Editor{
 	    game::free(cp.entityToComponentOff);
 	};
 	s->components.uninit();
-	map_deinit(&s->entityNameToID);
+	s->entityNameToID.uninit();
 	delete s->physicsWorld;
 	game::free(s);
     };
@@ -501,6 +505,7 @@ namespace Editor{
 	if(gameCodePath != nullptr){game::free(gameCodePath);};
 	if(materialSystemPath != nullptr){game::free(materialSystemPath);};
 	if(curScenePath != nullptr){game::free(curScenePath);};
+	mem::uninit();
     };
 };
 

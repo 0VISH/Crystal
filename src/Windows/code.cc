@@ -12,7 +12,7 @@
 				  allocAndSetCurrentSceneType ascst, uninitAndFreeCurrentSceneType ufcst, \
 				  initCurrentSceneType icst, setActiveCameraToCurrentSceneType sacct, \
 				  serializeCurrentSceneType secst,	\
-				  sceneNewEntityType snet, getEntityType get, \
+				  newEntityType snet, getEntityType get, \
 				  removeComponentType rct, getComponentType gct, \
 				  createRigidBodyType crbt, createBoxColliderFixtureType cbcft, \
 				  getEngineType gent,			\
@@ -23,7 +23,7 @@
 		  allocAndSetCurrentScene, uninitAndFreeCurrentScene,	\
 		  initCurrentScene, setActiveCameraToCurrentScene,	\
 		  serializeCurrentScene,				\
-		  sceneNewEntity, getEntity,				\
+		  newEntity, getEntity,					\
 		  removeComponent, getComponent,			\
 		  createRigidBody, createBoxColliderFixture,		\
 		  getEngine,						\

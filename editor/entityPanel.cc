@@ -104,18 +104,19 @@ struct EntityPanel{
 		if(entityName[0] == 0){
 		    print("[error] Entity name not provided");
 		}else{
-		    Entity e = sceneNewEntity(entityName);
+		    newEntity(entityName);
 		};
 	    };
 	    u32 x = 0;
-	    const char *key;
-	    map_iter_t iter = map_iter(&s->entityNameToID);
-	    while(key = map_next(&s->entityNameToID, &iter)){
-		if(ImGui::Selectable(key, selectedEntity == x)){
-		    selectedEntity = x;
-		    e = *map_get(&s->entityNameToID, key);
+	    HashmapStr &map = s->entityNameToID;
+	    for(u32 j=0; j<map.len; j+=1){
+		if(map.status[j]){
+		    if(ImGui::Selectable(map.keys[j].mem, selectedEntity == x)){
+			selectedEntity = x;
+			s->entityNameToID.getValue(map.keys[j], (u32*)&e);
+		    };
+		    x += 1;
 		};
-		x += 1;
 	    };
 	    ImGui::End();
 	};

@@ -16,7 +16,7 @@ typedef void   (*uninitAndFreeCurrentSceneType)();
 typedef void   (*serializeCurrentSceneType)(char *fileName);
 typedef void   (*initCurrentSceneType)(u32 begEntityCount);
 typedef void   (*setActiveCameraToCurrentSceneType)(Entity e);
-typedef Entity (*sceneNewEntityType)(char *name);
+typedef Entity (*newEntityType)(char *name);
 typedef Entity (*getEntityType)(char *name);
 typedef void   (*removeComponentType)(Entity e, u32 componentID);
 typedef void*  (*getComponentType)(Entity e, u32 componentID);

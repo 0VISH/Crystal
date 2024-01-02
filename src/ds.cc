@@ -156,6 +156,14 @@ struct HashmapStr{
 	mem::free(values);
 	mem::free(status);
     };
+    void uninit(void(*free)(void *str)){
+	for(u32 x=0; x<len; x+=1){
+	    if(status[x]){
+		free(keys[x].mem);
+	    };
+	};
+	uninit();
+    };
     u32 hashFunc(const String &key){
 	//fnv_hash_1a_32
 	u32 h = 0x811c9dc5;

@@ -64,7 +64,7 @@ struct MaterialPanel{
 		Entity e = getEntity(entityName);
 		if(e != -1){
 		    materialRegisterEntity(mat, e);
-		}else{print("[error] Invalid entity name");};
+		};
 	    };
 	    ImGui::End();
 	};

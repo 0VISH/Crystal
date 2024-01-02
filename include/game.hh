@@ -65,7 +65,7 @@ uninitAndFreeCurrentSceneType uninitAndFreeCurrentScene;
 serializeCurrentSceneType serializeCurrentScene;
 initCurrentSceneType initCurrentScene;
 setActiveCameraToCurrentSceneType setActiveCameraToCurrentScene;
-sceneNewEntityType sceneNewEntity;
+newEntityType newEntity;
 getEntityType getEntity;
 removeComponentType removeComponent;
 getComponentType getComponent;
@@ -82,7 +82,7 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt, 
 			  allocAndSetCurrentSceneType ascst, uninitAndFreeCurrentSceneType ufcst,
 			  initCurrentSceneType icst, setActiveCameraToCurrentSceneType sacct,
 			  serializeCurrentSceneType secst,
-			  sceneNewEntityType snet, getEntityType get,
+			  newEntityType net, getEntityType get,
 			  removeComponentType rct, getComponentType gct,
 			  createRigidBodyType crbt, createBoxColliderFixtureType cbcft,
 			  getEngineType gent,
@@ -104,7 +104,7 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt, 
     
     serializeCurrentScene = secst;
     
-    sceneNewEntity = snet;
+    newEntity = net;
     getEntity = get;
     
     removeComponent = rct;
