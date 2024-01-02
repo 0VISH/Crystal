@@ -11,22 +11,22 @@ struct MaterialPanel{
 		return;
 	    };
 	    const u32 MAX_NAME = 50;
-	    char matName[MAX_NAME] = "TODO: RMEMOVE ME";
-	    char shaderName[MAX_NAME] = {0};
-	    shaderName[0] = 1;    //TODO: remove
-	    ImGui::InputText("Material Name", matName, MAX_NAME);
-	    ImGui::InputText("Shader Name", shaderName, MAX_NAME);
-	    if(ImGui::Button("New Material")){
-		if(matName[0] == 0){
-		    print("[error] Material name not provided");
-		}else if(shaderName[0] == 0){
-		    print("[error] Shader name not provided");
+	    char matName[MAX_NAME] = {0};
+	    char shaderName[MAX_NAME] = "default";
+	    if(ImGui::InputText("New Material", matName, MAX_NAME, ImGuiInputTextFlags_EnterReturnsTrue)){
+		if(matName[0] != 0){
+		    if(shaderName[0] != 0){
+			if(shaderName[0] != 0){
+			    newMaterial(matName, shaderName);
+			};
+		    }else{
+			print("[error] Shader name not provided");
+		    }
 		}else{
-		    //TODO: get shader id from name
-		    newMaterial(matName, 1);
+		    print("[error] Material name not provided");
 		};
 	    };
-
+	    ImGui::InputText("Shader Name", shaderName, MAX_NAME);
 	    MaterialSystem *ms = engine->ms;
 	    for(u32 x=0; x<ms->materials.count; x+=1){
 		Material &mat = ms->materials[x];
@@ -56,10 +56,11 @@ struct MaterialPanel{
 		ImGui::TreePop();
 	    };
 	    const u32 MAX_NAME = 50;
-	    char entityName[MAX_NAME] = "TODO: REMOVE ME";
-	    ImGui::InputText("Register Entity", entityName, MAX_NAME);
-	    
-	    if(ImGui::Button("Add Entity")){
+	    char entityName[MAX_NAME] = {0};
+	    if(ImGui::InputText("Register Entity", entityName, MAX_NAME, ImGuiInputTextFlags_EnterReturnsTrue)){
+		if(entityName[0] == 0){
+		    print("[error] Entity name not provided");
+		};
 		Entity e = getEntity(entityName);
 		if(e != -1){
 		    materialRegisterEntity(mat, e);

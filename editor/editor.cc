@@ -318,12 +318,14 @@ namespace Editor{
 	}else if(e.type == EventType::MOUSE_SCROLL){
 	    io.AddMouseWheelEvent(0.0f, e.scroll / 120);
 	}else if(isKeyboardButtonEvent(e)){
-	    //TODO: WTFFFFFFFFFF WHY NO WORK???????
 	    if(e.buttonCode >= ButtonCode::Key_A && e.buttonCode <= ButtonCode::Key_Z && e.type == EventType::KEY_DOWN){
 		io.AddInputCharacter((u32)e.buttonCode + ((u32)'a' - (u32)ButtonCode::Key_A));
 	    }else{
 		ImGuiKey key = ImGuiKey_None;
 		switch(e.buttonCode){
+		case ButtonCode::Key_Enter:
+		    key = ImGuiKey_Enter;
+		    break;
 		case ButtonCode::Key_LeftShift:
 		    key = ImGuiKey_LeftShift;
 		    break;

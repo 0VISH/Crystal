@@ -8,11 +8,11 @@ logType print;
 
 #if(DBG)
 s32 main(){
-    mem::calls = 0;
 #else
 //no console
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow){
 #endif
+    mem::init();
     engine = (Crystal*)mem::alloc(sizeof(Crystal));
     
     HWND window = window::create("Crystal", 1280, 800);
@@ -52,7 +52,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	print("Loaded game code\n");
 
 	sq = Draw::initScreenQuad();
-	screenShader = engine->ss.newShader("package/shader/glsl4/displayVertex.glsl", "package/shader/glsl4/displayFragment.glsl");
+	screenShader = engine->ss.newShader("package/shader/glsl4/displayVertex.glsl", "package/shader/glsl4/displayFragment.glsl", "display");
     };
     engine->gameLayerOff = engine->lm.layerCount;
     engine->lm.newLayer();
@@ -112,9 +112,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     window::destroy(window);
 
     mem::free(engine);
-
-    dlog("CALLS: %d\nNOT_FREED: %lld\n", mem::calls, mem::notFreed);
+    dlog("ALLOC_COUNT: %d\n", mem::allocCount);
     if(logOutputFile != nullptr){uninitLogOutputFile();};
+    mem::uninit();
     return EXIT_SUCCESS;
 }
 

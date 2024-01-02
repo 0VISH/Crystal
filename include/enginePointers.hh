@@ -4,7 +4,7 @@
 #include "components.hh"
 
 typedef void      (*materialRegisterEntityType)(Material &m, Entity e);
-typedef Material& (*newMaterialType)(char *name, u32 shader);
+typedef Material& (*newMaterialType)(char *name, char *shaderName);
 typedef void      (*serializeMaterialSystemType)(char *fileName);
 typedef void      (*deserializeMaterialSystemType)(char *fileName);
 

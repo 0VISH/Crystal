@@ -29,7 +29,7 @@ void submitQuad(Renderer &r, const glm::mat4 &mat){
     v4.pos = mat * glm::vec4(quadVertices[6], quadVertices[7], 0.0, 1.0);
     v4.col = r.curMat->col;
     r.watermark += 1;
-	    
+    
     r.indexCount += 6;
 };
 void fillRenderBufferWithGivenMat(Renderer &r, Material &m){

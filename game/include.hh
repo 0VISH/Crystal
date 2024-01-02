@@ -1,7 +1,7 @@
 #pragma once
 
-#if(WIN)
+#include "../src/mem.cc"
+#include "../src/ds.cc"
 #include "map.cc"
 #include "addComponent.cc"
 #include "components.cc"
-#endif

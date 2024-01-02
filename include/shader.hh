@@ -1,11 +1,10 @@
 #pragma once
 
 struct ShaderSystem{
-    ds::DynamicArray<u32> shaderPrograms;
-    //TODO: hash-map shader name to id
+    HashmapStr shaderToId;
     
     void init();
     void uninit();
-    u32 newShader(char *vertexShaderPath, char *fragmentShaderPath);
-    u32 getDefaultShader();
+    u32 newShader(char *vertexShaderPath, char *fragmentShaderPath, char *name);
+    u32 getShader(char *name);
 };

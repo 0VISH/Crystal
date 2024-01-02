@@ -99,10 +99,8 @@ struct EntityPanel{
 		return;
 	    };
 	    const u32 MAX_NAME = 50;
-	    char entityName[MAX_NAME] = "TODO: REMOVE ME";
-	    ImGui::InputText(":", entityName, MAX_NAME);
-	    ImGui::SameLine();
-	    if(ImGui::Button("New Entity")){
+	    char entityName[MAX_NAME] = {0};
+	    if(ImGui::InputText("New Entity", entityName, MAX_NAME, ImGuiInputTextFlags_EnterReturnsTrue)){
 		if(entityName[0] == 0){
 		    print("[error] Entity name not provided");
 		}else{

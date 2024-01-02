@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../src/ds.cc"
 #include "box2d/box2d.h"
 
 typedef s32 Entity;
@@ -23,8 +24,8 @@ struct ComponentPool{
 
 struct Scene{
     map_int_t             entityNameToID;
-    ds::DynamicArray<u32> entityComponentMask;
-    ds::DynamicArray<ComponentPool> components;
+    DynamicArray<u32> entityComponentMask;
+    DynamicArray<ComponentPool> components;
     b2World *physicsWorld;
     LayerFunc onInit;
     LayerFunc onUninit;

@@ -14,7 +14,7 @@
 #include "event.cc"
 #include "layer.cc"
 #include "package.hh"
-#include "ds.hh"
+#include "ds.cc"
 #include "scene.cc"
 #include "physics.cc"
 #include "Renderer/include.hh"

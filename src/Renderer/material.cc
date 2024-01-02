@@ -15,6 +15,7 @@ void allocMaterialSystem(){
 void materialSystemInit(u32 materialCount = 5){
     MaterialSystem *ms = engine->ms;
     ms->materials.init(materialCount);
+    ms->materialToOff.init();
 };
 void uninitAndFreeMaterialSystem(){
     MaterialSystem *ms = engine->ms;
@@ -22,12 +23,23 @@ void uninitAndFreeMaterialSystem(){
 	Material &mat = ms->materials[x];
 	materialUninit(mat);
     };
+    ms->materialToOff.uninit();
     ms->materials.uninit();
     mem::free(ms);
 };
-Material &newMaterial(char *name, u32 shader){
+Material &newMaterial(char *name, char *shaderName){
     MaterialSystem *ms = engine->ms;
+    u32 shader = engine->ss.getShader(shaderName);
     u32 count = ms->materials.count;
+    String matName;
+    matName.mem = name;
+    matName.len = (u32)strlen(name);
+    u32 temp;
+    if(ms->materialToOff.getValue(matName, &temp)){
+	print("[error] material with name %s already exists", name);
+	return ms->materials[0];
+    };
+    ms->materialToOff.insertValue(matName, count);
     Material &mat =  ms->materials.newElem();
     u32 len = (u32)strlen(name) + 1;
     char *aName = (char*)mem::alloc(len);

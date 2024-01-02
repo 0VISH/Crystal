@@ -9,25 +9,38 @@ namespace Shader{
 };
 
 void ShaderSystem::init(){
-    shaderPrograms.init();
+    shaderToId.init();
 };
-u32 ShaderSystem::newShader(char *vertexShaderPath, char *fragmentShaderPath){
+u32 ShaderSystem::newShader(char *vertexShaderPath, char *fragmentShaderPath, char *name){
     u32 program;
+    String shaderName;
+    shaderName.mem = name;
+    shaderName.len = (u32)strlen(name);
+    if(shaderToId.getValue(shaderName, &program) == true){
+	print("[error] shader with name %s already exists", name);
+	return 0;
+    };
 #if(GL)
     program = glCreateProgram();
     OpenGL::createShader(vertexShaderPath, fragmentShaderPath, program);
 #endif
-    shaderPrograms.push(program);
+    shaderToId.insertValue(shaderName, program);
     return program;
 };
-u32 ShaderSystem::getDefaultShader(){
-    return shaderPrograms[0];
+u32 ShaderSystem::getShader(char *name){
+    u32 program = 0;
+    if(shaderToId.getValue({name, (u32)strlen(name)}, &program) == false){
+	print("[error] shader with name %s does not exist", name);
+    };
+    return program;
 };
 void ShaderSystem::uninit(){
-    for(u32 x=0; x<shaderPrograms.count; x+=1){
+    for(u32 x=0; x<shaderToId.count; x+=1){
+	if(shaderToId.status[x] == true){
 #if(GL)
-	OpenGL::destroyShader(shaderPrograms[x]);
+	    OpenGL::destroyShader(shaderToId.values[x]);
 #endif
+	};
     };
-    shaderPrograms.uninit();
+    shaderToId.uninit();
 };

@@ -5,6 +5,7 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #include "game.hh"
+Crystal *engine; 
 
 namespace Game{
     EXPORT bool trialUpdate(Event e, f64 dt){

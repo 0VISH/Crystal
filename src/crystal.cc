@@ -16,9 +16,9 @@ void Crystal::initGraphics(){
     Draw::init(r);
     Package::loadPkg("package/setup.pkg", Package::curPkg);
 #if(WIN)
-    u32 defaultShader = ss.newShader("package/shader/glsl4/vertex.glsl", "package/shader/glsl4/fragment.glsl");
+    u32 defaultShader = ss.newShader("package/shader/glsl4/vertex.glsl", "package/shader/glsl4/fragment.glsl", "default");
 #elif(AND)
-    u32 defaultShader = ss.newShader("package/shader/glsl3es/vertex.glsl", "package/shader/glsl3es/fragment.glsl");
+    u32 defaultShader = ss.newShader("package/shader/glsl3es/vertex.glsl", "package/shader/glsl3es/fragment.glsl", "default");
 #endif
     Shader::useShader(defaultShader);
     fb.init(windowX, windowY);

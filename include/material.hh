@@ -1,7 +1,7 @@
 #pragma once
 
 struct Material{
-    ds::DynamicArray<Entity> registeredEntities;
+    DynamicArray<Entity>  registeredEntities;
     glm::vec4 col;
     char *name;
     u32 shader;
@@ -9,6 +9,6 @@ struct Material{
 };
 
 struct MaterialSystem{
-    ds::DynamicArray<Material> materials;
-    //TODO: hash-map to get mat from its name
+    DynamicArray<Material> materials;
+    HashmapStr materialToOff;
 };
