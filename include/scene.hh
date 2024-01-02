@@ -32,7 +32,7 @@ struct Scene{
     LayerFunc onRender;
     LayerUpdateFunc onUpdate;
     Entity   activeCam;
-    Entity   entityCount;
+    u32      entityCount;
     SceneState state;
-    s8         id;
+    u32        id;
 };

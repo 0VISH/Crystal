@@ -49,20 +49,8 @@ namespace Package{
 	    package->fileToOff.insertValue({stringMem, (u32)strlen(stringMem)}, off);
 	};
     };
-    char *openNormalFileFromPkgElseFile(char *fileName, bool &fromFile, Pkg *package){
-	if(package != nullptr){
-	    if(package->mem != nullptr){
-		//pkg
-	        u32 off;
-		if(package->fileToOff.getValue({fileName, (u32)strlen(fileName)}, &off)){
-		    fromFile = false;
-		    return package->content + off;
-		};
-	    };
-	};
-
-	//file
-	FILE *f = fopen(fileName, "r");
+    char *openNormalFile(char *fileName){
+	FILE *f = fopen(fileName, "rb");
 	if(f == nullptr){
 	    print("%s path does not exist", fileName);
 	    return nullptr;
@@ -77,8 +65,23 @@ namespace Package{
 	fclose(f);
 
 	mem[fsize] = 0;
-	fromFile = true;
 	return mem;
+    };
+    char *openNormalFileFromPkgElseFile(char *fileName, bool &fromFile, Pkg *package){
+	if(package != nullptr){
+	    if(package->mem != nullptr){
+		//pkg
+	        u32 off;
+		if(package->fileToOff.getValue({fileName, (u32)strlen(fileName)}, &off)){
+		    fromFile = false;
+		    return package->content + off;
+		};
+	    };
+	};
+
+	//file
+	fromFile = true;
+	return openNormalFile(fileName);
     };
     char *openImgFileFromPkgElseFile(char *fileName, s32 &width, s32 &height, s32 &nrChannels, bool &fromFile, Pkg *package){
 	if(package->mem != nullptr){

@@ -162,6 +162,39 @@ void serializeCurrentScene(char *fileName){
     fclose(f);
 };
 void deserializeToCurrentScene(char *fileName){
+    Scene *s = engine->curScene;
+    char  *mem = Package::openNormalFile(fileName);
+    u32    x=0;
+
+    s->id = deserializeu32(mem, x);
+    s->activeCam = *(Entity*)(&mem[x]);
+    x += sizeof(Entity);
+    deserializeHashmapStr(s->entityNameToID, mem, x);
+    deserializeDynamicArray<u32>(s->entityComponentMask, mem, x);
+    s->components.count = deserializeu32(mem, x);
+    const u32 cpCount = s->components.count;
+    if(s->entityCount != 0){
+	s->components.init(cpCount);
+	for(u32 x=0; x<cpCount; x+=1){
+	    ComponentPool &cp = s->components.newElem();
+	    cp.count = deserializeu32(mem, x);
+	    cp.componentSize = *(u64*)mem;
+	    mem += sizeof(cp.componentSize);
+	    if(cp.count == 0){
+		componentPoolInit(cp, cp.componentSize, 5);
+		continue;
+	    };
+	    cp.len = cp.count;	    
+	    cp.entityWatermark = *(Entity*)mem;
+	    mem += sizeof(cp.entityWatermark);
+	    u64 entityToComponentSize = cp.entityWatermark*sizeof(Entity);
+	    cp.entityToComponentOff = (Entity*)mem::alloc(entityToComponentSize);
+	    memcpy(cp.entityToComponentOff, mem, entityToComponentSize);
+	    mem += entityToComponentSize;
+	    cp.mem = (char*)deserializeComponent[x](mem, cp.count);
+	    mem += serializedComponentSize[x]*cp.count;
+	};
+    };
 };
 Entity newEntity(char *name){
     Scene *s = engine->curScene;

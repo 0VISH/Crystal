@@ -19,9 +19,13 @@ void serializeDynamicArray(DynamicArray<T> &arr, FILE *f){
     };
 };
 
+inline u32 deserializeu32(char *mem, u32 &x){
+    u32 u = *(u32*)(&mem[x]);
+    x += sizeof(u32);
+    return u;
+};
 char* deserializeString(u32 &length, char *mem, u32 &x){
-    u32 len = *(u32*)(&mem[x]);
-    x += sizeof(len);
+    u32 len = deserializeu32(mem, x);
     char *str = (char*)mem::alloc(len);
     memcpy(str, &mem[x], len);
     x += len;
@@ -29,24 +33,21 @@ char* deserializeString(u32 &length, char *mem, u32 &x){
     return str;
 };
 void deserializeHashmapStr(HashmapStr &map, char *mem, u32 &x){
-    u32 count = *(u32*)(&mem[x]);
-    x += sizeof(count);
+    u32 count = deserializeu32(mem, x);
     map.init(count);
     for(u32 j=0; x<count; x+=1){
 	u32 len;
 	char *str = deserializeString(len, mem, x);
-	u32 value = *(u32*)(&mem[x]);
-	x += sizeof(count);
+	u32 value = deserializeu32(mem, x);
 	map.insertValue({str, len}, value);
     };
 };
 template<typename T>
 void deserializeDynamicArray(DynamicArray<T> &arr, char *mem, u32 &x){
-    u32 count = *(u32*)(&mem[x]);
-    x += sizeof(count);
+    u32 count = deserializeu32(mem, x);
     arr.init(count);
     for(u32 x=0; x<count; x+=1){
 	T *t = (T*)mem;
-	arr.insertValue(*T);
+	arr.push(*t);
     };
 };
