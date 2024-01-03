@@ -3,7 +3,11 @@ void setScene(char *scenePath){
 	uninitAndFreeCurrentScene();
     };
     allocAndSetCurrentScene();
-    deserializeToCurrentScene(scenePath);
+    if(deserializeToCurrentScene(scenePath) == false){
+	mem::free(engine->curScene);
+	engine->curScene = nullptr;
+	return;
+    };
     
     u32 len = strlen(scenePath);
     u32 dotOffFromBack;
@@ -34,7 +38,6 @@ void setMaterialSystem(char *filePath){
 	uninitAndFreeMaterialSystem();
     };
     print("Material System: %s\n", filePath);
-    allocMaterialSystem();
     deserializeMaterialSystem(filePath);
 };
 void editorSignal(){

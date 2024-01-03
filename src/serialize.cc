@@ -1,4 +1,5 @@
-void serializeString(char *mem, u32 len, FILE *f){
+void serializeString(char *mem, FILE *f){
+    u32 len = strlen(mem);
     fwrite(&len, sizeof(len), 1, f);
     fwrite(mem, len, 1, f);
 };
@@ -6,17 +7,18 @@ void serializeHashmapStr(HashmapStr &map, FILE *f){
     fwrite(&map.count, sizeof(map.count), 1, f);
     for(u32 x=0; x<map.len; x+=1){
 	if(map.status[x]){
-	    serializeString(map.keys[x].mem, map.keys[x].len, f);
+	    serializeString(map.keys[x].mem, f);
 	    fwrite(&map.values[x], sizeof(u32), 1, f);
 	};
     };
 };
+inline void serializeu32(u32 num, FILE *f){
+    fwrite(&num, sizeof(num), 1, f);
+};
 template<typename T>
 void serializeDynamicArray(DynamicArray<T> &arr, FILE *f){
     fwrite(&arr.count, sizeof(arr.count), 1, f);
-    for(u32 x=0; x<arr.count; x+=1){
-	fwrite(&arr.mem[x], sizeof(T), 1, f);
-    };
+    fwrite(arr.mem, sizeof(T)*arr.count, 1, f);
 };
 
 inline u32 deserializeu32(char *mem, u32 &x){
@@ -26,8 +28,9 @@ inline u32 deserializeu32(char *mem, u32 &x){
 };
 char* deserializeString(u32 &length, char *mem, u32 &x){
     u32 len = deserializeu32(mem, x);
-    char *str = (char*)mem::alloc(len);
+    char *str = (char*)mem::alloc(len+1);
     memcpy(str, &mem[x], len);
+    str[len] = '\0';
     x += len;
     length = len;
     return str;
@@ -35,7 +38,7 @@ char* deserializeString(u32 &length, char *mem, u32 &x){
 void deserializeHashmapStr(HashmapStr &map, char *mem, u32 &x){
     u32 count = deserializeu32(mem, x);
     map.init(count);
-    for(u32 j=0; x<count; x+=1){
+    for(u32 j=0; j<count; j+=1){
 	u32 len;
 	char *str = deserializeString(len, mem, x);
 	u32 value = deserializeu32(mem, x);
@@ -46,8 +49,9 @@ template<typename T>
 void deserializeDynamicArray(DynamicArray<T> &arr, char *mem, u32 &x){
     u32 count = deserializeu32(mem, x);
     arr.init(count);
-    for(u32 x=0; x<count; x+=1){
-	T *t = (T*)mem;
+    for(u32 j=0; j<count; j+=1){
+	T *t = (T*)(&mem[x]);
 	arr.push(*t);
+	x += sizeof(T);
     };
 };

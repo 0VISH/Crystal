@@ -18,8 +18,8 @@ struct ComponentPool{
     char *mem;
     u32 count;
     u32 len;
+    u32 entityWatermark;
     Entity *entityToComponentOff;
-    Entity entityWatermark;
 };
 
 struct Scene{

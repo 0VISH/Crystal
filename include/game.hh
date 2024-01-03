@@ -20,23 +20,17 @@
 #include "basic.hh"
 
 #include "utils.hh"
-namespace game{
-    allocType alloc;
-    freeType  free;
-};
 logType print;
 setGameCodeType  setGameCode;
 setSceneType     setScene;
 setMaterialSystemType setMaterialSystem;
 editorSignalType editorSignal;
 
-EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct, setMaterialSystemType smst, allocType at, freeType ft,  editorSignalType est){
+EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct, setMaterialSystemType smst,  editorSignalType est){
     print = l;
     setGameCode = sgct;
     setScene = sct;
     setMaterialSystem = smst;
-    game::alloc = at;
-    game::free = ft;
 
     editorSignal = est;
 };

@@ -69,10 +69,7 @@ void *componentPoolGetComponent(ComponentPool &cp, Entity e){
 static u8 sceneID = 0;
 
 typedef u64 (*SerializeComponent)(FILE *f, void *mem, u32 count);
-typedef void* (*DeserializeComponent)(char *mem, u32 count);
-
-const u64 camSize = sizeof(Component::PCamera::pos) + sizeof(Component::PCamera::zoomLevel) + sizeof(Component::PCamera::aspectRatio) + sizeof(Component::PCamera::fieldOfView);
-const u64 transSize = sizeof(Component::Transform::position) + sizeof(Component::Transform::rotation) + sizeof(Component::Transform::scale);
+typedef void* (*DeserializeComponent)(char *mem, u32 &xx, u32 count);
 
 u64 serializePCamera(FILE *f, void *mem, u32 count){
     Component::PCamera *cmem = (Component::PCamera*)mem;
@@ -83,22 +80,25 @@ u64 serializePCamera(FILE *f, void *mem, u32 count){
 	fwrite(&cc.aspectRatio, sizeof(cc.aspectRatio), 1, f);
 	fwrite(&cc.fieldOfView, sizeof(cc.fieldOfView), 1, f);
     };
+    const u64 camSize = sizeof(Component::PCamera::pos) + sizeof(Component::PCamera::zoomLevel) + sizeof(Component::PCamera::aspectRatio) + sizeof(Component::PCamera::fieldOfView);
     return camSize;
 };
-void *deserializePCamera(char *mem, u32 count){
+void *deserializePCamera(char *mem, u32 &xx, u32 count){
+    u32 x = xx;
     Component::PCamera *cmem = (Component::PCamera*)mem::alloc(count * sizeof(Component::PCamera));
-    for(u32 x=0; x<count; x+=1){
-	Component::PCamera &cam = cmem[x];
-	cam.pos = *(glm::vec3*)mem;
-	mem += sizeof(cam.pos);
-	cam.zoomLevel = *(f32*)mem;
-	mem += sizeof(cam.zoomLevel);
-	cam.aspectRatio = *(f32*)mem;
-	mem += sizeof(cam.aspectRatio);
-	cam.fieldOfView = *(f32*)mem;
-	mem += sizeof(cam.fieldOfView);
+    for(u32 j=0; j<count; j+=1){
+	Component::PCamera &cam = cmem[j];
+	cam.pos = *(glm::vec3*)(&mem[x]);
+	x += sizeof(cam.pos);
+	cam.zoomLevel = *(f32*)(&mem[x]);
+	x += sizeof(cam.zoomLevel);
+	cam.aspectRatio = *(f32*)(&mem[x]);
+	x += sizeof(cam.aspectRatio);
+	cam.fieldOfView = *(f32*)(&mem[x]);
+	x += sizeof(cam.fieldOfView);
 	cam.initPerspective(cam.fieldOfView, cam.aspectRatio, cam.pos);
     };
+    xx = x;
     return cmem;
 };
 u64 serializeTransform(FILE *f, void *mem, u32 count){
@@ -109,19 +109,22 @@ u64 serializeTransform(FILE *f, void *mem, u32 count){
 	fwrite(&ct.rotation, sizeof(ct.rotation), 1, f);
 	fwrite(&ct.scale,    sizeof(ct.scale), 1, f);
     };
+    const u64 transSize = sizeof(Component::Transform::position) + sizeof(Component::Transform::rotation) + sizeof(Component::Transform::scale);
     return transSize;
 };
-void *deserializeTransform(char *mem, u32 count){
+void *deserializeTransform(char *mem, u32 &xx, u32 count){
+    u32 x = xx;
     Component::Transform *tmem = (Component::Transform*)mem::alloc(count * sizeof(Component::Transform));
-    for(u32 x=0; x<count; x+=1){
-	Component::Transform &tra = tmem[x];
-	tra.position = *(glm::vec3*)mem;
-	mem += sizeof(tra.position);
-	tra.rotation = *(glm::vec3*)mem;
-	mem += sizeof(tra.rotation);
-	tra.scale = *(glm::vec3*)mem;
-	mem += sizeof(tra.scale);
+    for(u32 j=0; j<count; j+=1){
+	Component::Transform &tra = tmem[j];
+	tra.position = *(glm::vec3*)(&mem[x]);
+	x += sizeof(tra.position);
+	tra.rotation = *(glm::vec3*)(&mem[x]);
+	x += sizeof(tra.rotation);
+	tra.scale = *(glm::vec3*)(&mem[x]);
+	x += sizeof(tra.scale);
     };
+    xx = x;
     return tmem;
 };
 
@@ -133,13 +136,8 @@ DeserializeComponent deserializeComponent[] = {
     deserializePCamera,
     deserializeTransform,
 };
-u64 serializedComponentSize[] = {
-    camSize,
-    transSize,
-};
 
-const u32 magicNumber1 = 6969;
-const u32 magicNumber2 = 420420;
+const u32 magicNumber = 69;
 
 void serializeCurrentScene(char *fileName){
     Scene *s = engine->curScene;
@@ -149,6 +147,7 @@ void serializeCurrentScene(char *fileName){
     fwrite(&s->activeCam, sizeof(s->activeCam), 1, f);
     serializeHashmapStr(s->entityNameToID, f);
     serializeDynamicArray<u32>(s->entityComponentMask, f);
+    serializeu32(magicNumber, f);
     fwrite(&s->components.count, sizeof(s->components.count), 1, f);
     for(u32 x=0; x<s->components.count; x+=1){
 	ComponentPool &cp = s->components[x];
@@ -161,40 +160,44 @@ void serializeCurrentScene(char *fileName){
     };
     fclose(f);
 };
-void deserializeToCurrentScene(char *fileName){
+bool deserializeToCurrentScene(char *fileName){
     Scene *s = engine->curScene;
     char  *mem = Package::openNormalFile(fileName);
     u32    x=0;
 
+    s->physicsWorld = new b2World({0.0, -9.8});
     s->id = deserializeu32(mem, x);
     s->activeCam = *(Entity*)(&mem[x]);
     x += sizeof(Entity);
     deserializeHashmapStr(s->entityNameToID, mem, x);
     deserializeDynamicArray<u32>(s->entityComponentMask, mem, x);
+    if(deserializeu32(mem, x) != magicNumber){
+	print("[error] deserializing scene. Couldnt find magic number");
+	return false;
+    };
     s->components.count = deserializeu32(mem, x);
     const u32 cpCount = s->components.count;
     if(s->entityCount != 0){
 	s->components.init(cpCount);
-	for(u32 x=0; x<cpCount; x+=1){
+	for(u32 j=0; j<cpCount; j+=1){
 	    ComponentPool &cp = s->components.newElem();
 	    cp.count = deserializeu32(mem, x);
-	    cp.componentSize = *(u64*)mem;
-	    mem += sizeof(cp.componentSize);
+	    cp.componentSize = *(u64*)(&mem[x]);
+	    x += sizeof(cp.componentSize);
 	    if(cp.count == 0){
 		componentPoolInit(cp, cp.componentSize, 5);
 		continue;
 	    };
 	    cp.len = cp.count;	    
-	    cp.entityWatermark = *(Entity*)mem;
-	    mem += sizeof(cp.entityWatermark);
+	    cp.entityWatermark = deserializeu32(mem, x);
 	    u64 entityToComponentSize = cp.entityWatermark*sizeof(Entity);
 	    cp.entityToComponentOff = (Entity*)mem::alloc(entityToComponentSize);
-	    memcpy(cp.entityToComponentOff, mem, entityToComponentSize);
-	    mem += entityToComponentSize;
-	    cp.mem = (char*)deserializeComponent[x](mem, cp.count);
-	    mem += serializedComponentSize[x]*cp.count;
+	    memcpy(cp.entityToComponentOff, &mem[x], entityToComponentSize);
+	    x += entityToComponentSize;
+	    cp.mem = (char*)deserializeComponent[j](mem, x, cp.count);
 	};
     };
+    return true;
 };
 Entity newEntity(char *name){
     Scene *s = engine->curScene;

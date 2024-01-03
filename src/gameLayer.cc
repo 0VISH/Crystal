@@ -38,6 +38,7 @@ namespace GameLayer{
 	Entity e = s->activeCam;
 	if(e < 0){return;};
 	auto *cam = (Component::PCamera*)getComponent(e, (u32)ComponentID::PCAMERA);
+	ASSERT(cam != nullptr);
 	cam->init(s, e);
 	cam->calculateViewMat();;
 		

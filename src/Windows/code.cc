@@ -2,9 +2,8 @@
     auto setupUtilPointer = (void(*)(logType l,				\
 				     setGameCodeType sgct, setSceneType sct, \
 				     setMaterialSystemType smst,	\
-				     allocType at, freeType ft,		\
 				     editorSignalType est))GetProcAddress(HANDLE, "setupUtilPointers"); \
-    setupUtilPointer(print, Code::setGameCode, setScene, setMaterialSystem, mem::alloc, mem::free, editorSignal); \
+    setupUtilPointer(print, Code::setGameCode, setScene, setMaterialSystem, editorSignal); \
 									\
     auto setupPointers = (void(*)(materialRegisterEntityType mret, newMaterialType nmt, \
 				  serializeMaterialSystemType smst, deserializeMaterialSystemType dmst,	\
@@ -40,6 +39,7 @@ namespace Code{
     void setGameCode(char *path){
 	u32 len = strlen(path)+1;
 	memcpy(dll, path, len);
+	print("Game code: %s", dll);
 	memcpy(dllTemp, path, len);
 	u32 off = len;
 	while(dllTemp[off] != '.'){off -= 1;};
@@ -49,10 +49,7 @@ namespace Code{
 	char *dotDll = ".dll";
 	u32 dotDllLen = (u32)strlen(dotDll);
 	memcpy(dllTemp+off+tempLen, dotDll, dotDllLen+1); //+1 for null byte
-
-	print("Game code: %s", dll);
 	print("Temp game code: %s", dllTemp);
-	
 	engine->gameCode = cpySrcAndLoadTemp();
     };
     HMODULE load(char *path){

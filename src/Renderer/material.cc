@@ -15,7 +15,7 @@ void allocMaterialSystem(){
 void materialSystemInit(u32 materialCount = 5){
     MaterialSystem *ms = engine->ms;
     ms->materials.init(materialCount);
-    ms->materialToOff.init();
+    ms->materialToOff.init(materialCount);
 };
 void uninitAndFreeMaterialSystem(){
     MaterialSystem *ms = engine->ms;
@@ -48,6 +48,7 @@ Material &newMaterial(char *name, char *shaderName){
     mat.name = aName;
     mat.registeredEntities.init();
     mat.id = count;
+    mat.col = glm::vec4(0.0, 0.0, 0.0, 1.0);
     return mat;
 };
 
@@ -55,14 +56,12 @@ void serializeMaterialSystem(char *filePath){
     MaterialSystem *ms = engine->ms;
     FILE *f = fopen(filePath, "wb");
     ASSERT(f);
+
     fwrite(&ms->materials.count, sizeof(ms->materials.count), 1, f);
     for(u32 x=0; x<ms->materials.count; x+=1){
 	Material &mat = ms->materials[x];
-	fwrite(&mat.registeredEntities.count, sizeof(mat.registeredEntities.count), 1, f);
-	fwrite(mat.registeredEntities.mem, sizeof(Entity) * mat.registeredEntities.count, 1, f);
-	u32 nameLen = strlen(mat.name) + 1;  //+1 for null byte
-	fwrite(&nameLen, sizeof(nameLen), 1, f);
-	fwrite(mat.name, nameLen, 1, f);
+	serializeDynamicArray<Entity>(mat.registeredEntities, f);
+	serializeString(mat.name, f);
 	fwrite(&mat.col, sizeof(mat.col), 1, f);
 	fwrite(&mat.shader, sizeof(mat.shader), 1, f);
 	fwrite(&mat.id, sizeof(mat.id), 1, f);
@@ -75,40 +74,25 @@ void deserializeMaterialSystem(char *filePath){
     bool fromFile = true;
     void *mem = Package::openNormalFileFromPkgElseFile(filePath, fromFile, nullptr);
     char *charMem = (char*)mem;
+    u32 x = 0;
 
-    u32 count = *(u32*)charMem;
-    ms->materials.init(count);
-    charMem += sizeof(count);
+    u32 count = deserializeu32(charMem, x);
 
     //TODO: alloc a block for material names
-    for(u32 x=0; x<count; x+=1){
+    for(u32 j=0; j<count; j+=1){
 	Material mat;
+
+	deserializeDynamicArray<Entity>(mat.registeredEntities, charMem, x);
+	u32 len;
+	mat.name = deserializeString(len, charMem, x);
+	ms->materialToOff.insertValue({mat.name, len}, j);
 	
-	u32 entCount = *(u32*)charMem;
-	charMem += sizeof(count);
-	Entity *regEnt = (Entity*)charMem;
-	charMem += entCount * sizeof(Entity);
+	mat.col = *(glm::vec4*)(&charMem[x]);
+	x += sizeof(mat.col);
+
+	mat.shader = deserializeu32(charMem, x);
 	
-	mat.registeredEntities.init(entCount);
-	for(u32 y=0; y<entCount; y+=1){
-	    mat.registeredEntities.push(regEnt[x]);
-	};
-
-	u32 nameLen = *(u32*)charMem;
-	charMem += sizeof(nameLen);
-
-	char *name = (char*)mem::alloc(nameLen);
-	memcpy(name, charMem, nameLen);
-	charMem += nameLen;
-	mat.name = name;
-	
-	mat.col = *(glm::vec4*)charMem;
-	charMem += sizeof(mat.col);
-
-	mat.shader = *(u32*)charMem;
-	charMem += sizeof(mat.shader);
-
-	mat.id = *(u32*)charMem;
+	mat.id = deserializeu32(charMem, x);
 
 	ms->materials.push(mat);
     };

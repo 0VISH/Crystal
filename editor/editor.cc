@@ -65,7 +65,7 @@ char *getName(char *charMem, u32 &x){
     while(charMem[x] != '\n'){x+=1;};
     x += 1;
     u32 len = x - start - 1;
-    char *str = (char*)game::alloc(len);
+    char *str = (char*)mem::alloc(len);
     memcpy(str, charMem+start, len-1);
     str[len-1] = '\0';
     return str;
@@ -79,8 +79,7 @@ void openCryFile(){
 	long size = ftell(f);
 	fseek(f, 0, SEEK_SET);
 
-	void *mem = game::alloc(size);
-	memset(mem, NULL, size);
+	void *mem = mem::calloc(size);
 	fread(mem, size, 1, f);
 	fclose(f);
 	char *charMem = (char*)mem;
@@ -100,7 +99,7 @@ void openCryFile(){
 	    }else if(memcmp("scene", charMem+start, x-start-1) == 0){
 		curScenePath = getName(charMem, x);
 		setScene(curScenePath);
-		engine->curScene->state = SceneState::NONE;
+		if(engine->curScene){engine->curScene->state = SceneState::NONE;};
 	    }else if(memcmp("END", charMem+start, x-start-1)){
 		break;
 	    }else{
@@ -108,8 +107,7 @@ void openCryFile(){
 	    };
 	    eatEmptySpaces(charMem, x);
 	};
-
-	game::free(mem);
+	mem::free(mem);
     }else{
 	print("[warning] Project file not selected");
     }
@@ -238,7 +236,7 @@ namespace Editor{
 	}
     };
     Scene *deepCopyCurSceneAndSetCurScene(){
-	Scene *cpy = (Scene*)game::alloc(sizeof(Scene));
+	Scene *cpy = (Scene*)mem::alloc(sizeof(Scene));
 	Scene *cur = engine->curScene;
 	engine->curScene = cpy;
 	cpy->onInit   = cur->onInit;
@@ -258,8 +256,8 @@ namespace Editor{
 	    cpycp.entityWatermark = curcp.entityWatermark;
 	    u64 memLen = curcp.componentSize * curcp.count;
 	    u32 entLen = sizeof(Entity) * curcp.entityWatermark;
-	    char *cpyMem = (char*)game::alloc(memLen);
-	    Entity *cpyEntity = (Entity*)game::alloc(entLen);
+	    char *cpyMem = (char*)mem::alloc(memLen);
+	    Entity *cpyEntity = (Entity*)mem::alloc(entLen);
 	    memcpy(cpyMem, curcp.mem, memLen);
 	    memcpy(cpyEntity, curcp.entityToComponentOff, entLen);
 	    cpycp.mem = cpyMem;
@@ -301,13 +299,13 @@ namespace Editor{
 	s->entityComponentMask.uninit();
 	for(u32 x=0; x<s->components.count; x+=1){
 	    ComponentPool &cp = s->components[x];
-	    game::free(cp.mem);
-	    game::free(cp.entityToComponentOff);
+	    mem::free(cp.mem);
+	    mem::free(cp.entityToComponentOff);
 	};
 	s->components.uninit();
 	s->entityNameToID.uninit();
 	delete s->physicsWorld;
-	game::free(s);
+	mem::free(s);
     };
     EXPORT bool update(Event e, f64 dt){
 	//NEW FRAME
@@ -502,9 +500,9 @@ namespace Editor{
 #endif
 	ImGui::DestroyContext();
 	
-	if(gameCodePath != nullptr){game::free(gameCodePath);};
-	if(materialSystemPath != nullptr){game::free(materialSystemPath);};
-	if(curScenePath != nullptr){game::free(curScenePath);};
+	if(gameCodePath != nullptr){mem::free(gameCodePath);};
+	if(materialSystemPath != nullptr){mem::free(materialSystemPath);};
+	if(curScenePath != nullptr){mem::free(curScenePath);};
 	mem::uninit();
     };
 };
