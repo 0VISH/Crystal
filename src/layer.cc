@@ -22,8 +22,7 @@ void LayerManager::popLayerWithoutUninit(){
     layerCount -= 1;
 };
 void LayerManager::uninitLayers(){
-    for(u8 x=layerCount; x>0;){
-	x -= 1;
+    for(u8 x=0; x<layerCount; x+=1){
 	if(layers[x].onUninit != nullptr){layers[x].onUninit();};
     };
 };

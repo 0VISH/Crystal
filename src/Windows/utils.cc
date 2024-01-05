@@ -37,6 +37,8 @@ void setMaterialSystem(char *filePath){
     if(engine->ms != nullptr){
 	uninitAndFreeMaterialSystem();
     };
+    allocMaterialSystem();
+    materialSystemInit();
     print("Material System: %s\n", filePath);
     deserializeMaterialSystem(filePath);
 };

@@ -136,7 +136,7 @@ namespace Editor{
 	va_end(args);
 	console.Items.push_back(Strdup(buf));
     };
-    
+   
     EXPORT void init(HWND window){
 	mem::init();
 	gameTexture = nullptr;
@@ -235,7 +235,7 @@ namespace Editor{
 	    print("[error] User canceled the dialog or an error occurred");
 	}
     };
-    Scene *deepCopyCurSceneAndSetCurScene(){
+    Scene *deepCopyAndSetCurScene(){
 	Scene *cpy = (Scene*)mem::alloc(sizeof(Scene));
 	Scene *cur = engine->curScene;
 	engine->curScene = cpy;
@@ -295,10 +295,13 @@ namespace Editor{
 	};
 	return cpy;
     };
-    void destroyDeepCpyCurScene(Scene *s){
+    void uninitAndDeepFreeCurrentScene(){
+	Scene *s = engine->curScene;
+	if(s->onUninit){s->onUninit();};
 	s->entityComponentMask.uninit();
 	for(u32 x=0; x<s->components.count; x+=1){
 	    ComponentPool &cp = s->components[x];
+	    //componentPoolUninit(cp);
 	    mem::free(cp.mem);
 	    mem::free(cp.entityToComponentOff);
 	};
@@ -424,7 +427,7 @@ namespace Editor{
 		if(sceneState == SceneState::NONE){
 		    if(ImGui::Button("PLAY")){
 			curScene = engine->curScene;
-			deepCopyCurSceneAndSetCurScene();
+			deepCopyAndSetCurScene();
 			engine->curScene->state = SceneState::PLAYING;
 			if(engine->curScene->onInit){
 			    engine->curScene->onInit();
@@ -438,8 +441,9 @@ namespace Editor{
 		    ImGui::SameLine();
 		    if(ImGui::Button("STOP")){
 			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
-			destroyDeepCpyCurScene(engine->curScene);
+			uninitAndDeepFreeCurrentScene();
 			engine->curScene = curScene;
+			curScene = nullptr;
 		    };
 		}else if(sceneState == SceneState::PAUSED){
 		    if(ImGui::Button("PLAY")){
@@ -449,8 +453,9 @@ namespace Editor{
 		    ImGui::SameLine();
 		    if(ImGui::Button("STOP")){
 			Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
-			destroyDeepCpyCurScene(engine->curScene);
+			uninitAndDeepFreeCurrentScene();
 			engine->curScene = curScene;
+			curScene = nullptr;
 		    };
 		};
 	    };
@@ -492,6 +497,10 @@ namespace Editor{
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     };
     EXPORT void uninit(){
+	if(curScene != nullptr){
+	    uninitAndDeepFreeCurrentScene();
+	    engine->curScene = curScene;
+	};
 	console.uninit();
 
 #if(GL)

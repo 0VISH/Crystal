@@ -76,7 +76,7 @@ void deserializeMaterialSystem(char *filePath){
     char *charMem = (char*)mem;
     u32 x = 0;
 
-    u32 count = deserializeu32(charMem, x);
+    u32 count = deserialize<u32>(charMem, x);
 
     //TODO: alloc a block for material names
     for(u32 j=0; j<count; j+=1){
@@ -87,12 +87,11 @@ void deserializeMaterialSystem(char *filePath){
 	mat.name = deserializeString(len, charMem, x);
 	ms->materialToOff.insertValue({mat.name, len}, j);
 	
-	mat.col = *(glm::vec4*)(&charMem[x]);
-	x += sizeof(mat.col);
+	mat.col = deserialize<glm::vec4>(charMem, x);
 
-	mat.shader = deserializeu32(charMem, x);
+	mat.shader = deserialize<u32>(charMem, x);
 	
-	mat.id = deserializeu32(charMem, x);
+	mat.id = deserialize<u32>(charMem, x);
 
 	ms->materials.push(mat);
     };

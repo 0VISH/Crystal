@@ -48,9 +48,6 @@ namespace GameLayer{
     void onUninit(){
 	Scene *s = engine->curScene;
 	if(s == nullptr){return;};
-	if(s->onUninit && s->id != -1){
-	    s->onUninit();
-	};
 	uninitAndFreeCurrentScene();
     };
 };

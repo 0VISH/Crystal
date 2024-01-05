@@ -88,14 +88,10 @@ void *deserializePCamera(char *mem, u32 &xx, u32 count){
     Component::PCamera *cmem = (Component::PCamera*)mem::alloc(count * sizeof(Component::PCamera));
     for(u32 j=0; j<count; j+=1){
 	Component::PCamera &cam = cmem[j];
-	cam.pos = *(glm::vec3*)(&mem[x]);
-	x += sizeof(cam.pos);
-	cam.zoomLevel = *(f32*)(&mem[x]);
-	x += sizeof(cam.zoomLevel);
-	cam.aspectRatio = *(f32*)(&mem[x]);
-	x += sizeof(cam.aspectRatio);
-	cam.fieldOfView = *(f32*)(&mem[x]);
-	x += sizeof(cam.fieldOfView);
+	cam.pos = deserialize<glm::vec3>(mem, x);
+	cam.zoomLevel = deserialize<f32>(mem, x);
+	cam.aspectRatio = deserialize<f32>(mem, x);
+	cam.fieldOfView = deserialize<f32>(mem, x);
 	cam.initPerspective(cam.fieldOfView, cam.aspectRatio, cam.pos);
     };
     xx = x;
@@ -117,12 +113,9 @@ void *deserializeTransform(char *mem, u32 &xx, u32 count){
     Component::Transform *tmem = (Component::Transform*)mem::alloc(count * sizeof(Component::Transform));
     for(u32 j=0; j<count; j+=1){
 	Component::Transform &tra = tmem[j];
-	tra.position = *(glm::vec3*)(&mem[x]);
-	x += sizeof(tra.position);
-	tra.rotation = *(glm::vec3*)(&mem[x]);
-	x += sizeof(tra.rotation);
-	tra.scale = *(glm::vec3*)(&mem[x]);
-	x += sizeof(tra.scale);
+	tra.position = deserialize<glm::vec3>(mem, x);
+	tra.rotation = deserialize<glm::vec3>(mem, x);
+	tra.scale = deserialize<glm::vec3>(mem, x);
     };
     xx = x;
     return tmem;
@@ -147,7 +140,7 @@ void serializeCurrentScene(char *fileName){
     fwrite(&s->activeCam, sizeof(s->activeCam), 1, f);
     serializeHashmapStr(s->entityNameToID, f);
     serializeDynamicArray<u32>(s->entityComponentMask, f);
-    serializeu32(magicNumber, f);
+    fwrite(&magicNumber, sizeof(magicNumber), 1, f);
     fwrite(&s->components.count, sizeof(s->components.count), 1, f);
     for(u32 x=0; x<s->components.count; x+=1){
 	ComponentPool &cp = s->components[x];
@@ -166,30 +159,28 @@ bool deserializeToCurrentScene(char *fileName){
     u32    x=0;
 
     s->physicsWorld = new b2World({0.0, -9.8});
-    s->id = deserializeu32(mem, x);
-    s->activeCam = *(Entity*)(&mem[x]);
-    x += sizeof(Entity);
+    s->id = deserialize<u32>(mem, x);
+    s->activeCam = deserialize<Entity>(mem, x);
     deserializeHashmapStr(s->entityNameToID, mem, x);
     deserializeDynamicArray<u32>(s->entityComponentMask, mem, x);
-    if(deserializeu32(mem, x) != magicNumber){
+    if(deserialize<u32>(mem, x) != magicNumber){
 	print("[error] deserializing scene. Couldnt find magic number");
 	return false;
     };
-    s->components.count = deserializeu32(mem, x);
+    s->components.count = deserialize<u32>(mem, x);
     const u32 cpCount = s->components.count;
     if(s->entityCount != 0){
 	s->components.init(cpCount);
 	for(u32 j=0; j<cpCount; j+=1){
 	    ComponentPool &cp = s->components.newElem();
-	    cp.count = deserializeu32(mem, x);
-	    cp.componentSize = *(u64*)(&mem[x]);
-	    x += sizeof(cp.componentSize);
+	    cp.count = deserialize<u32>(mem, x);
+	    cp.componentSize = deserialize<u64>(mem, x);
 	    if(cp.count == 0){
 		componentPoolInit(cp, cp.componentSize, 5);
 		continue;
 	    };
 	    cp.len = cp.count;	    
-	    cp.entityWatermark = deserializeu32(mem, x);
+	    cp.entityWatermark = deserialize<u32>(mem, x);
 	    u64 entityToComponentSize = cp.entityWatermark*sizeof(Entity);
 	    cp.entityToComponentOff = (Entity*)mem::alloc(entityToComponentSize);
 	    memcpy(cp.entityToComponentOff, &mem[x], entityToComponentSize);
@@ -273,6 +264,7 @@ void initCurrentScene(u32 begEntityCount){
 };
 void uninitAndFreeCurrentScene(){
     Scene *s = engine->curScene;
+    if(s->onUninit){s->onUninit();};
     s->entityComponentMask.uninit();
     for(u32 x=0; x<s->components.count; x+=1){
 	ComponentPool &cp = s->components[x];
