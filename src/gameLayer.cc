@@ -7,7 +7,7 @@ namespace GameLayer{
 	if(s->components.count <= (u32)ComponentID::RIGIDBODY){
 	    return res;
 	};
-	//TODO: set physics to const rate?
+	//FIXME: set physics to const rate
         const u32 hertz = 60;
 	const f32 timeStamp = 1/hertz;
 	s32 velocityIterations = 6;
@@ -39,7 +39,7 @@ namespace GameLayer{
 	if(e < 0){return;};
 	auto *cam = (Component::PCamera*)getComponent(e, (u32)ComponentID::PCAMERA);
 	ASSERT(cam != nullptr);
-	cam->init(s, e);
+	cam->calculateProjectionMat();
 	cam->calculateViewMat();;
 		
 	fillRenderBufferHeader(engine->r, cam->projection * cam->view);
