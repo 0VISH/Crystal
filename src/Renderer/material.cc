@@ -12,10 +12,11 @@ void materialRegisterEntity(Material &m, Entity e){
 void allocMaterialSystem(){
     engine->ms = (MaterialSystem*)mem::alloc(sizeof(MaterialSystem));
 };
-void materialSystemInit(u32 materialCount = 5){
+void materialSystemInit(u32 materialCount = 5, u32 textureCount = 5){
     MaterialSystem *ms = engine->ms;
     ms->materials.init(materialCount);
     ms->materialToOff.init(materialCount);
+    ms->textureToId.init(textureCount);
 };
 void uninitAndFreeMaterialSystem(){
     MaterialSystem *ms = engine->ms;
@@ -25,6 +26,7 @@ void uninitAndFreeMaterialSystem(){
     };
     ms->materialToOff.uninit();
     ms->materials.uninit();
+    ms->textureToId.uninit();
     mem::free(ms);
 };
 Material &newMaterial(char *name, char *shaderName){

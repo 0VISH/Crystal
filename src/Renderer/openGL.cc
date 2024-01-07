@@ -166,7 +166,19 @@ namespace OpenGL{
 	glUniform4f(uLoc, vec[0], vec[1], vec[2], vec[3]);
     };
     void clearColourBuffer(){glClear(GL_COLOR_BUFFER_BIT);};
-
+    u32 loadTexture(char *data, u32 width, u32 height){
+	u32 id;
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	return id;
+    };
+    
     void init(Renderer &r){
 	glGenVertexArrays(1, &r.qvao);	
 	glBindVertexArray(r.qvao);
@@ -177,6 +189,8 @@ namespace OpenGL{
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Draw::Vertex), (const void*)offsetof(Draw::Vertex, col));
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Draw::Vertex), (const void*)offsetof(Draw::Vertex, textPos));
+	glEnableVertexAttribArray(2);
 
 	//fill up our entire index buffer
 	u32 *indices = (u32*)mem::alloc(sizeof(u32) * Draw::maxIndexCount);

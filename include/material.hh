@@ -5,10 +5,12 @@ struct Material{
     glm::vec4 col;
     char *name;
     u32 shader;
+    u32 textureId;
     u32 id;
 };
 
 struct MaterialSystem{
     DynamicArray<Material> materials;
     HashmapStr materialToOff;
+    HashmapStr textureToId;
 };

@@ -5,7 +5,7 @@
 				     editorSignalType est))GetProcAddress(HANDLE, "setupUtilPointers"); \
     setupUtilPointer(print, Code::setGameCode, setScene, setMaterialSystem, editorSignal); \
 									\
-    auto setupPointers = (void(*)(materialRegisterEntityType mret, newMaterialType nmt, \
+    auto setupPointers = (void(*)(loadTextureType ltt, materialRegisterEntityType mret, newMaterialType nmt, \
 				  serializeMaterialSystemType smst, deserializeMaterialSystemType dmst,	\
 				  componentPoolInitType cpit, componentPoolAddComponentType cpact, \
 				  allocAndSetCurrentSceneType ascst, uninitAndFreeCurrentSceneType ufcst, \
@@ -16,7 +16,7 @@
 				  createRigidBodyType crbt, createBoxColliderFixtureType cbcft, \
 				  getEngineType gent,			\
 				  isKeyDownType ikdt))GetProcAddress(HANDLE, "setupPointers"); \
-    setupPointers(materialRegisterEntity,  newMaterial,			\
+    setupPointers(loadTexture, materialRegisterEntity,  newMaterial,	\
 		  serializeMaterialSystem, deserializeMaterialSystem,	\
 		  componentPoolInit, componentPoolAddComponent,		\
 		  allocAndSetCurrentScene, uninitAndFreeCurrentScene,	\

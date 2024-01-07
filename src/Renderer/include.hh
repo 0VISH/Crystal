@@ -9,3 +9,4 @@
 #include "draw.cc"
 #include "material.cc"
 #include "renderBuffer.cc"
+#include "texture.cc"

@@ -54,7 +54,7 @@ struct PackageBuilder{
     void addImgFile(char *filePath){
 	int width, height, nrChannels;
 	unsigned char *data = stbi_load(filePath, &width, &height, &nrChannels, 0);
-	int bufferSize = width * height * nrChannels;
+	int bufferSize = width * height;
 
 	const int newFileSize = bufferSize + (sizeof(int)*3);
 	char *mem = (char*)malloc(newFileSize);
@@ -63,9 +63,7 @@ struct PackageBuilder{
 	intMem += 1;
 	*intMem = height;
 	intMem += 1;
-	*intMem = nrChannels;
-	intMem += 1;
-
+	
 	memcpy(intMem, data, bufferSize);
 	stbi_image_free(data);
 

@@ -45,6 +45,7 @@ EXPORT void setupUtilPointers(logType l, setGameCodeType sgct, setSceneType sct,
 #include "componentID.hh"
 
 #include "enginePointers.hh"
+loadTextureType loadTexture;
 materialRegisterEntityType materialRegisterEntity;
 newMaterialType newMaterial;
 serializeMaterialSystemType serializeMaterialSystem;
@@ -70,7 +71,7 @@ getEngineType getEngine;
 
 isKeyDownType    isKeyDown;
 
-EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt, serializeMaterialSystemType smst, deserializeMaterialSystemType dmst,
+EXPORT void setupPointers(loadTextureType ltt, materialRegisterEntityType mret, newMaterialType nmt, serializeMaterialSystemType smst, deserializeMaterialSystemType dmst,
 			  componentPoolInitType cpit, componentPoolAddComponentType cpact,
 			  allocAndSetCurrentSceneType ascst, uninitAndFreeCurrentSceneType ufcst,
 			  initCurrentSceneType icst, setActiveCameraToCurrentSceneType sacct,
@@ -80,7 +81,7 @@ EXPORT void setupPointers(materialRegisterEntityType mret, newMaterialType nmt, 
 			  createRigidBodyType crbt, createBoxColliderFixtureType cbcft,
 			  getEngineType gent,
 			  isKeyDownType ikdt){
-    
+    loadTexture = ltt;
     materialRegisterEntity = mret;
     newMaterial = nmt;
     serializeMaterialSystem = smst;

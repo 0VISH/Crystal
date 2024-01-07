@@ -13,6 +13,7 @@ namespace Package{
     void loadPkg(char *packagePath, Pkg *package);
     char *openNormalFile(char *fileName);
     char *openNormalFileFromPkgElseFile(char *fileName, bool &fromFile, Pkg *package);
+    char *openImgFileFromPkgElseFile(char *fileName, s32 &width, s32 &height, bool &fromFile, Pkg *package);
     void unloadPkg(Pkg *package);
 
     Pkg *commonPkg;

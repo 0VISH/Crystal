@@ -49,21 +49,42 @@ struct MaterialPanel{
 	    ImGui::ColorEdit4("Colour", (float*)&mat.col, ImGuiColorEditFlags_AlphaPreview);
 	    ImGui::Text("Shader ID: %d", mat.shader);
 
+	    const u32 MAX_NAME = 50;
+	    char textureName[MAX_NAME] = {0};
+	    if(ImGui::InputText("Add Texture", textureName, MAX_NAME, ImGuiInputTextFlags_EnterReturnsTrue)){
+		if(textureName[0] == 0){
+		    print("[error] Texture name not provided");
+		}else{
+		    MaterialSystem *ms = engine->ms;
+		    u32 id;
+		    if(ms->textureToId.getValue({textureName, (u32)strlen(textureName)}, &id)){
+			mat.textureId = id;
+		    }else{
+			s32 id = loadTexture(textureName);
+			if(id == -1){
+			    print("[error] invalid path provided for texture");
+			}else{
+			    ms->textureToId.insertValue({textureName, (u32)strlen(textureName)}, id);
+			    mat.textureId = id;
+			};
+		    };
+		};
+	    };
 	    if(ImGui::TreeNodeEx("Show Entities")){
 		for(u32 x=0; x<mat.registeredEntities.count; x+=1){
 		    ImGui::Text("%d", mat.registeredEntities[x]);
 		};
 		ImGui::TreePop();
 	    };
-	    const u32 MAX_NAME = 50;
 	    char entityName[MAX_NAME] = {0};
 	    if(ImGui::InputText("Register Entity", entityName, MAX_NAME, ImGuiInputTextFlags_EnterReturnsTrue)){
 		if(entityName[0] == 0){
 		    print("[error] Entity name not provided");
-		};
-		Entity e = getEntity(entityName);
-		if(e != -1){
-		    materialRegisterEntity(mat, e);
+		}else{
+		    Entity e = getEntity(entityName);
+		    if(e != -1){
+			materialRegisterEntity(mat, e);
+		    };
 		};
 	    };
 	    ImGui::End();

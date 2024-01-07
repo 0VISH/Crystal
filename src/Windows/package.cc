@@ -83,7 +83,7 @@ namespace Package{
 	fromFile = true;
 	return openNormalFile(fileName);
     };
-    char *openImgFileFromPkgElseFile(char *fileName, s32 &width, s32 &height, s32 &nrChannels, bool &fromFile, Pkg *package){
+    char *openImgFileFromPkgElseFile(char *fileName, s32 &width, s32 &height, bool &fromFile, Pkg *package){
 	if(package->mem != nullptr){
 	    //pkg
 	    u32 off;
@@ -95,13 +95,11 @@ namespace Package{
 		mem += 1;
 		height = *mem;
 		mem += 1;
-		nrChannels = *mem;
-		mem += 1;
 
 		return (char*)mem;
 	    };
 	};
-
+	s32 nrChannels;
 	unsigned char *data = stbi_load(fileName, &width, &height, &nrChannels, 0);
 	fromFile = true;
 	return (char*)data;
