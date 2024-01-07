@@ -13,6 +13,12 @@ void Crystal::init(){
     lm.init(3);
 };
 void Crystal::initGraphics(){
+    char whitePixel[] = {(char)255, (char)255, (char)255, (char)255};
+#if(GL)
+    u32 wid = OpenGL::loadTexture(whitePixel, 1, 1);
+#endif
+    ASSERT(wid == 1);
+    
     Draw::init(r);
     Package::loadPkg("package/setup.pkg", Package::curPkg);
 #if(WIN)
@@ -22,6 +28,7 @@ void Crystal::initGraphics(){
 #endif
     Shader::useShader(defaultShader);
     fb.init(windowX, windowY);
+
 };
 void Crystal::uninit(){
     if(lm.layers != nullptr){

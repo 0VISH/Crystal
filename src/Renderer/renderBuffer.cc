@@ -3,35 +3,38 @@
 #include "crystal.hh"
 #include "componentID.hh"
 
-void submitQuad(Renderer &r, const glm::mat4 &mat){
+void submitQuad(Renderer &r, const glm::mat4 &mat, Material &m){
     Draw::Vertex &v1 = *r.watermark;
     v1.pos = mat * glm::vec4(0.5f, 0.5f, 0.0, 1.0);
     v1.textPos = glm::vec2(1.0f, 1.0f);
-    v1.col = r.curMat->col;
+    v1.col = m.col;
+    v1.textID = m.textureId;
     r.watermark += 1;
 
     Draw::Vertex &v2 = *r.watermark;
     v2.pos = mat * glm::vec4(0.5f, -0.5f, 0.0, 1.0);
     v1.textPos = glm::vec2(1.0f, 0.0f);
-    v2.col = r.curMat->col;
+    v2.col = m.col;
+    v2.textID = m.textureId;
     r.watermark += 1;
 
     Draw::Vertex &v3 = *r.watermark;
     v3.pos = mat * glm::vec4(-0.5f, -0.5f, 0.0, 1.0);
     v1.textPos = glm::vec2(0.0f, 0.0f);
-    v3.col = r.curMat->col;
+    v3.col = m.col;
+    v3.textID = m.textureId;
     r.watermark += 1;
 
     Draw::Vertex &v4 = *r.watermark;
     v4.pos = mat * glm::vec4(-0.5f, 0.5f, 0.0, 1.0);
     v1.textPos = glm::vec2(0.0f, 1.0f);
-    v4.col = r.curMat->col;
+    v4.col = m.col;
+    v4.textID = m.textureId;
     r.watermark += 1;
     
     r.indexCount += 6;
 };
 void fillRenderBufferWithGivenMat(Renderer &r, Material &m){
-    r.curMat = &m;
     Draw::Vertex *info = r.watermark;
     info->shader = m.shader;
     r.watermark += 1;
@@ -40,7 +43,7 @@ void fillRenderBufferWithGivenMat(Renderer &r, Material &m){
 	Entity e = m.registeredEntities[x];
 	auto *transform = (Component::Transform*)getComponent(e, (u32)ComponentID::TRANSFORM);
 	if(transform == nullptr){continue;};
-	submitQuad(r, transform->genMatrix());
+	submitQuad(r, transform->genMatrix(), m);
 	submittedQuads += 1;
     };
     if(submittedQuads == 0){

@@ -11,6 +11,7 @@ namespace Draw{
 	};
 	glm::vec3 pos;
 	glm::vec2 textPos;
+	u32 textID;
     };
 
     const u32 maxQuadCount   = 1000;
@@ -21,7 +22,6 @@ namespace Draw{
 struct Renderer{
     Draw::Vertex *renderBuffer;
     Draw::Vertex *watermark;
-    Material *curMat;
 
     bool bufferEmpty;
     u32 qvbo;
