@@ -28,8 +28,9 @@ namespace Draw{
     void draw(Renderer &r){
 	if(r.bufferEmpty){return;};
 	Draw::Vertex *x = r.renderBuffer + (u32)ceil((f64)sizeof(glm::mat4)/(f64)sizeof(Draw::Vertex));
+	//FIXME: 
 	u32 curShader = x->shader;
-	Shader::useShader(curShader);
+	Shader::useShader(0);
 	while(x != r.watermark){
 	    Draw::Vertex *info = x;
 	    if(info->shader != curShader){

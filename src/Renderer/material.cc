@@ -53,7 +53,7 @@ Material &newMaterial(char *name, char *shaderName){
     mat.registeredEntities.init();
     mat.id = count;
     mat.col = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    mat.textureId = 1;
+    mat.textureId = 0;
     return mat;
 };
 

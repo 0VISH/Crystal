@@ -9,7 +9,7 @@ Crystal *engine;
 
 namespace Game{
     EXPORT bool trialUpdate(Event e, f64 dt){
-	Entity sq = getEntity("qad");
+	Entity sq = getEntity("quad");
 	if(sq == -1){return false;};
 	auto *cam = (Component::PCamera*)getComponent(sq, (u32)ComponentID::PCAMERA);
 	setActiveCameraToCurrentScene(sq);

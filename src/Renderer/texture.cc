@@ -6,6 +6,9 @@ void bindTextureToUnit(u32 unit, u32 textureId, u32 shader){
     OpenGL::bindTextureToUnit(unit, textureId, shader);
 #endif
 };
+
+static u32 wid = 0;
+
 s32 loadTexture(char *name, u32 shaderOff){
     ShaderSystem &ss = engine->ss;
     MaterialSystem *ms = engine->ms;
@@ -38,12 +41,19 @@ void initTextures(char *shaderName){
 	print("[error] shader with name %s does not exist. Cannot init texture samplers", shaderName);
     };
     ShaderInfo &info = ss.shaderInfo[off];
-    char whitePixel[] = {(char)255, (char)255, (char)255, (char)255};
+    if(wid == 0){
+	char whitePixel[] = {(char)255, (char)255, (char)255, (char)255};
 #if(GL)
-    OpenGL::initTextureSamplers(info.shaderId);
-    u32 wid = OpenGL::loadTexture(whitePixel, 1, 1, 0);
-    ASSERT(wid == 1);
+	OpenGL::initTextureSamplers(info.shaderId);
+	u32 wid = OpenGL::loadTexture(whitePixel, 1, 1, 0);
+	ASSERT(wid == 1);
 #endif
+    };
     bindTextureToUnit(0, wid, info.shaderId);
     info.textureUnitOff = 1;
+    MaterialSystem *ms = engine->ms;
+    String textureName;
+    textureName.mem = "white";
+    textureName.len = (u32)strlen(textureName.mem);
+    ms->textureToId.insertValue(textureName,  0);
 };

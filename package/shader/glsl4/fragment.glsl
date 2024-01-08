@@ -2,11 +2,12 @@
 
 layout (location = 0) in vec4 iCol;
 layout (location = 1) in vec2 iTex;
-
-layout (location = 0) out vec4 oFragCol;
+layout (location = 2) flat in int iTexId;
 
 uniform sampler2D textures[5];
 
+layout (location = 0) out vec4 oFragCol;
+
 void main(){
-     oFragCol = iCol;
+     oFragCol = iCol * texture(textures[iTexId], iTex);
 };

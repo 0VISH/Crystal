@@ -14,38 +14,38 @@ namespace OpenGL{
 	//https://learnopengl.com/In-Practice/Debugging
 	if(id == 131169 || id == 131185 || id == 131218 || id == 131204) return; 
 
-	print("------[OPENGL ERROR]---------\n");
-	print("%s\n", message);
+	printf("------[OPENGL ERROR]---------\n");
+	printf("%s\n", message);
 
 	switch (source)
 	    {
-	    case GL_DEBUG_SOURCE_API:             print("Source: API"); break;
-	    case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   print("Source: Window System"); break;
-	    case GL_DEBUG_SOURCE_SHADER_COMPILER: print("Source: Shader Compile"); break;
-	    case GL_DEBUG_SOURCE_THIRD_PARTY:     print("Source: Third Party"); break;
-	    case GL_DEBUG_SOURCE_APPLICATION:     print("Source: Application"); break;
-	    case GL_DEBUG_SOURCE_OTHER:           print("Source: Other"); break;
+	    case GL_DEBUG_SOURCE_API:             printf("Source: API"); break;
+	    case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   printf("Source: Window System"); break;
+	    case GL_DEBUG_SOURCE_SHADER_COMPILER: printf("Source: Shader Compile"); break;
+	    case GL_DEBUG_SOURCE_THIRD_PARTY:     printf("Source: Third Party"); break;
+	    case GL_DEBUG_SOURCE_APPLICATION:     printf("Source: Application"); break;
+	    case GL_DEBUG_SOURCE_OTHER:           printf("Source: Other"); break;
 	    };
 	switch (type)
 	    {
-	    case GL_DEBUG_TYPE_ERROR:               print("Type: Error"); break;
-	    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: print("Type: Deprecated Behaviour"); break;
-	    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  print("Type: Undefined Behaviour"); break; 
-	    case GL_DEBUG_TYPE_PORTABILITY:         print("Type: Portability"); break;
-	    case GL_DEBUG_TYPE_PERFORMANCE:         print("Type: Performance"); break;
-	    case GL_DEBUG_TYPE_MARKER:              print("Type: Marker"); break;
-	    case GL_DEBUG_TYPE_PUSH_GROUP:          print("Type: Push Group"); break;
-	    case GL_DEBUG_TYPE_POP_GROUP:           print("Type: Pop Group"); break;
-	    case GL_DEBUG_TYPE_OTHER:               print("Type: Other"); break;
+	    case GL_DEBUG_TYPE_ERROR:               printf("Type: Error"); break;
+	    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: printf("Type: Deprecated Behaviour"); break;
+	    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  printf("Type: Undefined Behaviour"); break; 
+	    case GL_DEBUG_TYPE_PORTABILITY:         printf("Type: Portability"); break;
+	    case GL_DEBUG_TYPE_PERFORMANCE:         printf("Type: Performance"); break;
+	    case GL_DEBUG_TYPE_MARKER:              printf("Type: Marker"); break;
+	    case GL_DEBUG_TYPE_PUSH_GROUP:          printf("Type: Push Group"); break;
+	    case GL_DEBUG_TYPE_POP_GROUP:           printf("Type: Pop Group"); break;
+	    case GL_DEBUG_TYPE_OTHER:               printf("Type: Other"); break;
 	    };
 	switch (severity)
 	    {
-	    case GL_DEBUG_SEVERITY_HIGH:         print("Severity: high"); break;
-	    case GL_DEBUG_SEVERITY_MEDIUM:       print("Severity: medium"); break;
-	    case GL_DEBUG_SEVERITY_LOW:          print("Severity: low"); break;
-	    case GL_DEBUG_SEVERITY_NOTIFICATION: print("Severity: notification"); break;
+	    case GL_DEBUG_SEVERITY_HIGH:         printf("Severity: high"); break;
+	    case GL_DEBUG_SEVERITY_MEDIUM:       printf("Severity: medium"); break;
+	    case GL_DEBUG_SEVERITY_LOW:          printf("Severity: low"); break;
+	    case GL_DEBUG_SEVERITY_NOTIFICATION: printf("Severity: notification"); break;
 	    };
-	print("------[END]---------\n");
+	printf("------[END]---------\n");
     }
 #endif
     bool vertexCheckErr(u32 shader){
@@ -54,7 +54,7 @@ namespace OpenGL{
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if(!success){
 	    glGetShaderInfoLog(shader, 512, NULL, infoLog);
-	    print("[VERTEX SHADER ERROR]: %s\n", infoLog);
+	    printf("[VERTEX SHADER ERROR]: %s\n", infoLog);
 	    return false;
 	};
 	return true;
@@ -65,7 +65,7 @@ namespace OpenGL{
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if(!success){
 	    glGetShaderInfoLog(shader, 512, NULL, infoLog);
-	    print("[FRAGMENT SHADER ERROR]: %s\n", infoLog);
+	    printf("[FRAGMENT SHADER ERROR]: %s\n", infoLog);
 	    return false;
 	};
 	return true;
@@ -76,7 +76,7 @@ namespace OpenGL{
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if(!success) {
 	    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-	    print("[SHADER LINK ERROR]: %s\n", infoLog);
+	    printf("[SHADER LINK ERROR]: %s\n", infoLog);
 	    return false;
 	}
 	return true;
@@ -95,10 +95,10 @@ namespace OpenGL{
     void createShader(char *vertexShaderPath, char *fragmentShaderPath, u32 shaderProgram){
 	//SHADER
 	u32 vertexShader = compileShader(vertexShaderPath, GL_VERTEX_SHADER);
-	if(OpenGL::vertexCheckErr(vertexShader) == false){print("VERTEX_SHADER_PATH: %s", vertexShaderPath);};
+	if(OpenGL::vertexCheckErr(vertexShader) == false){printf("VERTEX_SHADER_PATH: %s", vertexShaderPath);};
 	
 	u32 fragmentShader = compileShader(fragmentShaderPath, GL_FRAGMENT_SHADER);
-	if(OpenGL::fragmentCheckErr(fragmentShader) == false){print("FRAGMENT_SHADER_PATH: %s", fragmentShaderPath);};
+	if(OpenGL::fragmentCheckErr(fragmentShader) == false){printf("FRAGMENT_SHADER_PATH: %s", fragmentShaderPath);};
 	
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
@@ -192,6 +192,8 @@ namespace OpenGL{
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Draw::Vertex), (const void*)offsetof(Draw::Vertex, textPos));
 	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(3, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(Draw::Vertex), (const void*)offsetof(Draw::Vertex, textID));
+	glEnableVertexAttribArray(3);
 
 	//fill up our entire index buffer
 	u32 *indices = (u32*)mem::alloc(sizeof(u32) * Draw::maxIndexCount);
