@@ -3,7 +3,7 @@
 #include "crystal.hh"
 #include "components.hh"
 
-typedef s32       (*loadTextureType)(char *name);
+typedef s32       (*loadTextureType)(char *name, u32 shaderOff);
 typedef void      (*materialRegisterEntityType)(Material &m, Entity e);
 typedef Material& (*newMaterialType)(char *name, char *shaderName);
 typedef void      (*serializeMaterialSystemType)(char *fileName);

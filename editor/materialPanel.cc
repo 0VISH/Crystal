@@ -60,7 +60,7 @@ struct MaterialPanel{
 		    if(ms->textureToId.getValue({textureName, (u32)strlen(textureName)}, &id)){
 			mat.textureId = id;
 		    }else{
-			s32 id = loadTexture(textureName);
+			s32 id = loadTexture(textureName, mat.shader);
 			if(id == -1){
 			    print("[error] invalid path provided for texture");
 			}else{

@@ -31,7 +31,6 @@ void uninitAndFreeMaterialSystem(){
 };
 Material &newMaterial(char *name, char *shaderName){
     MaterialSystem *ms = engine->ms;
-    u32 shader = engine->ss.getShader(shaderName);
     u32 count = ms->materials.count;
     String matName;
     matName.mem = name;
@@ -46,7 +45,10 @@ Material &newMaterial(char *name, char *shaderName){
     u32 len = (u32)strlen(name) + 1;
     char *aName = (char*)mem::alloc(len);
     memcpy(aName, name, len);
-    mat.shader = shader;
+    if(engine->ss.shaderToOff.getValue({shaderName, (u32)strlen(shaderName)}, &mat.shader) == false){
+	print("[error] shader with name %s does not exist", shaderName);
+	mat.shader = 0;
+    };
     mat.name = aName;
     mat.registeredEntities.init();
     mat.id = count;

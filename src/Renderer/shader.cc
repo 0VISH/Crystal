@@ -1,7 +1,8 @@
 #include "shader.hh"
 
 namespace Shader{
-    void useShader(u32 program){
+    void useShader(u32 shader){
+	u32 program = engine->ss.getShaderId(shader);
 #if(GL)
 	glUseProgram(program);
 #endif
@@ -9,38 +10,50 @@ namespace Shader{
 };
 
 void ShaderSystem::init(){
-    shaderToId.init();
+    off = 0;
+    shaderToOff.init();
+    const u32 size = sizeof(ShaderInfo)*5;
+    shaderInfo = (ShaderInfo*)mem::alloc(size);
 };
 u32 ShaderSystem::newShader(char *vertexShaderPath, char *fragmentShaderPath, char *name){
-    u32 program;
     String shaderName;
     shaderName.mem = name;
     shaderName.len = (u32)strlen(name);
-    if(shaderToId.getValue(shaderName, &program) == true){
+    u32 offset = off;
+    if(shaderToOff.getValue(shaderName, &offset) == true){
 	print("[error] shader with name %s already exists", name);
 	return 0;
     };
+    off += 1;
 #if(GL)
-    program = glCreateProgram();
+    u32 program = glCreateProgram();
     OpenGL::createShader(vertexShaderPath, fragmentShaderPath, program);
 #endif
-    shaderToId.insertValue(shaderName, program);
-    return program;
+    ShaderInfo &info = shaderInfo[offset];
+    info.shaderId = program;
+    info.textureUnitOff = 0;
+    shaderToOff.insertValue(shaderName, offset);
+    return offset;
 };
-u32 ShaderSystem::getShader(char *name){
-    u32 program = 0;
-    if(shaderToId.getValue({name, (u32)strlen(name)}, &program) == false){
+u32 ShaderSystem::getShaderId(char *name){
+    u32 off;
+    if(shaderToOff.getValue({name, (u32)strlen(name)}, &off) == false){
 	print("[error] shader with name %s does not exist", name);
     };
-    return program;
+    return shaderInfo[off].shaderId;
+};
+u32 ShaderSystem::getShaderId(u32 shader){
+    return shaderInfo[shader].shaderId;
 };
 void ShaderSystem::uninit(){
-    for(u32 x=0; x<shaderToId.count; x+=1){
-	if(shaderToId.status[x] == true){
+    for(u32 x=0; x<shaderToOff.count; x+=1){
+	if(shaderToOff.status[x] == true){
+	    u32 shaderId = shaderInfo[shaderToOff.values[x]].shaderId;
 #if(GL)
-	    OpenGL::destroyShader(shaderToId.values[x]);
+	    OpenGL::destroyShader(shaderId);
 #endif
 	};
     };
-    shaderToId.uninit();
+    shaderToOff.uninit();
+    mem::free(shaderInfo);
 };

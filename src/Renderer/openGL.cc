@@ -166,7 +166,7 @@ namespace OpenGL{
 	glUniform4f(uLoc, vec[0], vec[1], vec[2], vec[3]);
     };
     void clearColourBuffer(){glClear(GL_COLOR_BUFFER_BIT);};
-    u32 loadTexture(char *data, u32 width, u32 height){
+    u32 loadTexture(char *data, u32 width, u32 height, u32 textureUnit){
 	u32 id;
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
@@ -176,6 +176,7 @@ namespace OpenGL{
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
+	glBindTextureUnit(textureUnit, id); 
 	return id;
     };
     
@@ -210,13 +211,22 @@ namespace OpenGL{
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(u32) * Draw::maxIndexCount, indices, GL_STATIC_DRAW);
 	mem::free(indices);
     };
+    void initTextureSamplers(u32 shader){
+	glUseProgram(shader);
+	u32 loc = glGetUniformLocation(shader, "textures");
+	s32 samplers[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+	glUniform1iv(loc, 10, samplers);
+    };
 
     void uninit(Renderer &r){
 	glDeleteBuffers(1, &r.qibo);
 	glDeleteBuffers(1, &r.qvbo);
 	glDeleteVertexArrays(1, &r.qvao);
     };
-
+    void bindTextureToUnit(u32 unit, u32 textureId, u32 shader){
+	glUseProgram(shader);
+	glBindTextureUnit(unit, textureId);
+    };
     void batchAndDraw(Renderer &r, void *begin, void *end){
 	u32 size = (char*)end - (char*)begin;
 	
