@@ -5,6 +5,8 @@
 
 #include <math.h>
 
+void bindTextureToUnit(u32 unit, u32 textureId, u32 shader);
+
 namespace Draw{
     void init(Renderer &r){
 	r.renderBuffer = (Draw::Vertex*)mem::alloc(sizeof(glm::mat4) + sizeof(Vertex) * maxVertexCount);
@@ -28,19 +30,25 @@ namespace Draw{
     void draw(Renderer &r){
 	if(r.bufferEmpty){return;};
 	Draw::Vertex *x = r.renderBuffer + (u32)ceil((f64)sizeof(glm::mat4)/(f64)sizeof(Draw::Vertex));
-	//FIXME: 
 	u32 curShader = x->shader;
-	Shader::useShader(0);
+	Shader::useShader(curShader);
+	MaterialSystem *ms = engine->ms;
+	for(u32 j=0; j<ms->textureIds.count; j+=1){
+	    bindTextureToUnit(j, ms->textureIds[j], curShader);
+	};
 	while(x != r.watermark){
 	    Draw::Vertex *info = x;
 	    if(info->shader != curShader){
 		curShader = info->shader;
 		Shader::useShader(curShader);
+		for(u32 j=0; j<ms->textureIds.count; j+=1){
+		    bindTextureToUnit(j, ms->textureIds[j], curShader);
+		};
 	    };
 	    x += 1;
 	    u32 quadVerticesCount = (u32)info->submittedQuads * 4;
 #if(GL)
-	    OpenGL::setMat4Uniform(*(glm::mat4*)r.renderBuffer, "uProjectionView", curShader);
+	    OpenGL::setMat4Uniform(*(glm::mat4*)r.renderBuffer, "uProjectionView", engine->ss.getShaderId(curShader));
 	    OpenGL::batchAndDraw(r, x, x + quadVerticesCount);
 #if(AND)
 	    u32 error = glGetError();

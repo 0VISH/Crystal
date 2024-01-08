@@ -4,6 +4,10 @@
 #include "componentID.hh"
 
 void submitQuad(Renderer &r, const glm::mat4 &mat, Material &m){
+    //TODO: remove me
+    m.textureId = 0;
+
+    
     Draw::Vertex &v1 = *r.watermark;
     v1.pos = mat * glm::vec4(0.5f, 0.5f, 0.0, 1.0);
     v1.textPos = glm::vec2(1.0f, 1.0f);

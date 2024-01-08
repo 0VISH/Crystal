@@ -45,7 +45,7 @@ namespace OpenGL{
 	    case GL_DEBUG_SEVERITY_LOW:          printf("Severity: low"); break;
 	    case GL_DEBUG_SEVERITY_NOTIFICATION: printf("Severity: notification"); break;
 	    };
-	printf("------[END]---------\n");
+	printf("\n");
     }
 #endif
     bool vertexCheckErr(u32 shader){

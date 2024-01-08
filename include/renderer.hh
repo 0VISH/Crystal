@@ -7,9 +7,11 @@ namespace Draw{
 	union{
 	    glm::vec4 col;
 	    u32 submittedQuads;
+	};
+	union{
+	    glm::vec3 pos;
 	    u16 shader;
 	};
-	glm::vec3 pos;
 	glm::vec2 textPos;
 	u32 textID;
     };

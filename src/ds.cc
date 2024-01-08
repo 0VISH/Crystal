@@ -12,7 +12,13 @@
 template<typename T, u32 len>
 struct StaticArray {
     T mem[len];
+    u32 count;
 
+    void init(){count = 0;};
+    void push(const T &t){
+	mem[count] = t;
+	count += 1;
+    };
     T& operator[](u32 index) {
 #if(DBG == true)
 	if (index >= len) {

@@ -11,6 +11,7 @@ struct Material{
 
 struct MaterialSystem{
     DynamicArray<Material> materials;
+    StaticArray<u32, 10> textureIds;
     HashmapStr materialToOff;
-    HashmapStr textureToId;
+    HashmapStr textureToOff;
 };

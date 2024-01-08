@@ -48,6 +48,7 @@ struct MaterialPanel{
 	    ImGui::Text("%s: %d", mat.name, mat.id);
 	    ImGui::ColorEdit4("Colour", (float*)&mat.col, ImGuiColorEditFlags_AlphaPreview);
 	    ImGui::Text("Shader ID: %d", mat.shader);
+	    ImGui::Text("Texture ID: %d", mat.textureId);
 
 	    const u32 MAX_NAME = 50;
 	    char textureName[MAX_NAME] = {0};
@@ -57,14 +58,14 @@ struct MaterialPanel{
 		}else{
 		    MaterialSystem *ms = engine->ms;
 		    u32 id;
-		    if(ms->textureToId.getValue({textureName, (u32)strlen(textureName)}, &id)){
+		    if(ms->textureToOff.getValue({textureName, (u32)strlen(textureName)}, &id)){
 			mat.textureId = id;
 		    }else{
 			s32 id = loadTexture(textureName, mat.shader);
 			if(id == -1){
 			    print("[error] invalid path provided for texture");
 			}else{
-			    ms->textureToId.insertValue({textureName, (u32)strlen(textureName)}, id);
+			    ms->textureToOff.insertValue({textureName, (u32)strlen(textureName)}, id);
 			    mat.textureId = id;
 			};
 		    };

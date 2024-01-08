@@ -2,24 +2,25 @@
 #include "stb_image.hh"
 
 void bindTextureToUnit(u32 unit, u32 textureId, u32 shader){
+    u32 program = engine->ss.getShaderId(shader);
 #if(GL)
-    OpenGL::bindTextureToUnit(unit, textureId, shader);
+    OpenGL::bindTextureToUnit(unit, textureId, program);
 #endif
 };
 
-static u32 wid = 0;
+u32 wid = 0;
 
 s32 loadTexture(char *name, u32 shaderOff){
     ShaderSystem &ss = engine->ss;
     MaterialSystem *ms = engine->ms;
-    u32 id = ms->textureToId.count;
+    u32 off = ms->textureToOff.count;
     String textName;
     textName.mem = name;
     textName.len = (u32)strlen(name);
-    if(ms->textureToId.getValue(textName, &id)){
-	return id;
+    if(ms->textureToOff.getValue(textName, &off)){
+	return off;
     };
-    ms->textureToId.insertValue(textName, id);
+    ms->textureToOff.insertValue(textName, off);
     s32 width;
     s32 height;
     bool fromFile;
@@ -32,7 +33,8 @@ s32 loadTexture(char *name, u32 shaderOff){
     bindTextureToUnit(info.textureUnitOff, tid, info.shaderId);
     info.textureUnitOff += 1;
     if(fromFile){stbi_image_free(mem);};
-    return id;
+    ms->textureIds.push(tid);
+    return off;
 };
 void initTextures(char *shaderName){
     ShaderSystem &ss = engine->ss;
@@ -45,15 +47,15 @@ void initTextures(char *shaderName){
 	char whitePixel[] = {(char)255, (char)255, (char)255, (char)255};
 #if(GL)
 	OpenGL::initTextureSamplers(info.shaderId);
-	u32 wid = OpenGL::loadTexture(whitePixel, 1, 1, 0);
+	wid = OpenGL::loadTexture(whitePixel, 1, 1, 0);
 	ASSERT(wid == 1);
 #endif
     };
-    bindTextureToUnit(0, wid, info.shaderId);
     info.textureUnitOff = 1;
     MaterialSystem *ms = engine->ms;
     String textureName;
     textureName.mem = "white";
     textureName.len = (u32)strlen(textureName.mem);
-    ms->textureToId.insertValue(textureName,  0);
+    ms->textureToOff.insertValue(textureName,  0);
+    ms->textureIds.init();
 };
