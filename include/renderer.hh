@@ -13,7 +13,7 @@ namespace Draw{
 	    u16 shader;
 	};
 	glm::vec2 textPos;
-	u32 textID;
+	s32 textID;
     };
 
     const u32 maxQuadCount   = 1000;

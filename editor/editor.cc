@@ -4,6 +4,9 @@
 #include <ShObjIdl.h>
 #include <ShlObj.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.hh"
+
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
 #include "glm/mat4x4.hpp"
@@ -18,9 +21,6 @@
 #include "console.cc"
 #include "entityPanel.cc"
 #include "materialPanel.cc"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.hh"
 
 Crystal *engine;
 
@@ -323,32 +323,43 @@ namespace Editor{
 	}else if(e.type == EventType::MOUSE_SCROLL){
 	    io.AddMouseWheelEvent(0.0f, e.scroll / 120);
 	}else if(isKeyboardButtonEvent(e)){
-	    if(e.buttonCode >= ButtonCode::Key_A && e.buttonCode <= ButtonCode::Key_Z && e.type == EventType::KEY_DOWN){
-		io.AddInputCharacter((u32)e.buttonCode + ((u32)'a' - (u32)ButtonCode::Key_A));
-	    }else{
-		ImGuiKey key = ImGuiKey_None;
+	    ImGuiKey key = ImGuiKey_None;
+	    if(e.type == EventType::KEY_DOWN){
 		switch(e.buttonCode){
-		case ButtonCode::Key_Enter:
-		    key = ImGuiKey_Enter;
+		case ButtonCode::Key_Period:
+		    key = (ImGuiKey)'.';
 		    break;
-		case ButtonCode::Key_LeftShift:
-		    key = ImGuiKey_LeftShift;
-		    break;
-		case ButtonCode::Key_RightShift:
-		    key = ImGuiKey_RightShift;
-		    break;
-		case ButtonCode::Key_Backspace:
-		    key = ImGuiKey_Backspace;
-		    break;
-		case ButtonCode::Key_LeftArrow:
-		    key = ImGuiKey_LeftArrow;
-		    break;
-		case ButtonCode::Key_RightArrow:
-		    key = ImGuiKey_RightArrow;
+		case ButtonCode::Key_Slash:
+		    key = (ImGuiKey)'/';
 		    break;
 		};
-		io.AddKeyEvent(key, e.type == EventType::KEY_DOWN);
+		if(e.buttonCode >= ButtonCode::Key_A && e.buttonCode <= ButtonCode::Key_Z){
+		    key = (ImGuiKey)((u32)e.buttonCode + ((u32)'a' - (u32)ButtonCode::Key_A));
+		};
+		io.AddInputCharacter(key);
 	    };
+	    key = ImGuiKey_None;
+	    switch(e.buttonCode){
+	    case ButtonCode::Key_Enter:
+		key = ImGuiKey_Enter;
+		break;
+	    case ButtonCode::Key_LeftShift:
+		key = ImGuiKey_LeftShift;
+		break;
+	    case ButtonCode::Key_RightShift:
+		key = ImGuiKey_RightShift;
+		break;
+	    case ButtonCode::Key_Backspace:
+		key = ImGuiKey_Backspace;
+		break;
+	    case ButtonCode::Key_LeftArrow:
+		key = ImGuiKey_LeftArrow;
+		break;
+	    case ButtonCode::Key_RightArrow:
+		key = ImGuiKey_RightArrow;
+		break;
+	    };
+	    io.AddKeyEvent(key, e.type == EventType::KEY_DOWN);
 	};
 
 	//DOCKSPACE

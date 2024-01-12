@@ -23,6 +23,8 @@ struct Crystal{
     Renderer          r;
     MaterialSystem   *ms;
     Scene            *curScene;
+    HashmapStr        textures;
+    DynamicArray<u32> textureIds;
     s32               gameLayerOff;
     u32               windowX; //if set to 0, engine exits
     u32               windowY;

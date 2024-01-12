@@ -33,22 +33,22 @@ namespace Draw{
 	u32 curShader = x->shader;
 	Shader::useShader(curShader);
 	MaterialSystem *ms = engine->ms;
-	for(u32 j=0; j<ms->textureIds.count; j+=1){
-	    bindTextureToUnit(j, ms->textureIds[j], curShader);
+	for(u32 j=0; j<engine->textureIds.count; j+=1){
+	    bindTextureToUnit(j, engine->textureIds[j], curShader);
 	};
 	while(x != r.watermark){
 	    Draw::Vertex *info = x;
 	    if(info->shader != curShader){
 		curShader = info->shader;
 		Shader::useShader(curShader);
-		for(u32 j=0; j<ms->textureIds.count; j+=1){
-		    bindTextureToUnit(j, ms->textureIds[j], curShader);
+		for(u32 j=0; j<engine->textureIds.count; j+=1){
+		    bindTextureToUnit(j, engine->textureIds[j], curShader);
 		};
 	    };
 	    x += 1;
 	    u32 quadVerticesCount = (u32)info->submittedQuads * 4;
 #if(GL)
-	    OpenGL::setMat4Uniform(*(glm::mat4*)r.renderBuffer, "uProjectionView", engine->ss.getShaderId(curShader));
+	    OpenGL::setMat4Uniform(*(glm::mat4*)r.renderBuffer, "uProjectionView", curShader);
 	    OpenGL::batchAndDraw(r, x, x + quadVerticesCount);
 #if(AND)
 	    u32 error = glGetError();

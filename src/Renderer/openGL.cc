@@ -192,7 +192,7 @@ namespace OpenGL{
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Draw::Vertex), (const void*)offsetof(Draw::Vertex, textPos));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(3, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(Draw::Vertex), (const void*)offsetof(Draw::Vertex, textID));
+	glVertexAttribPointer(3, 1, GL_INT, GL_FALSE, sizeof(Draw::Vertex), (const void*)offsetof(Draw::Vertex, textID));
 	glEnableVertexAttribArray(3);
 
 	//fill up our entire index buffer

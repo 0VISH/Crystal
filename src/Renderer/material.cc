@@ -8,6 +8,10 @@ void materialUninit(Material &m){
 void materialRegisterEntity(Material &m, Entity e){
     m.registeredEntities.push(e);
 };
+void registerWhiteTexture(){
+    MaterialSystem *ms = engine->ms;
+    
+};
 
 void allocMaterialSystem(){
     engine->ms = (MaterialSystem*)mem::alloc(sizeof(MaterialSystem));
@@ -16,9 +20,7 @@ void materialSystemInit(u32 materialCount = 5, u32 textureCount = 5){
     MaterialSystem *ms = engine->ms;
     ms->materials.init(materialCount);
     ms->materialToOff.init(materialCount);
-    ms->textureToOff.init(textureCount);
-    ms->textureIds.init();
-    ms->textureIds.push(1);
+    registerWhiteTexture();
 };
 void uninitAndFreeMaterialSystem(){
     MaterialSystem *ms = engine->ms;
@@ -28,7 +30,6 @@ void uninitAndFreeMaterialSystem(){
     };
     ms->materialToOff.uninit();
     ms->materials.uninit();
-    ms->textureToOff.uninit();
     mem::free(ms);
 };
 Material &newMaterial(char *name, char *shaderName){
@@ -47,7 +48,7 @@ Material &newMaterial(char *name, char *shaderName){
     u32 len = (u32)strlen(name) + 1;
     char *aName = (char*)mem::alloc(len);
     memcpy(aName, name, len);
-    if(engine->ss.shaderToOff.getValue({shaderName, (u32)strlen(shaderName)}, &mat.shader) == false){
+    if(engine->ss.shaderToId.getValue({shaderName, (u32)strlen(shaderName)}, &mat.shader) == false){
 	print("[error] shader with name %s does not exist", shaderName);
 	mat.shader = 0;
     };
@@ -72,6 +73,7 @@ void serializeMaterialSystem(char *filePath){
 	fwrite(&mat.col, sizeof(mat.col), 1, f);
 	fwrite(&mat.shader, sizeof(mat.shader), 1, f);
 	fwrite(&mat.id, sizeof(mat.id), 1, f);
+	fwrite(&mat.textureId, sizeof(mat.textureId), 1, f);
     };
     fclose(f);
 };
@@ -85,7 +87,6 @@ void deserializeMaterialSystem(char *filePath){
 
     u32 count = deserialize<u32>(charMem, x);
 
-    //TODO: alloc a block for material names
     for(u32 j=0; j<count; j+=1){
 	Material mat;
 
@@ -95,11 +96,10 @@ void deserializeMaterialSystem(char *filePath){
 	ms->materialToOff.insertValue({mat.name, len}, j);
 	
 	mat.col = deserialize<glm::vec4>(charMem, x);
-
 	mat.shader = deserialize<u32>(charMem, x);
-	
-	mat.id = deserialize<u32>(charMem, x);
-
+      	mat.id = deserialize<u32>(charMem, x);
+	mat.textureId = deserialize<u32>(charMem, x);
+	    
 	ms->materials.push(mat);
     };
     if(fromFile){mem::free(mem);};

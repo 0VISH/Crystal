@@ -8,6 +8,11 @@ void Crystal::init(){
     curScene = nullptr;
     allocMaterialSystem();
     materialSystemInit();
+    textures.init();
+    textureIds.init();
+    char *white = "white";
+    textures.insertValue({white, (u32)strlen(white)}, textures.count);
+    textureIds.push(1);
     ss.init();
     gameLayerOff = -1;
     lm.init(3);
@@ -21,9 +26,12 @@ void Crystal::initGraphics(){
     ss.newShader("package/shader/glsl3es/vertex.glsl", "package/shader/glsl3es/fragment.glsl", "default");
 #endif
     initTextures("default");
+    loadWhiteTexture();
     fb.init(windowX, windowY);
 };
 void Crystal::uninit(){
+    textureIds.uninit();
+    textures.uninit(mem::free);
     if(lm.layers != nullptr){
 	lm.uninitLayers();
 	lm.uninit();

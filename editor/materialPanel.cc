@@ -1,7 +1,9 @@
 struct MaterialPanel{
     u32 selectedID;
 
-    void init(){selectedID = -1;};
+    void init(){
+	selectedID = -1;
+    };
     
     void showMatNames(){
 	if(ImGui::Begin("Materials")){
@@ -58,14 +60,13 @@ struct MaterialPanel{
 		}else{
 		    MaterialSystem *ms = engine->ms;
 		    u32 id;
-		    if(ms->textureToOff.getValue({textureName, (u32)strlen(textureName)}, &id)){
+		    if(engine->textures.getValue({textureName, (u32)strlen(textureName)}, &id)){
 			mat.textureId = id;
 		    }else{
 			s32 id = loadTexture(textureName, mat.shader);
 			if(id == -1){
-			    print("[error] invalid path provided for texture");
+			    print("[error] invalid path provided for texture: %s", textureName);
 			}else{
-			    ms->textureToOff.insertValue({textureName, (u32)strlen(textureName)}, id);
 			    mat.textureId = id;
 			};
 		    };
