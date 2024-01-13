@@ -1,4 +1,6 @@
 namespace GameLayer{
+    f64 physicsDelta = 0;
+    
     bool onUpdate(Event e, f64 dt){
 	Scene *s = engine->curScene;
 	if(s == nullptr || s->state != SceneState::PLAYING){return false;};
@@ -7,27 +9,30 @@ namespace GameLayer{
 	if(s->components.count <= (u32)ComponentID::RIGIDBODY){
 	    return res;
 	};
-	//FIXME: set physics to const rate
-        const u32 hertz = 60;
-	const f32 timeStamp = 1/hertz;
-	s32 velocityIterations = 6;
-	s32 positionIterations = 2;
-	s->physicsWorld->Step(1.0f/60.0f, velocityIterations, positionIterations);
-	ComponentPool &cp = s->components[(u32)ComponentID::RIGIDBODY];
-	for(u32 x=0; x<cp.entityWatermark; x+=1){
-	    if(cp.entityToComponentOff[x] == -1){
-		continue;
+	physicsDelta += dt;
+	const u32 hertz = 60;
+	const f32 timeStamp = (f32)1/(f32)hertz;
+	if(physicsDelta >= timeStamp){
+	    const s32 velocityIterations = 6;
+	    const s32 positionIterations = 2;
+	    s->physicsWorld->Step(1.0f/60.0f, velocityIterations, positionIterations);
+	    ComponentPool &cp = s->components[(u32)ComponentID::RIGIDBODY];
+	    for(u32 x=0; x<cp.entityWatermark; x+=1){
+		if(cp.entityToComponentOff[x] == -1){
+		    continue;
+		};
+		auto *trans = (Component::Transform*)getComponent(x, (u32)ComponentID::TRANSFORM);
+		if(trans == nullptr){continue;};
+		auto *rb = (Component::RigidBody*)getComponent(x, (u32)ComponentID::RIGIDBODY);
+		if(rb == nullptr){continue;};
+		auto *body = rb->runtimeBody;
+		auto pos = body->GetPosition();
+		trans->position.x = pos.x;
+		trans->position.y = pos.y;
+		auto angle = body->GetAngle();
+		trans->rotation.z = angle;
 	    };
-	    auto *trans = (Component::Transform*)getComponent(x, (u32)ComponentID::TRANSFORM);
-	    if(trans == nullptr){continue;};
-	    auto *rb = (Component::RigidBody*)getComponent(x, (u32)ComponentID::RIGIDBODY);
-	    if(rb == nullptr){continue;};
-	    auto *body = rb->runtimeBody;
-	    auto pos = body->GetPosition();
-	    trans->position.x = pos.x;
-	    trans->position.y = pos.y;
-	    auto angle = body->GetAngle();
-	    trans->rotation.z = angle;
+	    physicsDelta = 0;
 	};
 	return res;
     };
