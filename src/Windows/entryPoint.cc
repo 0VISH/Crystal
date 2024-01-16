@@ -1,5 +1,7 @@
 #define ENGINE true
 
+unsigned int gid;
+
 #include "basic.hh"
 #include "utils.hh"
 logType print;

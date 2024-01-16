@@ -12,7 +12,6 @@ void Crystal::init(){
     textureIds.init();
     char *white = "white";
     textures.insertValue({white, (u32)strlen(white)}, textures.count);
-    textureIds.push(1);
     ss.init();
     gameLayerOff = -1;
     lm.init(3);
@@ -26,7 +25,8 @@ void Crystal::initGraphics(){
     ss.newShader("package/shader/glsl3es/vertex.glsl", "package/shader/glsl3es/fragment.glsl", "default");
 #endif
     initTextures("default");
-    loadWhiteTexture();
+    u32 id = loadWhiteTexture();
+    textureIds.push(id);
     fb.init(windowX, windowY);
 };
 void Crystal::uninit(){

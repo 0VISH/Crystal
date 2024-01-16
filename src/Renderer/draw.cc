@@ -5,7 +5,7 @@
 
 #include <math.h>
 
-void bindTextureToUnit(u32 unit, u32 textureId, u32 shader);
+void bindTextureToUnit(u32 unit, u32 textureId);
 
 namespace Draw{
     void init(Renderer &r){
@@ -34,7 +34,7 @@ namespace Draw{
 	Shader::useShader(curShader);
 	MaterialSystem *ms = engine->ms;
 	for(u32 j=0; j<engine->textureIds.count; j+=1){
-	    bindTextureToUnit(j, engine->textureIds[j], curShader);
+	    bindTextureToUnit(j, engine->textureIds[j]);
 	};
 	while(x != r.watermark){
 	    Draw::Vertex *info = x;
@@ -42,7 +42,7 @@ namespace Draw{
 		curShader = info->shader;
 		Shader::useShader(curShader);
 		for(u32 j=0; j<engine->textureIds.count; j+=1){
-		    bindTextureToUnit(j, engine->textureIds[j], curShader);
+		    bindTextureToUnit(j, engine->textureIds[j]);
 		};
 	    };
 	    x += 1;

@@ -1,9 +1,9 @@
 #include "../package.hh"
 #include "stb_image.hh"
 
-void bindTextureToUnit(u32 unit, u32 textureId, u32 shader){
+void bindTextureToUnit(u32 unit, u32 textureId){
 #if(GL)
-    OpenGL::bindTextureToUnit(unit, textureId, shader);
+    OpenGL::bindTextureToUnit(unit, textureId);
 #endif
 };
 
@@ -22,11 +22,15 @@ s32 loadTexture(char *name, u32 shaderOff){
     bool fromFile;
     char *mem = openImgFileFromPkgElseFile(name, width, height, fromFile, Package::curPkg);
     if(mem == nullptr){return -1;};
+    char redPixel[] = {(char)255, (char)0, (char)0, (char)255};
 #if(GL)
-    u32 tid = OpenGL::loadTexture(mem, width, height, 0);
+    u32 tid = OpenGL::loadTexture(redPixel, 1, 1);
+    gid = tid;
+#endif
+#if(GL)
+    //u32 tid = OpenGL::loadTexture(mem, width, height);
 #endif
     if(fromFile){stbi_image_free(mem);};
-    engine->textureIds.push(tid);
     String str;
     str.len = (u32)strlen(name) + 1;
     str.mem = (char*)mem::alloc(str.len);
@@ -40,15 +44,15 @@ void initTextures(char *shaderName){
     u32 id;
     if(ss.shaderToId.getValue({shaderName, (u32)strlen(shaderName)}, &id) == false){
 	print("[error] shader with name %s does not exist. Cannot init texture samplers", shaderName);
+	return;
     };
 #if(GL)
     OpenGL::initTextureSamplers(id);
 #endif
 };
-void loadWhiteTexture(){
+u32 loadWhiteTexture(){
     char whitePixel[] = {(char)255, (char)255, (char)255, (char)255};
 #if(GL)
-    u32 wid = OpenGL::loadTexture(whitePixel, 1, 1, 0);
-    ASSERT(wid == 1);
+    return OpenGL::loadTexture(whitePixel, 1, 1);
 #endif
 };
