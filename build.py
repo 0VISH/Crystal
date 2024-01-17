@@ -8,6 +8,7 @@ shouldBuildGLAD    = "glad"    in argv
 shouldBuildVENDOR  = "vendor"  in argv
 shouldBuildEditor  = "editor"  in argv
 shouldBuildBox2d   = "box2d"   in argv
+shouldBuildGuizmo  = "guizmo"  in argv
 shouldBuildClean   = "clean"   in argv
 dbg = not("rls" in argv)
 plat = "win"
@@ -28,9 +29,10 @@ if(shouldBuildClean):
     shouldBuildVENDOR = True
     shouldBuildEditor = True
 if(shouldBuildVENDOR):
-    shouldBuildIMGUI = True
-    shouldBuildGLAD  = True
-    shouldBuildBox2d = True
+    shouldBuildIMGUI  = True
+    shouldBuildGLAD   = True
+    shouldBuildBox2d  = True
+    shouldBuildGuizmo = True
 
 if(plat == "win"):
     Omen.build("src/Windows/entryPoint.cc", "crystal", "cl", extraSwitches="/I include/ /I vendor/imgui/ /I vendor/glad/include/ /I vendor/glm/ /I vendor/box2d/include/", intermediateOnly=True, defines=[renderingAPI])
@@ -39,6 +41,7 @@ if(plat == "win"):
     enginePath = folder + "crystal.obj"
     editorPath = folder + "editor.obj"
     box2dPath  = folder + "box2d.obj"
+    guizmoPath = folder + "guizmo.obj"
     if not os.path.isfile(imguiPath): shouldBuildIMGUI = True
     if not os.path.isfile(gladPath): shouldBuildGLAD = True
     if not os.path.isfile(enginePath): shouldBuildEngine = True
@@ -47,11 +50,13 @@ if(plat == "win"):
     if(shouldBuildIMGUI):
         Omen.build("src/Windows/imguiFiles.cc", "imgui", "cl", intermediateOnly=True, extraSwitches="/I include/ /I vendor/imgui/", defines=[renderingAPI])
     if(shouldBuildGLAD):
-        Omen.build("vendor/glad/src/glad.c", "glad", "cl", intermediateOnly=True, extraSwitches="/I vendor/glad/include/")
+        Omen.build("vendor/glad/src/glad.c", "glad", "cl", intermediateOnly=True, includes=["vendor/glad/include/"])
     if(shouldBuildBox2d):
-        Omen.build("src/box2dFiles.cc", "box2d", "cl", intermediateOnly=True, extraSwitches="/I vendor/box2d/include/ /I vendor/box2d/src/")
+        Omen.build("src/box2dFiles.cc", "box2d", "cl", intermediateOnly=True, includes=["vendor/box2d/include/", "vendor/box2d/src/"])
+    if(shouldBuildGuizmo):
+        Omen.build("vendor/imguizmo/ImGuizmo.cpp", "guizmo", "cl", intermediateOnly=True, includes=["vendor/imguizmo/", "vendor/imgui/"])
     if(shouldBuildEditor):
-        Omen.build("editor/editor.cc", "editor", "cl", intermediateOnly=True, defines=[renderingAPI], includes=["vendor/imgui/", "vendor/glm/", "vendor/box2d/include/", "vendor/glad/include/", "include/"])
-        Omen.runCmd("link /NOLOGO /DEBUG /DLL /PDB:" + folder + "editor.pdb " + editorPath + " " + imguiPath + " " + box2dPath + " /OUT:" + folder + "editor.dll")
+        Omen.build("editor/editor.cc", "editor", "cl", intermediateOnly=True, defines=[renderingAPI], includes=["vendor/imgui/", "vendor/glm/", "vendor/box2d/include/", "vendor/glad/include/", "vendor/imguizmo/", "include/"])
+        Omen.runCmd("link /NOLOGO /DEBUG /DLL /PDB:" + folder + "editor.pdb " + editorPath + " " + imguiPath + " " + guizmoPath + " " + box2dPath + " /OUT:" + folder + "editor.dll")
     Omen.runCmd("link /NOLOGO /DEBUG /PDB:" + folder + "crystal.pdb " + folder + "crystal.obj " + gladPath + " " + box2dPath + " /OUT:" + folder + "crystal.exe")
     Omen.runCmd(folder + "crystal.exe")

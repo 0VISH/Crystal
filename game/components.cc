@@ -60,7 +60,7 @@ namespace Component{
 	b2BodyDef bodyDef;
 	bodyDef.type = bodyType;
 	bodyDef.fixedRotation = fixedRotation;
-	auto *transform = (Component::Transform*)getComponent(e, (u32)ComponentID::TRANSFORM);
+	auto *transform = (Component::Transform*)getComponent(e, ComponentID::TRANSFORM);
 	if(transform == nullptr){
 	    bodyDef.position.Set(0.0f, 0.0f);
 	}else{
@@ -80,12 +80,12 @@ T *addComponent(Entity e, ComponentID id);
 
 namespace Component{
     void BoxCollider::initMore(Scene *s, Entity e){
-	auto *rigidBody = (Component::RigidBody*)getComponent(e, (u32)ComponentID::RIGIDBODY);
+	auto *rigidBody = (Component::RigidBody*)getComponent(e, ComponentID::RIGIDBODY);
 	if(rigidBody == nullptr){
 	    rigidBody = addComponent<Component::RigidBody>(e, ComponentID::RIGIDBODY);
 	};
 	b2Body *body = rigidBody->runtimeBody;
-	auto *transform = (Component::Transform*)getComponent(e, (u32)ComponentID::RIGIDBODY);
+	auto *transform = (Component::Transform*)getComponent(e, ComponentID::RIGIDBODY);
 	//TODO: change x,y
 	if(transform == nullptr){
 	    runtimeFixture = createBoxColliderFixture(5.0f, 5.0f, density, friction, body);

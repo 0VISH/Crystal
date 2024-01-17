@@ -1,33 +1,34 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <stdio.h>
 #include <windows.h>
 #include <Commdlg.h>
 #include <ShObjIdl.h>
 #include <ShlObj.h>
-
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.hh"
-
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
 #include "glm/mat4x4.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "imgui.h"
+#include "imGuizmo.h"
 #if(GL)
 #include "backends/imgui_impl_opengl3.h"
 #endif
 #include "backends/imgui_impl_win32.h"
 #include "game.hh"
+
+Entity selectedEntity = -1;
+
 #include "console.cc"
 #include "entityPanel.cc"
 #include "materialPanel.cc"
 
 Crystal *engine;
-
 char *gameCodePath = nullptr;
 char *curScenePath = nullptr;
 char *materialSystemPath = nullptr;
-LayerFunc ginit;
 
 bool openFileDialog(char *filter, char *buffer){
     OPENFILENAME ofn;
@@ -283,14 +284,14 @@ namespace Editor{
 	ComponentPool &rbp = cpy->components[(u32)ComponentID::RIGIDBODY];
 	for(u32 x=0; x<rbp.entityWatermark; x+=1){
 	    if(rbp.entityToComponentOff[x] == -1){continue;};
-	    auto *rb = (Component::RigidBody*)getComponent(x, (u32)ComponentID::RIGIDBODY);
+	    auto *rb = (Component::RigidBody*)getComponent(x, ComponentID::RIGIDBODY);
 	    rb->initMore(cpy, x);
 	};
 	if(cpy->components.count <= (u32)ComponentID::BOXCOLLIDER){return cpy;};
 	ComponentPool &bcp = cpy->components[(u32)ComponentID::BOXCOLLIDER];
 	for(u32 x=0; x<bcp.entityWatermark; x+=1){
 	    if(bcp.entityToComponentOff[x] == -1){continue;};
-	    auto *bc = (Component::BoxCollider*)getComponent(x, (u32)ComponentID::BOXCOLLIDER);
+	    auto *bc = (Component::BoxCollider*)getComponent(x, ComponentID::BOXCOLLIDER);
 	    bc->initMore(cpy, x);
 	};
 	return cpy;
@@ -315,6 +316,7 @@ namespace Editor{
 	ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 	
 	//FEEDING IMGUI EVENTS
 	ImGuiIO& io = ImGui::GetIO();
@@ -503,6 +505,13 @@ namespace Editor{
 	mp.showSelectedMatInfo();
 	console.Draw("Console");
 	if(showDemo){ImGui::ShowDemoWindow(&showDemo);};
+	if(selectedEntity != -1){
+	    auto *pcam = (Component::PCamera*)getComponent(selectedEntity, ComponentID::PCAMERA);
+	    auto *trans = (Component::Transform*)getComponent(selectedEntity, ComponentID::TRANSFORM);
+	    if(pcam != nullptr && trans != nullptr){
+		
+	    };
+	};
 
         ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

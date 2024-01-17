@@ -21,9 +21,9 @@ namespace GameLayer{
 		if(cp.entityToComponentOff[x] == -1){
 		    continue;
 		};
-		auto *trans = (Component::Transform*)getComponent(x, (u32)ComponentID::TRANSFORM);
+		auto *trans = (Component::Transform*)getComponent(x, ComponentID::TRANSFORM);
 		if(trans == nullptr){continue;};
-		auto *rb = (Component::RigidBody*)getComponent(x, (u32)ComponentID::RIGIDBODY);
+		auto *rb = (Component::RigidBody*)getComponent(x, ComponentID::RIGIDBODY);
 		if(rb == nullptr){continue;};
 		auto *body = rb->runtimeBody;
 		auto pos = body->GetPosition();
@@ -42,7 +42,7 @@ namespace GameLayer{
 	if(s->onRender != nullptr && s->state == SceneState::PLAYING){s->onRender();};
 	Entity e = s->activeCam;
 	if(e < 0){return;};
-	auto *cam = (Component::PCamera*)getComponent(e, (u32)ComponentID::PCAMERA);
+	auto *cam = (Component::PCamera*)getComponent(e, ComponentID::PCAMERA);
 	ASSERT(cam != nullptr);
 	cam->calculateProjectionMat();
 	cam->calculateViewMat();;

@@ -1,6 +1,7 @@
 #include "scene.hh"
 #include "crystal.hh"
 #include "components.hh"
+#include "componentID.hh"
 
 void componentPoolInit(ComponentPool &cp, u64 size, u32 begLen, u32 ew=1){
     cp.count = 0;
@@ -232,7 +233,7 @@ void removeComponent(Entity e, u32 componentID){
     CLEAR_BIT(mask, componentID);
     componentPoolRemoveComponent(s->components[componentID], e);
 };
-void *getComponent(Entity e, u32 componentID){
+void *getComponent(Entity e, ComponentID componentID){
     if(e < 0){
 	print("Invalid Entity ID: %d", e);
 	return nullptr;
@@ -240,7 +241,7 @@ void *getComponent(Entity e, u32 componentID){
     Scene *s = engine->curScene;
     u32 mask = s->entityComponentMask[e];
     if(!IS_BIT(mask, componentID)){return nullptr;};
-    return componentPoolGetComponent(s->components[componentID], e);
+    return componentPoolGetComponent(s->components[(u16)componentID], e);
 };
 void allocAndSetCurrentScene(){
     Scene *s = (Scene*)mem::alloc(sizeof(Scene));

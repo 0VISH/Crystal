@@ -20,7 +20,7 @@ typedef void   (*setActiveCameraToCurrentSceneType)(Entity e);
 typedef Entity (*newEntityType)(char *name);
 typedef Entity (*getEntityType)(char *name);
 typedef void   (*removeComponentType)(Entity e, u32 componentID);
-typedef void*  (*getComponentType)(Entity e, u32 componentID);
+typedef void*  (*getComponentType)(Entity e, ComponentID componentID);
 
 typedef Scene* (*getCurrentSceneType)();
 
