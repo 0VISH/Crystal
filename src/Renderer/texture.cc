@@ -22,13 +22,8 @@ s32 loadTexture(char *name, u32 shaderOff){
     bool fromFile;
     char *mem = openImgFileFromPkgElseFile(name, width, height, fromFile, Package::curPkg);
     if(mem == nullptr){return -1;};
-    char redPixel[] = {(char)255, (char)0, (char)0, (char)255};
 #if(GL)
-    u32 tid = OpenGL::loadTexture(redPixel, 1, 1);
-    gid = tid;
-#endif
-#if(GL)
-    //u32 tid = OpenGL::loadTexture(mem, width, height);
+    u32 tid = OpenGL::loadTexture(mem, width, height);
 #endif
     if(fromFile){stbi_image_free(mem);};
     String str;
