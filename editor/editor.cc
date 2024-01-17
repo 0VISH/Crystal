@@ -431,6 +431,8 @@ namespace Editor{
 	};
 	
 	if(ImGui::Begin("Scene")){
+	    engine->windowX = ImGui::GetWindowWidth();
+	    engine->windowY = ImGui::GetWindowHeight();
 	    ImGui::Text("Frame rate: %f\t\t\t\t\tDraw calls: %d", ImGui::GetIO().Framerate, r->drawCalls);
 	    if(engine->curScene != nullptr){
 		ImGui::Text("-");
@@ -485,6 +487,24 @@ namespace Editor{
 			 );
 #pragma warning(default: 4312)
 	    };
+
+	    Scene *s = engine->curScene;
+	    if(selectedEntity != -1 && s->activeCam != -1){
+		auto *pcam = (Component::PCamera*)getComponent(s->activeCam, ComponentID::PCAMERA);
+		auto *trans = (Component::Transform*)getComponent(selectedEntity, ComponentID::TRANSFORM);
+		if(trans != nullptr){
+		    ImGuizmo::SetOrthographic(true);
+		    ImGuizmo::SetDrawlist();
+		    auto pos = ImGui::GetWindowPos();
+		    ImGuizmo::SetRect(pos.x, pos.y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
+
+		    glm::mat4 view = pcam->calculateViewMat();
+		    glm::mat4 &projection = pcam->projection;
+		    glm::mat4 transform = trans->genMatrix();
+		    ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection), ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(transform));
+		    ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), (float*)&trans->translation, (float*)&trans->rotation, (float*)&trans->scale);
+		};
+	    };
 	    ImGui::End();
 	}
 
@@ -505,13 +525,6 @@ namespace Editor{
 	mp.showSelectedMatInfo();
 	console.Draw("Console");
 	if(showDemo){ImGui::ShowDemoWindow(&showDemo);};
-	if(selectedEntity != -1){
-	    auto *pcam = (Component::PCamera*)getComponent(selectedEntity, ComponentID::PCAMERA);
-	    auto *trans = (Component::Transform*)getComponent(selectedEntity, ComponentID::TRANSFORM);
-	    if(pcam != nullptr && trans != nullptr){
-		
-	    };
-	};
 
         ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

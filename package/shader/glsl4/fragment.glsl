@@ -9,5 +9,5 @@ uniform sampler2D textures[10];
 layout (location = 0) out vec4 oFragCol;
 
 void main(){
-     oFragCol = texture(textures[iTexId], iTex);
+     oFragCol = iCol * texture(textures[iTexId], iTex);
 };

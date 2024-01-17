@@ -68,7 +68,7 @@ void DrawVec3Control(char *label, glm::vec3& values, float resetValue = 0.0f, fl
 
 struct EntityPanel{
     void init(){
-	selectedEntity = -1;
+	selectedEntityOff = -1;
     };
 
     template<typename T, typename Function>
@@ -111,9 +111,10 @@ struct EntityPanel{
 	    HashmapStr &map = s->entityNameToID;
 	    for(u32 j=0; j<map.len; j+=1){
 		if(map.status[j]){
-		    if(ImGui::Selectable(map.keys[j].mem, selectedEntity == x)){
-			selectedEntity = x;
+		    if(ImGui::Selectable(map.keys[j].mem, selectedEntityOff == x)){
+			selectedEntityOff = x;
 			s->entityNameToID.getValue(map.keys[j], (u32*)&e);
+			selectedEntity = e;
 		    };
 		    x += 1;
 		};
@@ -128,7 +129,7 @@ struct EntityPanel{
 		ImGui::End();
 		return;
 	    };
-	    if(selectedEntity == -1){
+	    if(selectedEntityOff == -1){
 		ImGui::End();
 		return;
 	    };
@@ -153,12 +154,13 @@ struct EntityPanel{
 		ImGui::EndPopup();
 	    };
 	    drawComponent<Component::Transform>("Transform", e, s, ComponentID::TRANSFORM, [](auto *c, Scene *s, Entity e){
-		DrawVec3Control("Position", c->position);
+		DrawVec3Control("Translation", c->translation);
 		DrawVec3Control("Rotation", c->rotation);
 		DrawVec3Control("Scale", c->scale);
 	    });
 	    drawComponent<Component::PCamera>("PCamera", e, s, ComponentID::PCAMERA, [](auto *c, Scene *s, Entity e){
 		DrawVec3Control("Position", c->pos);
+		DrawVec3Control("Rotation", c->rotation);
 		ImGui::DragFloat("Zoom Level", &c->zoomLevel);
 		ImGui::DragFloat("Aspect Ratio", &c->aspectRatio);
 		ImGui::DragFloat("Field Of View", &c->fieldOfView);
@@ -177,6 +179,6 @@ struct EntityPanel{
 	};
     };
 
-    s32 selectedEntity;
+    s32 selectedEntityOff;
     Entity e;
 };

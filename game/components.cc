@@ -18,11 +18,15 @@ namespace Component{
     };
     void PCamera::init(Scene *s, Entity e){
 	zoomLevel = 1;
+	rotation = glm::vec3(0, 0, 0);
 	initPerspective(45, (f32)engine->windowX/(f32)engine->windowY, glm::vec3(0.0f, 0.0f, 3.0f));
     };
-    void PCamera::calculateViewMat(){
-	glm::mat4 t = glm::translate(glm::mat4(1.0f), pos);
-	view = glm::inverse(t);
+    glm::mat4 PCamera::calculateViewMat(){
+	glm::mat4 rot = glm::rotate(glm::mat4(1.0), rotation.x, {1, 0, 0})
+	    * glm::rotate(glm::mat4(1.0), rotation.y, {0, 1, 0})
+	    * glm::rotate(glm::mat4(1.0), rotation.z, {0, 0, 1});
+	glm::mat4 t = glm::translate(glm::mat4(1.0f), pos) * rot;
+	return glm::inverse(t);
     };
     void PCamera::changeZoomLevel(f32 zLevel){
 	zoomLevel = zLevel;
@@ -39,7 +43,7 @@ namespace Component{
 };
 namespace Component{
     void Transform::init(Scene *s, Entity e){
-	position = {0, 0, 0};
+	translation = {0, 0, 0};
 	rotation = {0, 0, 0};
 	scale    = {1, 1, 1};
     };
@@ -49,7 +53,7 @@ namespace Component{
 	    * glm::rotate(glm::mat4(1.0), rotation.y, {0, 1, 0})
 	    * glm::rotate(glm::mat4(1.0), rotation.z, {0, 0, 1});
 
-	return glm::translate(glm::mat4(1.0), position)
+	return glm::translate(glm::mat4(1.0), translation)
 	    * rot
 	    * glm::scale(glm::mat4(1.0), scale);
     };
@@ -64,7 +68,7 @@ namespace Component{
 	if(transform == nullptr){
 	    bodyDef.position.Set(0.0f, 0.0f);
 	}else{
-	    bodyDef.position.Set(transform->position.x, transform->position.y);
+	    bodyDef.position.Set(transform->translation.x, transform->translation.y);
 	};
 	runtimeBody = createRigidBody(&bodyDef, s->physicsWorld);
     };

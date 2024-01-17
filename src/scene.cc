@@ -102,11 +102,11 @@ u64 serializeTransform(FILE *f, void *mem, u32 count){
     Component::Transform *tmem = (Component::Transform*)mem;
     for(u32 x=0; x<count; x+=1){
 	Component::Transform &ct = tmem[x];
-	fwrite(&ct.position, sizeof(ct.position), 1, f);
+	fwrite(&ct.translation, sizeof(ct.translation), 1, f);
 	fwrite(&ct.rotation, sizeof(ct.rotation), 1, f);
 	fwrite(&ct.scale,    sizeof(ct.scale), 1, f);
     };
-    const u64 transSize = sizeof(Component::Transform::position) + sizeof(Component::Transform::rotation) + sizeof(Component::Transform::scale);
+    const u64 transSize = sizeof(Component::Transform::translation) + sizeof(Component::Transform::rotation) + sizeof(Component::Transform::scale);
     return transSize;
 };
 void *deserializeTransform(char *mem, u32 &xx, u32 count){
@@ -114,7 +114,7 @@ void *deserializeTransform(char *mem, u32 &xx, u32 count){
     Component::Transform *tmem = (Component::Transform*)mem::alloc(count * sizeof(Component::Transform));
     for(u32 j=0; j<count; j+=1){
 	Component::Transform &tra = tmem[j];
-	tra.position = deserialize<glm::vec3>(mem, x);
+	tra.translation = deserialize<glm::vec3>(mem, x);
 	tra.rotation = deserialize<glm::vec3>(mem, x);
 	tra.scale = deserialize<glm::vec3>(mem, x);
     };
@@ -224,7 +224,7 @@ Entity getEntity(char *name){
 };
 void removeComponent(Entity e, u32 componentID){
     if(e < 0){
-	print("Invalid Entity ID: %d", e);
+	print("Invalid Entity ID: %d. Cannot remove component", e);
 	return;
     };
     Scene *s = engine->curScene;
@@ -235,7 +235,7 @@ void removeComponent(Entity e, u32 componentID){
 };
 void *getComponent(Entity e, ComponentID componentID){
     if(e < 0){
-	print("Invalid Entity ID: %d", e);
+	print("Invalid Entity ID: %d. Cannot get component(%d)", e, componentID);
 	return nullptr;
     };
     Scene *s = engine->curScene;

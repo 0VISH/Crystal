@@ -27,8 +27,8 @@ namespace GameLayer{
 		if(rb == nullptr){continue;};
 		auto *body = rb->runtimeBody;
 		auto pos = body->GetPosition();
-		trans->position.x = pos.x;
-		trans->position.y = pos.y;
+		trans->translation.x = pos.x;
+		trans->translation.y = pos.y;
 		auto angle = body->GetAngle();
 		trans->rotation.z = angle;
 	    };
@@ -47,7 +47,7 @@ namespace GameLayer{
 	cam->calculateProjectionMat();
 	cam->calculateViewMat();;
 		
-	fillRenderBufferHeader(engine->r, cam->projection * cam->view);
+	fillRenderBufferHeader(engine->r, cam->projection * cam->calculateViewMat());
 	fillRenderBufferWithGivenMS(engine->r, engine->ms);
     };
     void onUninit(){

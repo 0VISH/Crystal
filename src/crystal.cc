@@ -47,7 +47,7 @@ Crystal *getEngine(){
 };
 void setActiveCameraToCurrentScene(Entity e){
     if(e < 0){
-	print("Invalid Entity ID: %d", e);
+	print("Invalid Entity ID: %d. Cannot set active cammera", e);
 	return;
     };
     Scene *s = engine->curScene;
