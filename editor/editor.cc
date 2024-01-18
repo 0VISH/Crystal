@@ -330,10 +330,10 @@ namespace Editor{
 	    if(isKeyDown(ButtonCode::Key_LeftCtrl) && e.type == EventType::KEY_DOWN){
 		switch(e.buttonCode){
 		case ButtonCode::Key_Z:{
-		    Tracker::undoredo(Tracker::Command::UNDO);
+		    Tracker::undo();
 		}break;
 		case ButtonCode::Key_R:{
-		    Tracker::undoredo(Tracker::Command::REDO);
+		    Tracker::redo();
 		}break;
 		};
 	    };

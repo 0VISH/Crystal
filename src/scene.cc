@@ -77,6 +77,7 @@ u64 serializePCamera(FILE *f, void *mem, u32 count){
     for(u32 x=0; x<count; x+=1){
 	Component::PCamera &cc = cmem[x];
 	fwrite(&cc.pos, sizeof(cc.pos), 1, f);
+	fwrite(&cc.rotation, sizeof(cc.rotation), 1, f);
 	fwrite(&cc.zoomLevel, sizeof(cc.zoomLevel), 1, f);
 	fwrite(&cc.aspectRatio, sizeof(cc.aspectRatio), 1, f);
 	fwrite(&cc.fieldOfView, sizeof(cc.fieldOfView), 1, f);
@@ -90,6 +91,7 @@ void *deserializePCamera(char *mem, u32 &xx, u32 count){
     for(u32 j=0; j<count; j+=1){
 	Component::PCamera &cam = cmem[j];
 	cam.pos = deserialize<glm::vec3>(mem, x);
+	cam.rotation = deserialize<glm::vec3>(mem, x);
 	cam.zoomLevel = deserialize<f32>(mem, x);
 	cam.aspectRatio = deserialize<f32>(mem, x);
 	cam.fieldOfView = deserialize<f32>(mem, x);
