@@ -21,6 +21,7 @@
 
 Entity selectedEntity = -1;
 
+#include "tracker.cc"
 #include "console.cc"
 #include "entityPanel.cc"
 #include "materialPanel.cc"
@@ -185,6 +186,7 @@ namespace Editor{
 	console.init();
 	print = addLog;
 	showDemo = false;
+	Tracker::init();
     };
     void saveMS(){
 	OPENFILENAME ofn;
@@ -325,6 +327,16 @@ namespace Editor{
 	}else if(e.type == EventType::MOUSE_SCROLL){
 	    io.AddMouseWheelEvent(0.0f, e.scroll / 120);
 	}else if(isKeyboardButtonEvent(e)){
+	    if(isKeyDown(ButtonCode::Key_LeftCtrl) && e.type == EventType::KEY_DOWN){
+		switch(e.buttonCode){
+		case ButtonCode::Key_Z:{
+		    Tracker::undoredo(Tracker::Command::UNDO);
+		}break;
+		case ButtonCode::Key_R:{
+		    Tracker::undoredo(Tracker::Command::REDO);
+		}break;
+		};
+	    };
 	    ImGuiKey key = ImGuiKey_None;
 	    if(e.type == EventType::KEY_DOWN){
 		switch(e.buttonCode){
@@ -493,16 +505,24 @@ namespace Editor{
 		auto *pcam = (Component::PCamera*)getComponent(s->activeCam, ComponentID::PCAMERA);
 		auto *trans = (Component::Transform*)getComponent(selectedEntity, ComponentID::TRANSFORM);
 		if(trans != nullptr){
-		    ImGuizmo::SetOrthographic(true);
+		    ImGuizmo::SetOrthographic(false);
 		    ImGuizmo::SetDrawlist();
 		    auto pos = ImGui::GetWindowPos();
 		    ImGuizmo::SetRect(pos.x, pos.y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
+		    if(ImGuizmo::IsUsing() == false){
+			Tracker::vec3 = trans->translation;
+		    };
 
 		    glm::mat4 view = pcam->calculateViewMat();
 		    glm::mat4 &projection = pcam->projection;
 		    glm::mat4 transform = trans->genMatrix();
 		    ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection), ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(transform));
-		    ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), (float*)&trans->translation, (float*)&trans->rotation, (float*)&trans->scale);
+		    ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), glm::value_ptr(trans->translation), glm::value_ptr(trans->rotation), glm::value_ptr(trans->scale));
+		    glm::vec3 tr = trans->translation;
+		    if(ImGuizmo::IsUsing() == false && Tracker::vec3 != tr){
+			Tracker::translate(selectedEntity, tr);
+			print("Moved entity %d to (%f, %f, %f)", selectedEntity, tr.x, tr.y, tr.z);
+		    };
 		};
 	    };
 	    ImGui::End();
@@ -545,6 +565,7 @@ namespace Editor{
 	if(gameCodePath != nullptr){mem::free(gameCodePath);};
 	if(materialSystemPath != nullptr){mem::free(materialSystemPath);};
 	if(curScenePath != nullptr){mem::free(curScenePath);};
+	Tracker::uninit();
 	mem::uninit();
     };
 };
