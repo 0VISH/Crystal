@@ -17,6 +17,7 @@ namespace Tracker{
     char *cmds;
     char *watermark;
     CommandBase *curCommand;
+    bool isLastCmd;
     //to save old data;
     static union{
 	glm::vec3 vec3;
@@ -26,6 +27,7 @@ namespace Tracker{
 	cmds = (char*)mem::alloc(cmdBufferSize);
 	watermark = cmds;
 	curCommand = nullptr;
+	isLastCmd = false;
     };
     void uninit(){
 	mem::free(cmds);
@@ -61,7 +63,7 @@ namespace Tracker{
 	CommandBase *base = curCommand;
 	if(curCommand->prevCmd){
 	    curCommand = curCommand->prevCmd;
-	};
+	}else{isLastCmd = true;};
 	watermark = (char*)base;
 	switch(base->cmd){
 	case Command::TRANSLATE:{
@@ -77,14 +79,15 @@ namespace Tracker{
 	};
     };
     void redo(){
-	if(curCommand == nullptr){
-	    watermark = cmds;
+	CommandBase *base = curCommand->nextCmd;
+	if(isLastCmd){
+	    isLastCmd = false;
+	    base = curCommand;
+	}else if(curCommand->nextCmd){curCommand = curCommand->nextCmd;};
+	if(base == nullptr){
 	    print("Nothing left to redo");
 	    return;
 	};
-	CommandBase *base = curCommand->nextCmd;
-	if(base == nullptr){return;};
-	curCommand = curCommand->nextCmd;
 	watermark = (char*)curCommand;
 	switch(base->cmd){
 	case Command::TRANSLATE:{
