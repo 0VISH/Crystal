@@ -8,12 +8,16 @@
 Crystal *engine; 
 
 namespace Game{
+    EXPORT void init(){
+	setMaterialSystem("sandbox/runtime/woa.ms");
+	setScene("sandbox/runtime/trial.scn");
+    };
     EXPORT bool trialUpdate(Event e, f64 dt){
 	Entity sq = getEntity("quad");
 	if(sq == -1){return false;};
-	auto *cam = (Component::PCamera*)getComponent(sq, (u32)ComponentID::PCAMERA);
+	auto *cam = (Component::PCamera*)getComponent(sq, ComponentID::PCAMERA);
 	setActiveCameraToCurrentScene(sq);
-	auto *s1T = (Component::Transform*)getComponent(sq, (u32)ComponentID::TRANSFORM);
+	auto *s1T = (Component::Transform*)getComponent(sq, ComponentID::TRANSFORM);
 	if(s1T == nullptr){return false;};
 	s1T->rotation.x += dt;
 	return false;

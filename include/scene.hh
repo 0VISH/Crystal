@@ -5,8 +5,6 @@
 
 typedef s32 Entity;
 
-//TODO: write a custom hashmap
-
 enum class SceneState{
     NONE,
     PLAYING,

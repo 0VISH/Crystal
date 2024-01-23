@@ -31,6 +31,7 @@ void setScene(char *scenePath){
     s->onRender = (LayerFunc)GetProcAddress(engine->gameCode, buffer);
     memcpy(buffer+len, "Uninit", strlen("Uninit")+1);
     s->onUninit = (LayerFunc)GetProcAddress(engine->gameCode, buffer);
+    s->state = SceneState::PLAYING;
     print("Scene: %s\n", scenePath);
 };
 void setMaterialSystem(char *filePath){

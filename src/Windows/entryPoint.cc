@@ -53,6 +53,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 	sq = Draw::initScreenQuad();
 	screenShader = engine->ss.newShader("package/shader/glsl4/displayVertex.glsl", "package/shader/glsl4/displayFragment.glsl", "display");
+	auto gameInit = (void(*)())GetProcAddress(engine->gameCode, "init");
+	if(gameInit == nullptr){
+	    print("Game code doesnt have init function. Oops!");
+	}else{
+	    gameInit();
+	};
     };
     engine->gameLayerOff = engine->lm.layerCount;
     engine->lm.newLayer();
