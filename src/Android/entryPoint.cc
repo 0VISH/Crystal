@@ -71,7 +71,7 @@ EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalUpdate(JNIEn
 
 EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalDraw(JNIEnv* env, jobject obj){
     engine->lm.renderLayers();
-
+    
     Draw::beginFrame(engine->r, engine->fb);
     Draw::draw(engine->r);
     Draw::endFrame(engine->r, engine->fb);

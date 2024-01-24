@@ -13,21 +13,21 @@ void submitQuad(Renderer &r, const glm::mat4 &mat, Material &m){
 
     Draw::Vertex &v2 = *r.watermark;
     v2.pos = mat * glm::vec4(0.5f, -0.5f, 0.0, 1.0);
-    v1.textPos = glm::vec2(1.0f, 0.0f);
+    v2.textPos = glm::vec2(1.0f, 0.0f);
     v2.col = m.col;
     v2.textID = m.textureId;
     r.watermark += 1;
 
     Draw::Vertex &v3 = *r.watermark;
     v3.pos = mat * glm::vec4(-0.5f, -0.5f, 0.0, 1.0);
-    v1.textPos = glm::vec2(0.0f, 0.0f);
+    v3.textPos = glm::vec2(0.0f, 0.0f);
     v3.col = m.col;
     v3.textID = m.textureId;
     r.watermark += 1;
 
     Draw::Vertex &v4 = *r.watermark;
     v4.pos = mat * glm::vec4(-0.5f, 0.5f, 0.0, 1.0);
-    v1.textPos = glm::vec2(0.0f, 1.0f);
+    v4.textPos = glm::vec2(0.0f, 1.0f);
     v4.col = m.col;
     v4.textID = m.textureId;
     r.watermark += 1;
