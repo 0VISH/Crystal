@@ -54,7 +54,7 @@ namespace OpenGL{
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if(!success){
 	    glGetShaderInfoLog(shader, 512, NULL, infoLog);
-	    printf("[VERTEX SHADER ERROR]: %s\n", infoLog);
+	    print("[VERTEX SHADER ERROR]: %s\n", infoLog);
 	    return false;
 	};
 	return true;
@@ -65,7 +65,7 @@ namespace OpenGL{
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if(!success){
 	    glGetShaderInfoLog(shader, 512, NULL, infoLog);
-	    printf("[FRAGMENT SHADER ERROR]: %s\n", infoLog);
+	    print("[FRAGMENT SHADER ERROR]: %s\n", infoLog);
 	    return false;
 	};
 	return true;
@@ -76,7 +76,7 @@ namespace OpenGL{
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if(!success) {
 	    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-	    printf("[SHADER LINK ERROR]: %s\n", infoLog);
+	    print("[SHADER LINK ERROR]: %s\n", infoLog);
 	    return false;
 	}
 	return true;
@@ -95,10 +95,14 @@ namespace OpenGL{
     void createShader(char *vertexShaderPath, char *fragmentShaderPath, u32 shaderProgram){
 	//SHADER
 	u32 vertexShader = compileShader(vertexShaderPath, GL_VERTEX_SHADER);
-	if(OpenGL::vertexCheckErr(vertexShader) == false){printf("VERTEX_SHADER_PATH: %s", vertexShaderPath);};
+	if(OpenGL::vertexCheckErr(vertexShader) == false){
+	    print("VERTEX_SHADER_PATH: %s", vertexShaderPath);
+	};
 	
 	u32 fragmentShader = compileShader(fragmentShaderPath, GL_FRAGMENT_SHADER);
-	if(OpenGL::fragmentCheckErr(fragmentShader) == false){printf("FRAGMENT_SHADER_PATH: %s", fragmentShaderPath);};
+	if(OpenGL::fragmentCheckErr(fragmentShader) == false){
+	    print("FRAGMENT_SHADER_PATH: %s", fragmentShaderPath);
+	};
 	
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
@@ -191,7 +195,7 @@ namespace OpenGL{
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Draw::Vertex), (const void*)offsetof(Draw::Vertex, textPos));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(3, 1, GL_INT, GL_FALSE, sizeof(Draw::Vertex), (const void*)offsetof(Draw::Vertex, textID));
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Draw::Vertex), (const void*)offsetof(Draw::Vertex, textID));
 	glEnableVertexAttribArray(3);
 
 	//fill up our entire index buffer
@@ -225,7 +229,12 @@ namespace OpenGL{
 	glDeleteVertexArrays(1, &r.qvao);
     };
     void bindTextureToUnit(u32 unit, u32 textureId){
+#if(WIN)
 	glBindTextureUnit(unit, textureId);
+#elif(AND)
+	glActiveTexture(GL_TEXTURE0 + unit);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+#endif
     };
     void batchAndDraw(Renderer &r, void *begin, void *end){
 	u32 size = (char*)end - (char*)begin;

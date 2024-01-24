@@ -25,7 +25,9 @@ s32 loadTexture(char *name, u32 shaderOff){
 #if(GL)
     u32 tid = OpenGL::loadTexture(mem, width, height);
 #endif
+#if(WIN)
     if(fromFile){stbi_image_free(mem);};
+#endif
     String str;
     str.len = (u32)strlen(name) + 1;
     str.mem = (char*)mem::alloc(str.len);

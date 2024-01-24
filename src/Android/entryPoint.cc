@@ -22,6 +22,7 @@ ScreenQuad sq;
 u32 screenShader;
 
 EXPORT void JNICALL Java_com_example_androidcrystal_MainActivity_CrystalInit(JNIEnv* env, jobject obj, jobject assetManager){
+    mem::init();
     Package::assetManager = AAssetManager_fromJava(env, assetManager);
 #if(DBG)
     print = dlog;
@@ -32,16 +33,16 @@ EXPORT void JNICALL Java_com_example_androidcrystal_MainActivity_CrystalInit(JNI
     engine->windowX = 0;
     engine->windowY = 0;
     engine->gameCode = dlopen("libgameand.so", RTLD_LAZY);
-    SETUP_POINTERS(engine->gameCode);
+    GET_POINTERS(engine->gameCode);
+    SET_POINTERS;
     engine->gameLayerOff = engine->lm.layerCount;
     engine->lm.newLayer();
     Layer *gameLayer = &engine->lm.layers[engine->gameLayerOff];
     gameLayer->onUpdate = GameLayer::onUpdate;
     gameLayer->onRender = GameLayer::onRender;
     gameLayer->onUninit = GameLayer::onUninit;
-    //TODO: let game code do this
-    setMaterialSystem("runtime/woa.ms");
-    setScene("runtime/trial.scn");
+    auto gameInit = (void(*)())dlsym(engine->gameCode, "init");
+    gameInit();
 }
 EXPORT void JNICALL Java_com_example_androidcrystal_MainActivity_CrystalUninit(JNIEnv* env, jobject obj){
     dlclose(engine->gameCode);
@@ -53,7 +54,7 @@ EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalSurfaceCreat
     engine->initGraphics();
     print("Render context: %s\n", Draw::getRenderContextInfoString());
     sq = Draw::initScreenQuad();
-    screenShader = engine->ss.newShader("package/shader/glsl3es/displayVertex.glsl", "package/shader/glsl3es/displayFragment.glsl");
+    screenShader = engine->ss.newShader("package/shader/glsl3es/displayVertex.glsl", "package/shader/glsl3es/displayFragment.glsl", "display");
 };
 EXPORT void JNICALL Java_com_example_androidcrystal_Renderer_CrystalSurfaceChanged(JNIEnv* env, jobject obj, jint x, jint y){
     engine->windowX = x;

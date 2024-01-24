@@ -9,8 +9,13 @@ Crystal *engine;
 
 namespace Game{
     EXPORT void init(){
+#if(WIN)
 	setMaterialSystem("sandbox/runtime/woa.ms");
 	setScene("sandbox/runtime/trial.scn");
+#elif(AND)
+	setMaterialSystem("runtime/woa.ms");
+	setScene("runtime/trial.scn");
+#endif
     };
     EXPORT bool trialUpdate(Event e, f64 dt){
 	Entity sq = getEntity("quad");

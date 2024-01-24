@@ -13,6 +13,7 @@ namespace Draw{
 	r.watermark = r.renderBuffer;
 	r.bufferEmpty = true;
 	r.drawCalls = 0;
+	r.indexCount = 0;
 #if(GL)
 	OpenGL::init(r);
 #if(DBG)
@@ -47,9 +48,6 @@ namespace Draw{
 	    };
 	    x += 1;
 	    u32 quadVerticesCount = (u32)info->submittedQuads * 4;
-#if(GL)
-	    OpenGL::setMat4Uniform(*(glm::mat4*)r.renderBuffer, "uProjectionView", curShader);
-	    OpenGL::batchAndDraw(r, x, x + quadVerticesCount);
 #if(AND)
 	    u32 error = glGetError();
 	    while(error != GL_NO_ERROR){
@@ -57,6 +55,9 @@ namespace Draw{
 		error = glGetError();
 	    };
 #endif
+#if(GL)
+	    OpenGL::setMat4Uniform(*(glm::mat4*)r.renderBuffer, "uProjectionView", curShader);
+	    OpenGL::batchAndDraw(r, x, x + quadVerticesCount);
 #endif
 	    x += quadVerticesCount;
 	};

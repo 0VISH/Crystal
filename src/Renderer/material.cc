@@ -8,10 +8,6 @@ void materialUninit(Material &m){
 void materialRegisterEntity(Material &m, Entity e){
     m.registeredEntities.push(e);
 };
-void registerWhiteTexture(){
-    MaterialSystem *ms = engine->ms;
-    
-};
 
 void allocMaterialSystem(){
     engine->ms = (MaterialSystem*)mem::alloc(sizeof(MaterialSystem));
@@ -20,7 +16,6 @@ void materialSystemInit(u32 materialCount = 5, u32 textureCount = 5){
     MaterialSystem *ms = engine->ms;
     ms->materials.init(materialCount);
     ms->materialToOff.init(materialCount);
-    registerWhiteTexture();
 };
 void uninitAndFreeMaterialSystem(){
     MaterialSystem *ms = engine->ms;

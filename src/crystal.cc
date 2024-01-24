@@ -10,8 +10,6 @@ void Crystal::init(){
     materialSystemInit();
     textures.init();
     textureIds.init();
-    char *white = "white";
-    textures.insertValue({white, (u32)strlen(white)}, textures.count);
     ss.init();
     gameLayerOff = -1;
     lm.init(3);
@@ -26,6 +24,8 @@ void Crystal::initGraphics(){
 #endif
     initTextures("default");
     u32 id = loadWhiteTexture();
+    char *white = "white";
+    textures.insertValue({white, (u32)strlen(white)}, id);
     textureIds.push(id);
     fb.init(windowX, windowY);
 };

@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CrystalInit(getAssets());
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         ActionBar actionBar = getSupportActionBar();
@@ -34,11 +35,7 @@ public class MainActivity extends AppCompatActivity{
         glSurfaceView.setEGLContextClientVersion(3);
         glSurfaceView.setRenderer(renderer);
     }
-    @Override
-    public void onStart(){
-        super.onStart();
-        CrystalInit(getAssets());
-    }
+
     @Override
     public void onDestroy(){
         super.onDestroy();

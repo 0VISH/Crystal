@@ -17,9 +17,21 @@ namespace Package{
 	    AAsset_close(assetFile);
 	    fileContent[length] = '\0';
 	    return fileContent;
-	};
+	}else{print("assetFile is NULL");};
 	return nullptr;
     };
-    char *openImgFileFromPkgElseFile(char *fileName, s32 &width, s32 &height, s32 &nrChannels, bool &fromFile, Pkg *package){return "TODO:";};
+    char *openNormalFile(char *fileName){
+	AAsset* assetFile = AAssetManager_open(assetManager, fileName, AASSET_MODE_BUFFER);
+	if (assetFile != nullptr) {
+	    off_t length = AAsset_getLength(assetFile);
+	    char* fileContent = (char*)mem::alloc(length + 1);
+	    AAsset_read(assetFile, fileContent, length);
+	    AAsset_close(assetFile);
+	    fileContent[length] = '\0';
+	    return fileContent;
+	}else{print("assetFile is NULL");};
+	return nullptr;
+    };
+    char *openImgFileFromPkgElseFile(char *fileName, s32 &width, s32 &height, bool &fromFile, Pkg *package){return "TODO:";};
     void unloadPkg(Pkg *package){};
 };
